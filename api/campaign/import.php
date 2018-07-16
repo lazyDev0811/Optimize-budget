@@ -4,8 +4,8 @@ include_once($dir.'/../util.php');
 include_once($dir.'/../db.php');
 include_once($dir.'/../token.php');
 
-define(NUM_CHECK,'#^[^0-9]*((?:\\d{1,3}[, ]?)*\\d{1,3}(?:\\.\\d{1,2})?)[^0-9]*$#');
-define(NUM_GET,'#[^0-9\\.]#');
+define("NUM_CHECK",'#^[^0-9]*((?:\\d{1,3}[, ]?)*\\d{1,3}(?:\\.\\d{1,2})?)[^0-9]*$#');
+define("NUM_GET",'#[^0-9\\.]#');
 
 $uid = has_login();
 

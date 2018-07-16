@@ -13,6 +13,7 @@
           <th>CPA campaigns</th>
           <th>ROI data-points</th>
           <th>CPA data-points</th>
+          <th>Campaign upload</th>
           <th>Industry</th>
           <th>Aggregate data</th>
           <th>Last login</th>
@@ -36,6 +37,7 @@
           <td>{{ item.cpa_campaign | thousand }}</td>
           <td>{{ item.roi_data | thousand }}</td>
           <td>{{ item.cpa_data | thousand }}</td>
+          <td>{{ item.ckind + '  /  ' + item.cupload }}</td>
           <td>{{ item.industry }}</td>
           <td>
             <img v-if="item.permit" src="~@/img/valid.svg" width="16" height="16" />
