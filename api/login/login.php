@@ -28,8 +28,8 @@ else
     //elseif($data['confirmed'] != '') unauthorized('{"msg":"This account still has not confirmed the validity of its e-mail"}');
     else
     {
-      if($data['confirmed']!='') $db->query('INSERT INTO mm_log(event_id,user_id,ip) VALUES(3,'.$data['id'].',INET_ATON("'.$_SERVER['REMOTE_ADDR'].'"))');
-        else $db->query('INSERT INTO mm_log(event_id,user_id,ip) VALUES(4,'.$data['id'].',INET_ATON("'.$_SERVER['REMOTE_ADDR'].'"))');
+      if($data['confirmed']!='') $db->query('INSERT INTO mm_log(stamp,event_id,user_id,ip) VALUES(NOW(),3,'.$data['id'].',INET_ATON("'.$_SERVER['REMOTE_ADDR'].'"))');
+        else $db->query('INSERT INTO mm_log(stamp,event_id,user_id,ip) VALUES(NOW(),4,'.$data['id'].',INET_ATON("'.$_SERVER['REMOTE_ADDR'].'"))');
       $json = make_cookie($data['id']);
       send_token($json);
    	  send_info_cookie(Array('id'=>$data['id'], 'full_name'=>$data['full_name']!='' ? $data['full_name'] : $user, 'confirmed'=>$data['confirmed']=='', 'is_admin'=>in_array($data['id'],$admin_id)));
