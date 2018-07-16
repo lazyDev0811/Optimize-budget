@@ -543,7 +543,7 @@ export default
 
   .collapse .collapse-header::before{
     left: auto !important;
-    right: 20px;
+    right: 10px;
   }
 
   .group_title .collapse-header{
