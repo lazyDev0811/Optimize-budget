@@ -481,7 +481,7 @@ export default
     display: flex;
     flex-direction: column;
     padding: 3px;
-    min-height: 250px;
+    min-height: 412px;
   }
 
   .campaign_panel,
