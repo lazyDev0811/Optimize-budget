@@ -29,7 +29,10 @@
                 <div v-if="grp.collapsed">
                   <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
                 </div>
-                <div class="group_name" @click="toggleCollapsed(grp)">{{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}</div>
+                <div class="group_name" @click="toggleCollapsed(grp)">
+                  {{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}
+                  <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                  </div>
               </div>
               <ul class="no_list camp_group" v-if="grp.collapsed">
                 <li v-for="item in sortedCPA(grp)">
