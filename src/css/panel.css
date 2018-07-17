@@ -1,0 +1,27 @@
+@import './style.css';
+
+.screen
+{
+  display: flex;
+  justify-content: center;
+  margin: 12px;
+}
+
+.container
+{
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.panel
+{
+  background-color: #eee;
+  padding: 10px 15px;
+  margin: 10px;
+}
+
+.panel > *
+{
+  margin: 8px 0;
+}

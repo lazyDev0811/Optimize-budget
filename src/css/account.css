@@ -1,0 +1,26 @@
+.acc_stat
+{
+  border-collapse: collapse;
+}
+
+.acc_stat thead
+{
+  background-color: bisque;
+}
+
+.acc_stat tbody tr:nth-child(even)
+{
+  background-color: #EAEAEA;
+}
+
+.acc_stat td,
+.acc_stat th
+{
+  border: 1px solid black;
+  padding: 4px;
+}
+
+.user_name
+{
+  color: red;
+}
