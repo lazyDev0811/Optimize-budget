@@ -1,0 +1,54 @@
+@import './style.css';
+
+.sup_container
+{
+  display: flex;
+  justify-content: space-around;
+  height: 100%;
+  margin: 0 24px;
+}
+
+.sup_container > *
+{
+  flex: 1 1 0;
+}
+
+.field_full
+{
+  width: 24rem;
+}
+
+.field_half
+{
+  width: 100%;
+}
+
+.contact_form
+{
+  background-color: #EEE;
+  padding: 12px;
+  display: inline-block;
+  text-align: left;
+  margin-top: 12px;
+}
+
+.small_margin
+{
+  margin: 8px 0 0 0;
+}
+
+.send-enter-active
+{
+  transition: all .5s ease;
+}
+
+.send-leave-active
+{
+  transition: all .25s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.send-enter, .send-leave-to
+{
+  opacity: 0;
+  transform: translateY(-2rem);
+}
