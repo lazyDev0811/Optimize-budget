@@ -37,7 +37,7 @@ $ nano ~/.gitconfig
 ### Clone this repository
 
 ```bash
-$ git clone https://github.com/tmcdos/adwords-optimizer.git
+$ git clone https://github.com/Markmey/budget-optimize.git
 ```
 
 ### Install YARN and Patch-Package
@@ -117,7 +117,7 @@ $ sudo chown -R www-data:www-data /var/www/html/budget-optimise
 
 ## How to access the tool
 
-Open `https://www.oneegg.com.au/budget-optimise`
+Open `https://optimize.oneegg.com.au`
 
 ## How to change the video
 
