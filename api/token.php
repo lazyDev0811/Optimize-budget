@@ -69,13 +69,13 @@ function make_cookie($id)
 function send_token($js)
 {
   // use setRawCookie and rawUrlEncode to properly encode spaces to %20 instead of +
-  setrawcookie(COOKIE_TOKEN, rawurlencode(token_encode(SALT,json_encode($js))), (86400 * 90), '/'); // expire 90 days later
+  setrawcookie(COOKIE_TOKEN, rawurlencode(token_encode(SALT,json_encode($js))), time() + (86400 * 90), '/'); // expire 90 days later
 }
 
 function send_info_cookie($js)
 {
   // use setRawCookie and rawUrlEncode to properly encode spaces to %20 instead of +
-  setrawcookie(COOKIE_INFO, rawurlencode(json_encode($js)), (86400 * 90), '/'); // expire 90 days later
+  setrawcookie(COOKIE_INFO, rawurlencode(json_encode($js)), time() + (86400 * 90), '/'); // expire 90 days later
 }
 
 // checks for valid unexpired token,

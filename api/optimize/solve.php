@@ -47,8 +47,10 @@ close '".$file_res."';
 
 foreach($arr['list'] as $k=>&$v)
 {
-  foreach($v['regression'] as $ck=>&$cv)
+  foreach($v['regression'] as $ck=>&$cv){
+    if($cv == null) $cv = 0;
     $cof[$ck].= '  c'.$k.' '.$cv."\n";
+  }
   $names.= ' c'.$k;
   $improve.= '  c'.$k.' '.(1+$v['improve']/100)."\n";
   $_min = $v['min_cost'];
