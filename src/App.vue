@@ -3,7 +3,7 @@
     <nav class="mainmenu">
       <a class="logo" href="#/"><img src="~@/img/logo.svg"/></a>
       <template v-if="$root.is_loged">
-        <router-link v-for="page in $router.options.routes" v-if="page.meta!=null && (page.meta.menu || (page.meta.admin && $root.info && $root.info.is_admin == true))" v-bind:key="page.path" v-bind:to="page.path">{{ page.meta.title }}</router-link>
+        <router-link v-for="page in $router.options.routes" v-if="page.meta!=null && (page.meta.menu || (page.meta.admin && $root.info && $root.info.is_admin == true))" v-bind:key="page.path" v-bind:to="page.path" class="menuItem">{{ page.meta.title }}</router-link>
         <span class="log_info">Welcome, {{ $root.user_name != '' ? $root.user_name : 'dear customer' }}</span>
         <a class="login pointer" href="api/login/logout.php">Logout</a>
       </template>
@@ -86,6 +86,11 @@ export default
     display: flex;
     align-items: center;
     min-height: 50px;
+  }
+
+  .mainmenu .menuItem {
+    margin-left: 20px;
+    text-decoration: none;
   }
 
   .login
