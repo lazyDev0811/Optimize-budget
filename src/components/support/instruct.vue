@@ -160,5 +160,12 @@ export default
     }
   }
 
+  @media screen and ( max-width: 420px) {
+    .video > *
+    {
+      width: 100%;
+    }
+  }
+
 
 </style>
