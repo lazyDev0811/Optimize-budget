@@ -481,7 +481,7 @@ export default
     display: flex;
     flex-direction: column;
     padding: 3px;
-    min-height: 250px;
+    min-height: 412px;
   }
 
   .campaign_panel,
@@ -543,7 +543,7 @@ export default
 
   .collapse .collapse-header::before{
     left: auto !important;
-    right: 20px;
+    right: 10px;
   }
 
   .group_title .collapse-header{
