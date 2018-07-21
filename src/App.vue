@@ -208,8 +208,6 @@ export default
   @media screen and (max-width: 1150px) {
     .mainmenu.responsive {
       z-index: 1000;
-      margin-left: -20px;
-      margin-top: -10px;
       opacity: 1;
       position: fixed;
       width: 100%;
