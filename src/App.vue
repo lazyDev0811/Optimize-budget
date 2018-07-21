@@ -1,18 +1,28 @@
 <template>
   <div class="vue_app">
-    <nav class="mainmenu">
+    <nav class="mainmenu" id="myTopnav">
       <a class="logo" href="#/"><img src="~@/img/logo.svg"/></a>
-      <template v-if="$root.is_loged">
-        <router-link v-for="page in $router.options.routes" v-if="page.meta!=null && (page.meta.menu || (page.meta.admin && $root.info && $root.info.is_admin == true))" v-bind:key="page.path" v-bind:to="page.path" class="menuItem">{{ page.meta.title }}</router-link>
-        <span class="log_info">Welcome, {{ $root.user_name != '' ? $root.user_name : 'dear customer' }}</span>
+      <template v-if="$root.is_loged"><div @click="func1()">
+        <a href=""></a>
+        <router-link v-for="page in $router.options.routes" v-if="page.meta!=null && (page.meta.menu || (page.meta.admin && $root.info && $root.info.is_admin == true))" v-bind:key="page.path" v-bind:to="page.path"> {{ page.meta.title }}</router-link></div>
+        <a><span class="log_info">Welcome, {{ $root.user_name != '' ? $root.user_name : 'dear customer' }}</span></a>
         <a class="login pointer" href="api/login/logout.php">Logout</a>
       </template>
       <template v-else>
         <span class="log_info">&nbsp;</span>
-        <a class="login" href="#/contact">Support</a>
-        <a class="login" href="#/signup">Sign up</a>
-        <a class="login" href="#/login">Login</a>
+        <div class="btn_right">
+          <a href=""></a>
+          <a class="login btn" href="#/contact" @click="func1()">Support</a>
+          <a class="login btn" href="#/signup" @click="func1()">Sign up</a>
+          <a class="login btn" href="#/login" @click="func1()">Login</a>
+        </div>
       </template>
+      <a href="javascript:void(0);" class="icon" @click="myFunction()">
+        <i class="fa fa-bars" style="color: #00a0b9;font-size: 30px;"></i>
+      </a>
+      <a href="javascript:void(0);" class="icon1" @click="myFunction()">
+        <i class="fa fa-times-circle-o" style="font-size: 33px;"></i>
+      </a>
     </nav>
     <div class="content">
       <router-view></router-view>
@@ -38,6 +48,24 @@ export default
       {
         return this.$router;
       }
+    },
+    methods: {
+        myFunction() {
+          var x = document.getElementById("myTopnav");
+          if (x.className === "mainmenu") {
+              x.className += " responsive";
+              // console.log(x.className);
+          } else {
+              x.className = "mainmenu";
+              // console.log(x.className);
+          }
+        },
+        func1() {
+          // console.log('aaa');
+          var x = document.getElementById("myTopnav");
+          x.className = "mainmenu";
+        }
+
     }
 }
 
@@ -83,14 +111,8 @@ export default
   {
     padding: 6px 20px;
     background-color: #f7f7f9;
-    display: flex;
     align-items: center;
     min-height: 50px;
-  }
-
-  .mainmenu .menuItem {
-    padding: 18px;
-    text-decoration: none;
   }
 
   .login
@@ -104,6 +126,7 @@ export default
     background-color: #fff;
     font-weight: 500;
     transition: all .3s;
+    float: right !important;
   }
 
   .login:hover
@@ -123,7 +146,6 @@ export default
   .mainmenu .router-link-inactive
   {
     text-decoration: none;
-    padding: 2px 12px;
   }
 
   .mainmenu .router-link-active
@@ -164,6 +186,80 @@ export default
     border-top: 1px solid #BBB;
     background-color: #f7f7f9;
     display: flex;
+  }
+
+  .mainmenu .icon {
+    display: none;
+  }
+  .mainmenu .icon1 {
+    display: none;
+  }
+
+  @media screen and (max-width: 1150px) {
+    .mainmenu a:not(:first-child) {display: none;text-align: center;}
+    .mainmenu a.icon {
+      display: block;
+      right: 0;
+      top: 0px;
+      position: absolute;
+    }
+  }
+
+  @media screen and (max-width: 1150px) {
+    .mainmenu.responsive {
+      z-index: 1000;
+      margin-left: -20px;
+      margin-top: -10px;
+      opacity: 1;
+      position: fixed;
+      width: 100%;
+      background: rgba(0,0,0,0.8);
+      height: 100%;
+      color: white;
+    }
+    .mainmenu.responsive .log_info {
+      display: none;
+    }
+    .mainmenu.responsive .icon {
+      display: none;
+    }
+    .mainmenu.responsive .icon1 {
+      float: right;
+      display: block;
+      right: 0;
+      top: 10px;
+      position: absolute;
+    }
+    .mainmenu.responsive a {
+      float: none;
+      display: block;
+      text-align: left;
+      color: white;
+    }
+    .mainmenu.responsive .login.pointer {
+      width: 100px;
+      margin-left: 20px;
+      background-color: rgba(6,6,6,0.2);
+    }
+    .mainmenu.responsive .btn {
+      width: 300px;
+      text-align: center;
+      margin-top: 20px;
+      margin-left: 20px;
+      background-color: rgba(6,6,6,0.2);
+    }
+  }
+
+  .mainmenu a {
+    float: left;
+    display: block;
+    text-align: center;
+    padding: 15px 8px;
+    text-decoration: none;
+  }
+
+  .btn_right {
+    float: right;
   }
 
 </style>
