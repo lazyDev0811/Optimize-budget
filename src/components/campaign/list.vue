@@ -7,12 +7,15 @@
           <template v-if="roi_or_cpa==1">
             <template v-for="grp in groupsROI">
               <div class="group_title">
-                <div v-if="!grp.collapsed">
+                <div v-if="grp.collapsed">
                   <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp)" :checked="grp.checked==campaign_roi[grp.id].length" />
                 </div>
-                <div class="group_name" @click="toggleCollapsed(grp)">{{ (grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}</div>
+                <div class="group_name" @click="toggleCollapsed(grp)">
+                  {{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}
+                  <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                </div>
               </div>
-              <ul class="no_list camp_group" v-if="!grp.collapsed">
+              <ul class="no_list camp_group" v-if="grp.collapsed">
                 <li v-for="item in sortedROI(grp)">
                   <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
                   <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
@@ -23,12 +26,12 @@
           <template v-else>
             <template v-for="grp in groupsCPA">
               <div class="group_title">
-                <div v-if="!grp.collapsed">
+                <div v-if="grp.collapsed">
                   <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
                 </div>
-                <div class="group_name" @click="toggleCollapsed(grp)">{{ (grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}</div>
+                <div class="group_name" @click="toggleCollapsed(grp)">{{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}</div>
               </div>
-              <ul class="no_list camp_group" v-if="!grp.collapsed">
+              <ul class="no_list camp_group" v-if="grp.collapsed">
                 <li v-for="item in sortedCPA(grp)">
                   <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
                   <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
@@ -54,63 +57,86 @@
         </div>
       </div>
       <div class="campaign_optimize">
-        <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-          <b>Optimize for ROI or CPA</b>
-          <img src="~@/img/help.svg"/>
-        </div>
-        <div>
-          <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
-          <label for="roi_optimial">ROI</label>
-        </div>
-        <div>
-          <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
-          <label for="cpa_optimial">CPA</label>
-        </div>
-        <div>
-          <input type="checkbox" v-model="outlier" id="remove_outlier"/>
-          <label for="remove_outlier">Remove outliers</label>
-        </div>
-        <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
-        <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
+        <collapse :selected="false">
+          <div slot="collapse-header">
+            <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              <b>Optimize for ROI or CPA</b>
+              <img src="~@/img/help.svg"/>
+            </div>
+          </div>
+
+          <div slot="collapse-body">
+              <div>
+                <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
+                <label for="roi_optimial">ROI</label>
+              </div>
+              <div>
+                <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
+                <label for="cpa_optimial">CPA</label>
+              </div>
+              <div>
+                <input type="checkbox" v-model="outlier" id="remove_outlier"/>
+                <label for="remove_outlier">Remove outliers</label>
+              </div>
+            <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
+            <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
+          </div>
+        </collapse>
       </div>
+
       <div class="campaign_regress">
-        <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-          <b>Regression Model for best fit</b>
-          <img src="~@/img/help.svg"/>
-        </div>
-        <table>
-          <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td align="right">R<span class="super">2</span></td>
-          </tr>
-          <tr v-for="(reg,idx) in regressions">
-            <td>
-              <input type="radio" v-model="kind_regress" :value="idx" :id="'regid_'+idx"/>
-            </td>
-            <td><label :for="'regid_'+idx">{{ reg }}</label></td>
-            <td align="right">{{ r2[idx] | filterNum }}</td>
-          </tr>
-        </table>
+        <collapse :selected="false">
+          <div slot="collapse-header">
+            <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              <b>Regression Model for <br> best fit</b>
+              <img src="~@/img/help.svg"/>
+            </div>
+          </div>
+
+          <div slot="collapse-body">
+            <table>
+              <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td align="right">R<span class="super">2</span></td>
+              </tr>
+              <tr v-for="(reg,idx) in regressions">
+                <td>
+                  <input type="radio" v-model="kind_regress" :value="idx" :id="'regid_'+idx"/>
+                </td>
+                <td><label :for="'regid_'+idx">{{ reg }}</label></td>
+                <td align="right">{{ r2[idx] | filterNum }}</td>
+              </tr>
+            </table>
+          </div>
+
+        </collapse>
       </div>
       <div class="campaign_actual">
-        <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-          <b>Actual Historical Results<br/>during this period</b>
-          <img src="~@/img/help.svg"/>
-        </div>
-        <div class="actual_body">
-          Total Spent = {{ total_spent | filterNum }}<br/>Avg Spent = {{ avg_spent | filterNum }}
-        </div>
-        <div class="actual_body">
-          Total {{ roi_or_cpa ? 'Revenue = ' : 'Conversions = ' }}{{ total_revenue | filterNum }}
-          <br/>
-          Avg {{ roi_or_cpa ? 'revenue' : 'conv' }} / day = {{ avg_revenue | filterNum }}
-        </div>
-        <div class="actual_body">
-          Total {{ roi_or_cpa ? 'ROI' : 'CPA' }} for period = {{ total_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
-          <br/>
-          Avg daily {{ roi_or_cpa ? 'ROI' : 'CPA' }} = {{ avg_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
-        </div>
+        <collapse :selected="false">
+          <div slot="collapse-header">
+            <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              <b>Actual Historical Results<br/>during this period</b>
+              <img src="~@/img/help.svg"/>
+            </div>
+          </div>
+
+          <div slot="collapse-body">
+            <div class="actual_body">
+              Total Spent = {{ total_spent | filterNum }}<br/>Avg Spent = {{ avg_spent | filterNum }}
+            </div>
+            <div class="actual_body">
+              Total {{ roi_or_cpa ? 'Revenue = ' : 'Conversions = ' }}{{ total_revenue | filterNum }}
+              <br/>
+              Avg {{ roi_or_cpa ? 'revenue' : 'conv' }} / day = {{ avg_revenue | filterNum }}
+            </div>
+            <div class="actual_body">
+              Total {{ roi_or_cpa ? 'ROI' : 'CPA' }} for period = {{ total_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
+              <br/>
+              Avg daily {{ roi_or_cpa ? 'ROI' : 'CPA' }} = {{ avg_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
+            </div>
+          </div>
+        </collapse>
       </div>
     </div>
     <div class="campaign_center">
@@ -124,6 +150,7 @@ import AJAX from '@/tool/ajax'
 import errPanel from '@/components/err_panel'
 import panelOptimize from '@/components/campaign/tabs'
 import { strCompare, round } from '@/tool/util'
+import Collapse from 'vue-collapse'
 require('@/css/panel.css');
 require('@/css/tooltip.css');
 
@@ -132,7 +159,8 @@ export default
   components:
     {
       'err-panel': errPanel,
-      'optimizer': panelOptimize
+      'optimizer': panelOptimize,
+       Collapse
     },
   data: function()
   {
@@ -238,6 +266,7 @@ export default
           }
         );
       },
+
       getResult(resp)
       {
         this.select_roi = [];
@@ -274,6 +303,11 @@ export default
       },
       toggleCollapsed: function(grp)
       {
+        if(!grp.collapsed){
+          document.getElementById(grp.id).className = "fa fa-angle-down";
+        }else if(grp.collapsed){
+          document.getElementById(grp.id).className = "fa fa-angle-up";
+        }
         this.$set(grp,'collapsed', !grp.collapsed);
       },
       toggleSelected: function(arr,list,grp)
@@ -353,6 +387,7 @@ export default
     display: flex;
     padding: 0 5px 3px 5px;
     border-bottom: 1px solid #999;
+    position: relative;
   }
 
   .group_title input
@@ -362,10 +397,16 @@ export default
 
   .group_name
   {
-    flex: 1 1 auto;
+    /* flex: 1 1 auto; */
     cursor: pointer;
+    padding-left: 80px;
   }
 
+  .group_name i{
+    position: absolute;
+    right: 5px;
+    top: 0px;
+  }
   .camp_group li
   {
     padding: 0 5px;
@@ -449,7 +490,7 @@ export default
     display: flex;
     flex-direction: column;
     padding: 3px;
-    min-height: 250px;
+    min-height: 412px;
   }
 
   .campaign_panel,
@@ -497,4 +538,50 @@ export default
     box-shadow: inset 0 0 0 1px #27496d,inset 0 5px 30px #193047;
   }
 
+  .campaign_optimize .collapse .collapse-header{
+    background-color: #70AD47 !important;
+  }
+
+  .campaign_regress .collapse .collapse-header{
+    background-color: black !important;
+  }
+
+  .campaign_actual .collapse .collapse-header{
+    background-color: lightblue !important;
+  }
+
+  .collapse .collapse-header::before{
+    left: auto !important;
+    right: 10px;
+  }
+
+  .group_title .collapse-header{
+    padding: 0 !important;
+    background: inherit !important;
+  }
+
+  @media screen and (max-width:480px) {
+    .campaigns_screen
+    {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      overflow: scroll;
+      align-items: center;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .campaign_center
+    {
+      flex: none;
+      overflow: inherit;
+      margin-top: 20px;
+    }
+    .no_list
+    {
+      max-height: 200px;
+      overflow: scroll;
+    }
+  }
 </style>

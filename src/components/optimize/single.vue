@@ -1,59 +1,67 @@
 <template>
   <div class="op_main">
-    <div class="op_title help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-      <h2 class="op_header" :title="campaign.title" >{{ campaign.title }}<img src="~@/img/help.svg"/></h2>
+    <div class="op_graph">
+        <div class="op_title help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+          <h2 class="op_header" :title="campaign.title" >{{ campaign.title }}<img src="~@/img/help.svg"/></h2>
+        </div>
+        <div :id="'graph'+_uid" class="graph_panel"></div>
+        <div class="top_space help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+          Regression formula: <strong class="code">{{ regression.string }}</strong>
+          <img src="~@/img/help.svg"/>
+        </div>
+        <div class="top_space">
+          Confidence of regression: <span :class="{r_low: regression.r2 < 0.1}"><strong class="code">R<span class="super">2</span> = {{ regression.r2 | filterNum }}</strong></span>&nbsp; ({{ campaign.points.length }} pts)
+        </div>
+        <div class="top_space">
+          Kind of regression: <strong class="code">{{ reg_names[type_reg ? type_reg : campaign.best_fit] }}</strong>
+        </div>
     </div>
-    <div :id="'graph'+_uid" class="graph_panel"></div>
-    <div class="top_space help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-      Regression formula: <strong class="code">{{ regression.string }}</strong>
-      <img src="~@/img/help.svg"/>
-    </div>
-    <div class="top_space">
-      Confidence of regression: <span :class="{r_low: regression.r2 < 0.1}"><strong class="code">R<span class="super">2</span> = {{ regression.r2 | filterNum }}</strong></span>&nbsp; ({{ campaign.points.length }} pts)
-    </div>
-    <div class="top_space">
-      Kind of regression: <strong class="code">{{ reg_names[type_reg ? type_reg : campaign.best_fit] }}</strong>
-    </div>
-    <hr size="2" width="100%" color="#70AD47"/>
-    <div class="full_width center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-      Your optimal result for this campaign is:
-      <img src="~@/img/help.svg"/>
-    </div>
-    <table align="center">
-      <tr>
-        <td align="right">Cost/day</td>
-        <td align="center"><div class="const_field">{{ optimal_cost | filterNum }}</div></td>
-      </tr>
-      <tr>
-        <td align="right">{{ text_kind }}</td>
-        <td align="center"><div class="const_field">{{ optimal_value | filterNum }}</div></td>
-      </tr>
-      <tr>
-        <td align="right">{{ optimal_text }}</td>
-        <td align="center"><div class="const_field">{{ optimum | filterNum }}{{ kind==1 ? '%' : '' }}</div></td>
-      </tr>
-    </table>
-    <hr size="2" width="100%" color="#70AD47"/>
-    <div class="center full_width help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-      Calculate your projected &nbsp;<strong>{{ optimal_text }}</strong>&nbsp; at different cost:
-      <img src="~@/img/help.svg"/>
-    </div>
-    <table align="center">
-      <tr>
-        <td align="right">Input:<br/>cost/day</td>
-        <td><input type="number" class="num_field" v-model="var_cost" onClick="this.select()"/></td>
-      </tr>
-      <tr>
-        <td align="right">Output:<br/>Projected {{ text_kind }}</td>
-        <td align="center"><div class="const_field">{{ projected_value(var_cost) | filterNum }}</div></td>
-      </tr>
-      <tr>
-        <td align="right">Output:<br/>Projected {{ optimal_text }}</td>
-        <td align="center"><div class="const_field">{{ projected_roi(var_cost,projected_value(var_cost)) | filterNum }}{{ kind==1 ? '%' : '' }}</div></td>
-      </tr>
-    </table>
-    <div class="slider_panel">
-      <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord"/>
+
+    <div class="op_detail">
+        <div class="op_top">
+          <div class="full_width center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+            Your optimal result for this campaign is:
+            <img src="~@/img/help.svg"/>
+          </div>
+          <table align="center">
+            <tr>
+              <td align="right">Cost/day</td>
+              <td align="center"><div class="const_field">{{ optimal_cost | filterNum }}</div></td>
+            </tr>
+            <tr>
+              <td align="right">{{ text_kind }}</td>
+              <td align="center"><div class="const_field">{{ optimal_value | filterNum }}</div></td>
+            </tr>
+            <tr>
+              <td align="right">{{ optimal_text }}</td>
+              <td align="center"><div class="const_field">{{ optimum | filterNum }}{{ kind==1 ? '%' : '' }}</div></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="op_bottom">
+            <div class="center full_width help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              Calculate your projected &nbsp;<strong>{{ optimal_text }}</strong>&nbsp; at different cost:
+              <img src="~@/img/help.svg"/>
+            </div>
+            <table align="center">
+              <tr>
+                <td align="right">Input:<br/>cost/day</td>
+                <td><input type="number" class="num_field" v-model="var_cost" onClick="this.select()"/></td>
+              </tr>
+              <tr>
+                <td align="right">Output:<br/>Projected {{ text_kind }}</td>
+                <td align="center"><div class="const_field">{{ projected_value(var_cost) | filterNum }}</div></td>
+              </tr>
+              <tr>
+                <td align="right">Output:<br/>Projected {{ optimal_text }}</td>
+                <td align="center"><div class="const_field">{{ projected_roi(var_cost,projected_value(var_cost)) | filterNum }}{{ kind==1 ? '%' : '' }}</div></td>
+              </tr>
+            </table>
+            <div class="slider_panel">
+              <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord"/>
+            </div>
+        </div>
     </div>
   </div>
 </template>
@@ -384,11 +392,30 @@ export default
   .op_main
   {
     display: flex;
-    flex-direction: column;
     margin: 10px;
+    min-width: 400px;
+  }
+
+  .op_graph{
     padding: 12px;
     background-color: #eee;
-    min-width: 400px;
+    margin-right: 25px;
+  }
+
+  .op_detail{
+    margin: auto 0;
+    margin-left: 25px;
+  }
+
+  .op_top{
+    margin-bottom: 50px;
+    padding: 12px;
+    background-color: #eee;
+  }
+
+  .op_bottom{
+    padding: 12px;
+    background-color: #eee;
   }
 
   .op_header
@@ -463,6 +490,33 @@ export default
     display: inline-block;
     margin-left: 6px;
     width: 20px;
+  }
+
+  @media screen and (max-width: 480px) {
+    .op_main
+    {
+      flex-direction: column;
+      margin: 0px;
+      min-width: inherit;
+    }
+    .op_graph
+    {
+      margin-right: 0px;
+    }
+
+    .op_detail
+    {
+      margin-left: 0px;
+    }
+
+    .op_detail .op_top
+    {
+      margin-bottom: 0px;
+    }
+    .op_detail .op_top, .op_bottom
+    {
+      border-top: 3px solid #70AD47;
+    }
   }
 
 </style>
