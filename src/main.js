@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import responsive from 'vue-responsive'
 import Routes from './routes'
 import events from './events'
 import { jsonCookieValue } from './tool/cook'
@@ -9,6 +10,7 @@ require('./css/style.css');
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
+Vue.use(responsive);
 
 Routes.afterEach( function (to, from)
 {
