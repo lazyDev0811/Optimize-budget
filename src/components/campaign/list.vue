@@ -7,18 +7,15 @@
           <template v-if="roi_or_cpa==1">
             <template v-for="grp in groupsROI">
               <div class="group_title">
-                <div v-if="!grp.collapsed">
+                <div v-if="grp.collapsed">
                   <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp)" :checked="grp.checked==campaign_roi[grp.id].length" />
                 </div>
-
-                <!-- <collapse :selected="false">
-                  <div slot="collapse-header"> -->
-                    <div class="group_name" @click="toggleCollapsed(grp)">{{ (grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}</div>
-                  <!-- </div>
-                </collapse> -->
-
+                <div class="group_name" @click="toggleCollapsed(grp)">
+                  {{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}
+                  <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                </div>
               </div>
-              <ul class="no_list camp_group" v-if="!grp.collapsed">
+              <ul class="no_list camp_group" v-if="grp.collapsed">
                 <li v-for="item in sortedROI(grp)">
                   <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
                   <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
@@ -29,12 +26,12 @@
           <template v-else>
             <template v-for="grp in groupsCPA">
               <div class="group_title">
-                <div v-if="!grp.collapsed">
+                <div v-if="grp.collapsed">
                   <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
                 </div>
-                <div class="group_name" @click="toggleCollapsed(grp)">{{ (grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}</div>
+                <div class="group_name" @click="toggleCollapsed(grp)">{{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}</div>
               </div>
-              <ul class="no_list camp_group" v-if="!grp.collapsed">
+              <ul class="no_list camp_group" v-if="grp.collapsed">
                 <li v-for="item in sortedCPA(grp)">
                   <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
                   <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
@@ -306,6 +303,11 @@ export default
       },
       toggleCollapsed: function(grp)
       {
+        if(!grp.collapsed){
+          document.getElementById(grp.id).className = "fa fa-angle-down";
+        }else if(grp.collapsed){
+          document.getElementById(grp.id).className = "fa fa-angle-up";
+        }
         this.$set(grp,'collapsed', !grp.collapsed);
       },
       toggleSelected: function(arr,list,grp)
@@ -385,6 +387,7 @@ export default
     display: flex;
     padding: 0 5px 3px 5px;
     border-bottom: 1px solid #999;
+    position: relative;
   }
 
   .group_title input
@@ -394,10 +397,16 @@ export default
 
   .group_name
   {
-    flex: 1 1 auto;
+    /* flex: 1 1 auto; */
     cursor: pointer;
+    padding-left: 80px;
   }
 
+  .group_name i{
+    position: absolute;
+    right: 5px;
+    top: 0px;
+  }
   .camp_group li
   {
     padding: 0 5px;
