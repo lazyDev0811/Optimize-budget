@@ -89,7 +89,7 @@ export default
   }
 
   .mainmenu .menuItem {
-    margin-left: 20px;
+    padding: 18px;
     text-decoration: none;
   }
 
