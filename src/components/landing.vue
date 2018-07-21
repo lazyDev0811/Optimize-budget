@@ -185,4 +185,18 @@ export default
     background: transparent;
   }
 
+  @media screen and (max-width: 420px) {
+    .landing
+    {
+      display: block;
+      padding: 0px;
+    }
+
+    .video_panel{
+      flex-direction: column;
+      align-items: center;
+    }
+
+  }
+
 </style>

@@ -424,4 +424,11 @@ function make_error(err)
     font-weight: bold;
   }
 
+  @media screen and (max-width: 420px) {
+    .import_container
+    {
+      display: block;
+    }
+  }
+
 </style>
