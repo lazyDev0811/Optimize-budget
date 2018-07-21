@@ -3,14 +3,13 @@
 .sup_container
 {
   display: flex;
-  justify-content: space-around;
   height: 100%;
   margin: 0 24px;
 }
 
-.sup_container > *
+.sup_container .center
 {
-  flex: 1 1 0;
+  flex: 1;
 }
 
 .field_full
@@ -51,4 +50,11 @@
 {
   opacity: 0;
   transform: translateY(-2rem);
+}
+
+@media only screen and (max-width: 1023px) {
+  .sup_container
+  {
+    display: block;
+  }
 }
