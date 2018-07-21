@@ -62,7 +62,7 @@
               <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord"/>
             </div>
         </div>
-    </div>    
+    </div>
   </div>
 </template>
 
@@ -490,6 +490,33 @@ export default
     display: inline-block;
     margin-left: 6px;
     width: 20px;
+  }
+
+  @media screen and (max-width: 480px) {
+    .op_main
+    {
+      flex-direction: column;
+      margin: 0px;
+      min-width: inherit;
+    }
+    .op_graph
+    {
+      margin-right: 0px;
+    }
+
+    .op_detail
+    {
+      margin-left: 0px;
+    }
+
+    .op_detail .op_top
+    {
+      margin-bottom: 0px;
+    }
+    .op_detail .op_top, .op_bottom
+    {
+      border-top: 3px solid #70AD47;
+    }
   }
 
 </style>

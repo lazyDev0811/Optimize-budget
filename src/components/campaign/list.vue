@@ -111,7 +111,7 @@
                 <td align="right">{{ r2[idx] | filterNum }}</td>
               </tr>
             </table>
-          </div>  
+          </div>
 
         </collapse>
       </div>
@@ -269,7 +269,7 @@ export default
           }
         );
       },
-      
+
       getResult(resp)
       {
         this.select_roi = [];
@@ -549,5 +549,30 @@ export default
   .group_title .collapse-header{
     padding: 0 !important;
     background: inherit !important;
+  }
+
+  @media screen and (max-width:480px) {
+    .campaigns_screen
+    {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      overflow: scroll;
+      align-items: center;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .campaign_center
+    {
+      flex: none;
+      overflow: inherit;
+      margin-top: 20px;
+    }
+    .no_list
+    {
+      max-height: 200px;
+      overflow: scroll;
+    }
   }
 </style>
