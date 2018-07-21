@@ -126,7 +126,12 @@ export default
     background-color: #fff;
     font-weight: 500;
     transition: all .3s;
+  }
+
+  .pointer
+  {
     float: right !important;
+    margin-top: 6px !important;
   }
 
   .login:hover
@@ -235,8 +240,6 @@ export default
       color: white;
     }
     .mainmenu.responsive .login.pointer {
-      width: 100px;
-      margin-left: 20px;
       background-color: rgba(6,6,6,0.2);
     }
     .mainmenu.responsive .btn {
@@ -252,7 +255,7 @@ export default
     float: left;
     display: block;
     text-align: center;
-    padding: 15px 8px;
+    margin: 15px 8px;
     text-decoration: none;
   }
 
