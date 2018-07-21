@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <div class="explain">
       <div class="help_panel">
         <div class="help_title">
@@ -90,17 +90,27 @@ export default
 </script>
 
 <style>
+
+  .wrapper
+  {
+    flex: 2;
+    margin-left: 10px;
+  }
+
   .video
   {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+    width: 100%;
   }
 
   .video > *
   {
-    margin: 0 16px;
-    width: 90%;
+    width: 32%;
+    display: inline-block;
+    margin-left: 5px;
+  }
+
+  .video .center iframe {
+    width: 100%;
   }
 
   .plyr__time
@@ -141,6 +151,20 @@ export default
   {
     vertical-align: middle;
     margin: 6px;
+  }
+
+  @media only screen and ( max-width: 1023px ) {
+    .wrapper
+    {
+      margin-left: 0px;
+    }
+  }
+
+  @media screen and ( max-width: 420px) {
+    .video > *
+    {
+      width: 100%;
+    }
   }
 
 

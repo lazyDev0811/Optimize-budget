@@ -284,16 +284,17 @@ export default
     color: white;
   }
 
-  .campaign_item
+  .campaign_list
   {
     display: flex;
     justify-content: space-around;
   }
 
-  .campaign_list
-  {
-    display: flex;
-    justify-content: space-around;
+  @media screen and (max-width: 480px) {
+    .btn_camp_cur, .btn_camp
+    {
+      margin: 0px;
+    }
   }
 
 </style>
