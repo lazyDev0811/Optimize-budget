@@ -155,7 +155,7 @@ export default
 
   .mainmenu .router-link-active
   {
-    color: #4a4a4a;
+    color: #4a4a4a !important;
   }
 
   .mainmenu .router-link-inactive
@@ -257,6 +257,10 @@ export default
     text-align: center;
     margin: 15px 8px;
     text-decoration: none;
+  }
+
+  .mainmenu div a{
+    color: #00a0b9;
   }
 
   .btn_right {
