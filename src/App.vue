@@ -155,7 +155,7 @@ export default
 
   .mainmenu .router-link-active
   {
-    color: #4a4a4a !important;
+    color: #4a4a4a;
   }
 
   .mainmenu .router-link-inactive
