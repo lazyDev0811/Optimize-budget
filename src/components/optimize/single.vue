@@ -394,6 +394,7 @@ export default
     display: flex;
     margin: 10px;
     min-width: 400px;
+    justify-content: space-around;
   }
 
   .op_graph{
