@@ -1,2 +1,4 @@
 node_modules/*
 dist/*
+api/google/adwords-examples-36.0.0/*
+api/vendor/*
