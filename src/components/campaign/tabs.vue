@@ -179,7 +179,7 @@ export default
               cmd: 2,
               param: this.individual,
               kind: parseInt(this.kind),
-              regression: this.regression,
+              regression: parseInt(this.regression),
               outliers: this.outliers
             });
         }
@@ -191,7 +191,7 @@ export default
               cmd: 1,
               param: this.combined,
               kind: parseInt(this.kind),
-              regression: this.regression,
+              regression: parseInt(this.regression),
               outliers: this.outliers
             });
         }
