@@ -24,7 +24,7 @@ session_start();
 $oauth2 = new OAuth2([
     'authorizationUri' => 'https://accounts.google.com/o/oauth2/v2/auth',
     'tokenCredentialUri' => 'https://www.googleapis.com/oauth2/v4/token',
-    'redirectUri' => 'http://localhost:8080/api/google/connect_api.php',
+    'redirectUri' => 'https://optimize.oneegg.com.au/api/google/connect_api.php',
     'clientId' => '821197463542-847jqv6so2stgq8qm7u36toi9hlbbafq.apps.googleusercontent.com',
     'clientSecret' => 'Fqe5vhaPhujWfBUkzP8etIjn',
     'scope' => 'https://www.googleapis.com/auth/adwords',
@@ -285,6 +285,6 @@ elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) 
     // $campaignService = $adWordsServices->get($session, CampaignService::class);
 
     header('Access-Control-Allow-Origin: *');
-    header('Location: ' . 'http://localhost:8080/#/import', true, 302);
+    header('Location: ' . 'https://optimize.oneegg.com.au/#/import', true, 302);
     exit();
 }
