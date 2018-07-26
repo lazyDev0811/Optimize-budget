@@ -210,7 +210,7 @@ export default
         // this.optimal_cost = Math.min(this.max_value, 10000);
         // this.optimal_value = this.projected_value(this.optimal_cost);
         // this.optimum = Math.round(100 * this.projected_roi(this.optimal_cost,this.optimal_value))/100;
-        var optimum = 1000000, optimal_cost, tmp;
+        var optimum = 1000000, optimal_cost = 0, tmp;
         if(this.kind == 1) optimum = 0;
         for(var v_cost=0; v_cost<=this.max_value ; v_cost+=0.01){
           tmp = Math.round(100 * this.projected_roi(v_cost,this.projected_value(v_cost))) / 100;

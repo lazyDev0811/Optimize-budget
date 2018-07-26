@@ -3528,7 +3528,7 @@ __webpack_require__(13);
       // this.optimal_value = this.projected_value(this.optimal_cost);
       // this.optimum = Math.round(100 * this.projected_roi(this.optimal_cost,this.optimal_value))/100;
       var optimum = 1000000,
-          optimal_cost,
+          optimal_cost = 0,
           tmp;
       if (this.kind == 1) optimum = 0;
       for (var v_cost = 0; v_cost <= this.max_value; v_cost += 0.01) {
