@@ -25,7 +25,8 @@ if(in_array($uid,$admin_id))
 		  'ROI campaigns',
 		  'CPA campaigns',
 		  'ROI data-points',
-		  'CPA data-points',
+      'CPA data-points',
+      'Campaign upload',
 		  'Industry',
 		  'Permission',
 		  'Last login',
@@ -37,20 +38,25 @@ if(in_array($uid,$admin_id))
 		));
   }
   $res = $db->query('SELECT mm_user.id,user_name,COALESCE(full_name,"") full_name,COALESCE(confirmed,"")="" AS confirmed,mm_user.created,
-    COALESCE(mm_industry.title,"") AS industry,permit_aggregate AS permit,
-    (SELECT COUNT(*) FROM mm_campaign WHERE user_id = mm_user.id AND kind = 1) AS roi_campaign,
-    (SELECT COUNT(*) FROM mm_campaign WHERE user_id = mm_user.id AND kind = 2) AS cpa_campaign,
-    (SELECT COUNT(*) FROM mm_campaign LEFT JOIN mm_data ON campaign_id = mm_campaign.id WHERE user_id = mm_user.id AND kind = 1) AS roi_data,
-    (SELECT COUNT(*) FROM mm_campaign LEFT JOIN mm_data ON campaign_id = mm_campaign.id WHERE user_id = mm_user.id AND kind = 2) AS cpa_data,
-    (SELECT stamp FROM mm_log WHERE user_id = mm_user.id AND event_id IN (1,2,3,4) ORDER BY stamp DESC LIMIT 1) AS last_login,
-    (SELECT INET_NTOA(ip) FROM mm_log WHERE user_id = mm_user.id AND event_id IN (1,2,3,4) ORDER BY stamp DESC LIMIT 1) AS last_ip,
-    (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 1) AS login_wrong,
-    (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 2) AS login_disabled,
-    (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 3) AS login_pending,
-    (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 4) AS login_ok
-    FROM mm_user 
-    LEFT JOIN mm_industry ON industry_id = mm_industry.id
-    ORDER BY last_login DESC,created DESC');
+      COALESCE(mm_industry.title,"") AS industry,permit_aggregate AS permit,
+      (SELECT COUNT(*) FROM mm_campaign WHERE user_id = mm_user.id AND kind = 1) AS roi_campaign,
+      (SELECT COUNT(*) FROM mm_campaign WHERE user_id = mm_user.id AND kind = 2) AS cpa_campaign,
+      (SELECT COUNT(*) FROM mm_campaign LEFT JOIN mm_data ON campaign_id = mm_campaign.id WHERE user_id = mm_user.id AND kind = 1) AS roi_data,
+      (SELECT COUNT(*) FROM mm_campaign LEFT JOIN mm_data ON campaign_id = mm_campaign.id WHERE user_id = mm_user.id AND kind = 2) AS cpa_data,
+      (SELECT stamp FROM mm_log WHERE user_id = mm_user.id AND event_id IN (1,2,3,4) ORDER BY stamp DESC LIMIT 1) AS last_login,
+      (SELECT INET_NTOA(ip) FROM mm_log WHERE user_id = mm_user.id AND event_id IN (1,2,3,4) ORDER BY stamp DESC LIMIT 1) AS last_ip,
+      (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 1) AS login_wrong,
+      (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 2) AS login_disabled,
+      (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 3) AS login_pending,
+      (SELECT COUNT(*) FROM mm_log WHERE user_id = mm_user.id AND event_id = 4) AS login_ok,
+      IF(upload.ckind,upload.ckind,0) AS ckind, IF(upload.cupload,upload.cupload,0) AS cupload
+      FROM mm_user 
+      LEFT JOIN mm_industry ON industry_id = mm_industry.id
+      LEFT JOIN (SELECT COUNT(campaign.id) AS ckind, campaign.user_id, SUM(campaign.allcampaign) AS cupload FROM 
+      (SELECT mc.`id`, mc.`user_id`, COUNT(md.`campaign_id`) AS allcampaign FROM `mm_campaign` AS mc 
+      LEFT JOIN `mm_data` AS md ON(mc.`id` = md.`campaign_id`)
+      GROUP BY mc.`id`) AS campaign GROUP BY campaign.`user_id`) AS upload ON(upload.user_id = mm_user.id)
+      ORDER BY last_login DESC,created DESC');
   while($row = mysqli_fetch_assoc($res)) 
   {
     $row['permit'] = (bool)$row['permit'];
@@ -66,6 +72,7 @@ if(in_array($uid,$admin_id))
         (int)$row['cpa_campaign'],
         (int)$row['roi_data'],
         (int)$row['cpa_data'],
+        (string)$row['ckind'].'/'.$row['cupload'],
         (string)$row['industry'],
         $row['permit'] ? 'YES' : 'NO',
         (string)$row['last_login'],
