@@ -76,6 +76,10 @@ elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) 
         ->build();
 
     // Create report query to get the data for last 7 days.
+    $enddate = date('Ymd');
+    $startdate = strtotime('-2 year', strtotime($enddate));
+    $startdate = date('Ymd', $startdate);
+
     $query = (new ReportQueryBuilder())
         ->select([
             'Date',
@@ -87,7 +91,7 @@ elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) 
         ])
         ->from(ReportDefinitionReportType::CRITERIA_PERFORMANCE_REPORT)
         ->where('Status')->in(['ENABLED'])
-        ->duringDateRange(ReportDefinitionDateRangeType::LAST_30_DAYS)
+        ->during($startdate, $enddate)
         ->build();
     
     // Download report as a string.

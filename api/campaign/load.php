@@ -17,10 +17,11 @@ if($data['list']!='' AND preg_match('/^\\d+(,\\d+)*$/',$data['list']))
   $res = $db->query('SELECT id,kind,campaign AS title FROM mm_campaign WHERE id IN ('.$data['list'].')'.($is_admin ? '' : ' AND user_id = '.$uid));
   $kind = 0;
   $cam_id = '';
-  if($data['from']!='' AND preg_match('/\d{4}-\d{1,2}-\d{1,2}/',$date['from'])) $date_start = $date['from'];
+  if($data['from']!='' AND preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$data['from'])) $date_start = $data['from'];
     else $date_start = '2000-01-01';
-  if($data['to']!='' AND preg_match('/\d{4}-\d{1,2}-\d{1,2}/',$date['to'])) $date_end = $date['to'];
+  if($data['to']!='' AND preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$data['to'])) $date_end = $data['to'];
     else $date_end = '2100-12-31';
+  
   while($row = mysqli_fetch_assoc($res))
   {
     $row['id'] = (int)$row['id'];
