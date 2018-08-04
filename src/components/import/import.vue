@@ -36,6 +36,8 @@
             <li v-for="item in file_roi_new">{{ item.name }}</li>
           </ol>
           <button type="button" class="btn-login block top_space" @click="uploadROI">UPLOAD</button>
+          <input type="text" class="full_width" v-model="roi_client_customer_id" placeholder="Customer Client ID for your adwords account"/>
+          <button type="button" class="btn-login block top_space" @click="connectROIAPI">Connect API</button>  
         </fieldset>
         <h2 class="center">OR</h2>
         <fieldset class="new_campaign">
@@ -83,6 +85,8 @@
             <li v-for="item in file_cpa_new">{{ item.name }}</li>
           </ol>
           <button type="button" class="btn-login block top_space" @click="uploadCPA">UPLOAD</button>
+          <input type="text" class="full_width" v-model="cpa_client_customer_id" placeholder="Customer Client ID for your adwords account"/>
+          <button type="button" class="btn-login block top_space" @click="connectConversionAPI">Connect API</button>  
         </fieldset>
         <h2 class="center">OR</h2>
         <fieldset class="new_campaign">
@@ -130,6 +134,8 @@ export default
         unpaid: false,
         campaign_roi: [],
         campaign_cpa: [],
+        cpa_client_customer_id: null,
+        roi_client_customer_id: null,
         group_roi: [],
         group_cpa: [],
         new_roi: '', // name for the new campaign
@@ -252,6 +258,30 @@ export default
             payload
           )
         }
+      },
+      connectAPI: function (data_type)
+      {
+        var customer_id = data_type == 1 ? this.roi_client_customer_id : this.cpa_client_customer_id;
+        AJAX.ajax_get(this,"api/google/connect_api.php?data_type=" + data_type + "&customer_id=" + customer_id,
+            function (resp)
+            {
+              window.open(resp.url, '_self');
+            },
+            function (stat,resp)
+            {
+              make_error.call(this,resp);
+            }
+          )
+      },
+      connectROIAPI: function ()
+      {
+        if(!this.roi_client_customer_id) make_error.call(this,'Missing client customer id');
+        else this.connectAPI(1);
+      },
+      connectConversionAPI: function ()
+      {
+        if(!this.cpa_client_customer_id) make_error.call(this,'Missing client customer id');
+        else this.connectAPI(2);
       },
       sortedROI: function (grp)
       {

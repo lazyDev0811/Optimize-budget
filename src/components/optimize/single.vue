@@ -146,28 +146,28 @@ export default
       max_value: function()
       {
         // compute the cost for the max ROI or max CPA - using the predicted values from regression
-        var i, p, cost = 0, max_v = 0, tmp, points = this.regression.points, len = points.length;
-        if(this.kind==1)
+        var i, p, cost = 5000, tmp, points = this.regression.points, len = points.length;
+        // if(this.kind==1)
           for(i=0;i<len;i++)
           {
             p = points[i];
-            tmp = p[1] - p[0];
-            if(tmp > max_v)
+            // tmp = p[1] - p[0];
+            if(p[0] > cost)
             {
-              max_v = tmp;
               cost = p[0];
             }
           }
-        else
-          for(i=0;i<len;i++)
-          {
-            p = points[i];
-            if(p[1] > max_v)
-            {
-              max_v = p[1];
-              cost = p[0];
-            }
-          }
+        // else
+        //   for(i=0;i<len;i++)
+        //   {
+        //     p = points[i];
+        //     if(p[1] > max_v)
+        //     {
+        //       max_v = p[1];
+        //       cost = p[0];
+        //     }
+        //   }
+        cost = Math.min(cost, 10000);
         return cost;
         /*
         var v = 0;
@@ -215,21 +215,27 @@ export default
       },
       optimal_regress: function()
       {
-        this.optimal_cost = Math.min(this.max_value, 10000);
-        this.optimal_value = this.projected_value(this.optimal_cost);
+        // this.optimal_cost = Math.min(this.max_value, 10000);
+        // this.optimal_value = this.projected_value(this.optimal_cost);
         // this.optimum = Math.round(100 * this.projected_roi(this.optimal_cost,this.optimal_value))/100;
-        var optimum = 1000000, tmp;
+        var optimum = 1000000, optimal_cost = 0, tmp;
         if(this.kind == 1) optimum = 0;
-        for(var v_cost=0; v_cost<=5000 ; v_cost+=0.01){
-          tmp = Math.round(100 * this.projected_roi(v_cost,this. projected_value(v_cost))) / 100;
+        for(var v_cost=0; v_cost<=this.max_value ; v_cost+=0.01){
+          tmp = Math.round(100 * this.projected_roi(v_cost,this.projected_value(v_cost))) / 100;
           if(this.kind == 1){
-            if(optimum < tmp) optimum = tmp;
+            if(optimum < tmp) {
+              optimum = tmp;
+              optimal_cost = v_cost;
+            }
           } else if(tmp > 0 && optimum > tmp){
             optimum = tmp;
+            optimal_cost = v_cost;
           }
         }
 
         this.optimum = optimum;
+        this.optimal_cost = optimal_cost;
+        this.optimal_value = this.projected_value(optimal_cost);
         if(this.kind==1)
         {
           // the cost with maximum ROI

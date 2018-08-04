@@ -289,7 +289,10 @@ export default
         this.valid_msg = '';
         if(!list.length) this.valid_msg = 'Please select at least 1 campaign';
         else if(!(this.$root.info && this.$root.info.confirmed)) this.valid_msg = '<b>Forbidden</b><br/>Confirm your e-mail first<br/>or <a href="#/profile" class="link">re-issue</a> another activation';
-        else this.optimizer_list = list.slice();
+        else {
+          this.kind_regress = 0;
+          this.optimizer_list = list.slice();
+        }
       },
       delCampaign: function(list)
       {
