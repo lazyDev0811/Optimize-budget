@@ -2,6 +2,18 @@
   <div class="campaigns_screen">
     <err-panel v-model="warn_text" :warn="is_warn"></err-panel>
     <div class="campaign_left">
+      <div class="sidebar_tap_wrapper">
+        <div class="roi_content tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+          <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
+          <label for="roi_optimial">ROI</label>
+          <img src="~@/img/help.svg"/>
+        </div>
+        <div class="cpa_content tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+          <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
+          <label for="cpa_optimial">CPA</label>
+          <img src="~@/img/help.svg"/>
+        </div>
+      </div>
       <div class="campaign_panel">
         <div class="campaign_listing">
           <template v-if="roi_or_cpa==1">
@@ -69,14 +81,6 @@
           </div>
 
           <div slot="collapse-body">
-              <div>
-                <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
-                <label for="roi_optimial">ROI</label>
-              </div>
-              <div>
-                <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
-                <label for="cpa_optimial">CPA</label>
-              </div>
               <div>
                 <input type="checkbox" v-model="outlier" id="remove_outlier"/>
                 <label for="remove_outlier">Remove outliers</label>
@@ -489,6 +493,54 @@ export default
   {
     padding-left: 20px;
     padding-top: 8px;
+  }
+
+  .sidebar_tap_wrapper {
+    display: flex;
+    margin: 5px 5px 0px 5px;
+  }
+
+  .sidebar_tap_wrapper .roi_content
+  {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px;
+    background: #ed9999;
+    border-radius: 7px;
+  }
+
+  .sidebar_tap_wrapper .cpa_content
+  {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px;
+    background: #bbb;
+    border-radius: 7px;
+    border: 1px solid #222;
+  }
+
+  input[type="radio"] {
+    visibility: hidden;
+  }
+
+  .sidebar_tap_wrapper img
+  {
+    display: inline-block;
+    margin-left: 6px;
+    width: 20px;
+    vertical-align: sub;
+    float: right;
+  }
+
+  .sidebar_tap_wrapper label
+  {
+    width: 100%;
+    position: absolute;
+    left: 0px;
   }
 
   .campaign_panel
