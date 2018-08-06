@@ -3,15 +3,19 @@
     <err-panel v-model="warn_text" :warn="is_warn"></err-panel>
     <div class="campaign_left">
       <div class="sidebar_tap_wrapper">
-        <div class="roi_content tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+        <div class="roi_content" >
           <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
           <label for="roi_optimial">ROI</label>
-          <img src="~@/img/help.svg"/>
+          <span class="tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+            <img src="~@/img/help.svg"/>
+          </span>
         </div>
-        <div class="cpa_content tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+        <div class="cpa_content">
           <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
           <label for="cpa_optimial">CPA</label>
-          <img src="~@/img/help.svg"/>
+          <span class="tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+            <img src="~@/img/help.svg"/>
+          </span>
         </div>
       </div>
       <div class="campaign_panel">
@@ -23,8 +27,8 @@
                   <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp)" :checked="grp.checked==campaign_roi[grp.id].length" />
                 </div>
                 <div class="group_name" @click="toggleCollapsed(grp)">
-                  {{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}
                   <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                  {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
                 </div>
               </div>
               <ul class="no_list camp_group" v-if="grp.collapsed">
@@ -42,8 +46,8 @@
                   <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
                 </div>
                 <div class="group_name" @click="toggleCollapsed(grp)">
-                  {{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}
                   <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                  {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
                   </div>
               </div>
               <ul class="no_list camp_group" v-if="grp.collapsed">
@@ -412,11 +416,6 @@ export default
     padding-left: 80px;
   }
 
-  .group_name i{
-    position: absolute;
-    right: 5px;
-    top: 0px;
-  }
   .camp_group li
   {
     padding: 0 5px;
@@ -541,6 +540,7 @@ export default
     width: 100%;
     position: absolute;
     left: 0px;
+    font-size: 20px;
   }
 
   .campaign_panel
