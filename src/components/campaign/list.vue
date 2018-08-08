@@ -20,6 +20,10 @@
       </div>
       <div class="campaign_panel">
         <div class="campaign_listing">
+          <div class="search-wrapper">
+            <input type="text" v-model="search" placeholder="Search campaign.."/>
+                <label>Search title:</label>
+          </div>
           <template v-if="roi_or_cpa==1">
             <template v-for="grp in groupsROI">
               <div class="group_title">
@@ -179,6 +183,7 @@ export default
   {
     var a =
       {
+        search: '',
         is_warn: false,
         warn_text: '',
         unpaid: false,
@@ -238,17 +243,27 @@ export default
     {
       groupsROI: function ()
       {
-        return this.group_roi.sort(function (a, b)
-        {
-          return strCompare(a.title, b.title);
-        });
+        return (
+          this.group_roi.sort(function (a, b)
+          {
+            return strCompare(a.title, b.title);
+          }),
+          this.group_roi.filter(post => {
+            return post.title.toLowerCase().includes(this.search.toLowerCase())
+          })
+        )
       },
       groupsCPA: function ()
       {
-        return this.group_cpa.sort(function (a, b)
-        {
-          return strCompare(a.title, b.title);
-        });
+        return (
+          this.group_cpa.sort(function (a, b)
+          {
+            return strCompare(a.title, b.title);
+          }),
+          this.group_cpa.filter(post => {
+            return post.title.toLowerCase().includes(this.search.toLowerCase())
+          })
+        )
       },
 
     },
@@ -441,6 +456,45 @@ export default
     display: flex;
     flex-direction: column;
     width: 300px;
+  }
+
+  .search-wrapper
+  {
+    position: relative;
+  }
+
+  .search-wrapper label
+  {
+    position: absolute;
+    font-size: 12px;
+    color: rgba(0,0,0,.50);
+    top: 8px;
+    left: 12px;
+    z-index: -1;
+    transition: .15s all ease-in-out;
+  }
+
+  .search-wrapper input
+  {
+    width: 100%;
+    padding: 4px 12px;
+    color: rgba(0,0,0,.70);
+    border: 1px solid rgba(0,0,0,.12);
+    transition: .15s all ease-in-out;
+    background: white;
+    &:focus {
+      outline: none;
+      transform: scale(1.05);
+      & + label  {
+        font-size: 10px;
+        transform: translateY(-24px) translateX(-12px);
+      }
+    }
+    &::-webkit-input-placeholder {
+        font-size: 12px;
+        color: rgba(0,0,0,.50);
+        font-weight: 100;
+    }
   }
 
   .campaign_listing
