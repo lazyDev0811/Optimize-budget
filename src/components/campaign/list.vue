@@ -7,14 +7,14 @@
           <div class="roi_content" >
             <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
             <label for="roi_optimial">ROI</label>
-            <span class="tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+            <span class="tooltip-bottom" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
               <img src="~@/img/help.svg"/>
             </span>
           </div>
           <div class="cpa_content">
             <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
             <label for="cpa_optimial">CPA</label>
-            <span class="tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+            <span class="tooltip-bottom" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
               <img src="~@/img/help.svg"/>
             </span>
           </div>
@@ -83,29 +83,21 @@
           </div>
         </div>
         <div class="campaign_optimize">
-          <collapse :selected="false">
-            <div slot="collapse-header">
-              <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-                <b>Optimize for ROI or CPA</b>
+          <div slot="collapse-body">
+              <div class="tooltip-bottom" data-tooltip="Outliers are abnormal observations that can skew results. Removing outliers is recommended.">
+                <input type="checkbox" v-model="outlier" id="remove_outlier"/>
+                <label for="remove_outlier">Remove outliers</label>
                 <img src="~@/img/help.svg"/>
               </div>
-            </div>
-
-            <div slot="collapse-body">
-                <div>
-                  <input type="checkbox" v-model="outlier" id="remove_outlier"/>
-                  <label for="remove_outlier">Remove outliers</label>
-                </div>
-              <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
-              <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
-            </div>
-          </collapse>
+            <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
+            <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
+          </div>
         </div>
 
         <div class="campaign_regress">
           <collapse :selected="false">
             <div slot="collapse-header">
-              <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              <div class="center help_sign tooltip-bottom" data-tooltip="r-squared is a statistical measure of how close the regression line fits the data points.  R-squared lies between 0 & 1.  The higher the r-squared value the better the fit.  We have auto selected the model with the highest r-squared value, however you can adjust the model.">
                 <b>Regression Model for <br> best fit</b>
                 <img src="~@/img/help.svg"/>
               </div>
@@ -133,7 +125,7 @@
         <div class="campaign_actual">
           <collapse :selected="false">
             <div slot="collapse-header">
-              <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              <div class="center help_sign tooltip-bottom" data-tooltip="These are actual results from your data within the selected time frame.  Compare these numbers with results from the model to see the difference in the predictions vs actual results.">
                 <b>Actual Historical Results<br/>during this period</b>
                 <img src="~@/img/help.svg"/>
               </div>
@@ -574,6 +566,13 @@ export default
     background-color: #70AD47;
     color: white;
     position: relative;
+  }
+
+  .tooltip-bottom img
+  {
+    display: inline-block;
+    width: 20px;
+    float: right;
   }
 
   .campaign_delete
