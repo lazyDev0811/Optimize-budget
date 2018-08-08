@@ -30,6 +30,7 @@
                   <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
                   {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
                 </div>
+                <i class="fa fa-remove cus_remove" @click="removeElement($event)"></i>
               </div>
               <ul class="no_list camp_group" v-if="grp.collapsed">
                 <li v-for="item in sortedROI(grp)">
@@ -48,7 +49,8 @@
                 <div class="group_name" @click="toggleCollapsed(grp)">
                   <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
                   {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
-                  </div>
+                </div>
+                <i class="fa fa-remove cus_remove" @click="removeElement($event)"></i>
               </div>
               <ul class="no_list camp_group" v-if="grp.collapsed">
                 <li v-for="item in sortedCPA(grp)">
@@ -248,6 +250,7 @@ export default
           return strCompare(a.title, b.title);
         });
       },
+
     },
   methods:
     {
@@ -364,7 +367,7 @@ export default
         // update best fit R2
         //this.kind_regress = history.best_fit;
         this.r2 = history.r2;
-      }
+      },
       /*
       month_start: function()
       {
@@ -380,6 +383,10 @@ export default
         return d.toISOString().substr(0,10);
       }
       */
+      removeElement: function(event)
+      {
+        event.target.parentElement.setAttribute('style', 'display: none');
+      }
     }
 }
 
@@ -407,6 +414,13 @@ export default
   .group_title input
   {
     vertical-align: middle;
+  }
+
+  .group_title .cus_remove
+  {
+    position: absolute;
+    right: 5px;
+    top: 3px;
   }
 
   .group_name
