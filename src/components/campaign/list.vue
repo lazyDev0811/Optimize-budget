@@ -1,145 +1,164 @@
 <template>
   <div class="campaigns_screen">
     <err-panel v-model="warn_text" :warn="is_warn"></err-panel>
-    <div class="campaign_left">
-      <div class="campaign_panel">
-        <div class="campaign_listing">
-          <template v-if="roi_or_cpa==1">
-            <template v-for="grp in groupsROI">
-              <div class="group_title">
-                <div v-if="grp.collapsed">
-                  <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp)" :checked="grp.checked==campaign_roi[grp.id].length" />
-                </div>
-                <div class="group_name" @click="toggleCollapsed(grp)">
-                  {{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}
-                  <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
-                </div>
-              </div>
-              <ul class="no_list camp_group" v-if="grp.collapsed">
-                <li v-for="item in sortedROI(grp)">
-                  <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
-                  <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
-                </li>
-              </ul>
-            </template>
-          </template>
-          <template v-else>
-            <template v-for="grp in groupsCPA">
-              <div class="group_title">
-                <div v-if="grp.collapsed">
-                  <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
-                </div>
-                <div class="group_name" @click="toggleCollapsed(grp)">
-                  {{ (!grp.collapsed ? '+ ' : '- ') + (grp.title!='' ? grp.title : 'NO GROUP') }}
-                  <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+    <div class="campaign_sidebar_wrapper">
+      <div class="campaign_left" :class="{ active: active}">
+        <div class="sidebar_tap_wrapper">
+          <div class="roi_content" >
+            <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
+            <label for="roi_optimial">ROI</label>
+            <span class="tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              <img src="~@/img/help.svg"/>
+            </span>
+          </div>
+          <div class="cpa_content">
+            <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
+            <label for="cpa_optimial">CPA</label>
+            <span class="tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+              <img src="~@/img/help.svg"/>
+            </span>
+          </div>
+        </div>
+        <div class="campaign_panel">
+          <div class="campaign_listing">
+            <div class="search-wrapper">
+              <input type="text" v-model="search" placeholder="Search campaign.."/>
+                  <label>Search title:</label>
+            </div>
+            <template v-if="roi_or_cpa==1">
+              <template v-for="grp in groupsROI">
+                <div class="group_title">
+                  <div v-if="grp.collapsed">
+                    <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp)" :checked="grp.checked==campaign_roi[grp.id].length" />
                   </div>
-              </div>
-              <ul class="no_list camp_group" v-if="grp.collapsed">
-                <li v-for="item in sortedCPA(grp)">
-                  <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
-                  <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
-                </li>
-              </ul>
+                  <div class="group_name" @click="toggleCollapsed(grp)">
+                    <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                    {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
+                  </div>
+                  <i class="fa fa-remove cus_remove" @click="removeElement($event)"></i>
+                </div>
+                <ul class="no_list camp_group" v-if="grp.collapsed">
+                  <li v-for="item in sortedROI(grp)">
+                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
+                    <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
+                  </li>
+                </ul>
+              </template>
             </template>
-          </template>
+            <template v-else>
+              <template v-for="grp in groupsCPA">
+                <div class="group_title">
+                  <div v-if="grp.collapsed">
+                    <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
+                  </div>
+                  <div class="group_name" @click="toggleCollapsed(grp)">
+                    <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                    {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
+                  </div>
+                  <i class="fa fa-remove cus_remove" @click="removeElement($event)"></i>
+                </div>
+                <ul class="no_list camp_group" v-if="grp.collapsed">
+                  <li v-for="item in sortedCPA(grp)">
+                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
+                    <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
+                  </li>
+                </ul>
+              </template>
+            </template>
+          </div>
+          <div class="error_message" v-if="valid_msg != ''" v-html="valid_msg"></div>
+          <div class="error_message" v-if="(roi_or_cpa==1 && campaign_roi.length==0) || (roi_or_cpa!=1 && campaign_cpa.length==0)">
+            Please <a href="#/import" class="link">import</a> some data
+          </div>
+          <div class="campaign_dates">
+            <input type="date" v-model="from_date"/>
+            <input type="date" v-model="to_date"/>
+            <button class="btn btn_dark btn-shadow" style="padding: 3px 6px 4px" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)">
+              <svg width="16px" height="22px" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#fff" d="M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3
+                  C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7
+                  C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"/>
+              </svg>
+            </button>
+          </div>
         </div>
-        <div class="error_message" v-if="valid_msg != ''" v-html="valid_msg"></div>
-        <div class="error_message" v-if="(roi_or_cpa==1 && campaign_roi.length==0) || (roi_or_cpa!=1 && campaign_cpa.length==0)">
-          Please <a href="#/import" class="link">import</a> some data
+        <div class="campaign_optimize">
+          <collapse :selected="false">
+            <div slot="collapse-header">
+              <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+                <b>Optimize for ROI or CPA</b>
+                <img src="~@/img/help.svg"/>
+              </div>
+            </div>
+
+            <div slot="collapse-body">
+                <div>
+                  <input type="checkbox" v-model="outlier" id="remove_outlier"/>
+                  <label for="remove_outlier">Remove outliers</label>
+                </div>
+              <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
+              <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
+            </div>
+          </collapse>
         </div>
-        <div class="campaign_dates">
-          <input type="date" v-model="from_date"/>
-          <input type="date" v-model="to_date"/>
-          <button class="btn btn_dark btn-shadow" style="padding: 3px 6px 4px" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)">
-            <svg width="16px" height="22px" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#fff" d="M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3
-                C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7
-                C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"/>
-            </svg>
-          </button>
+
+        <div class="campaign_regress">
+          <collapse :selected="false">
+            <div slot="collapse-header">
+              <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+                <b>Regression Model for <br> best fit</b>
+                <img src="~@/img/help.svg"/>
+              </div>
+            </div>
+
+            <div slot="collapse-body">
+              <table>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td align="right">R<span class="super">2</span></td>
+                </tr>
+                <tr v-for="(reg,idx) in regressions">
+                  <td>
+                    <input type="radio" v-model="kind_regress" :value="idx" :id="'regid_'+idx"/>
+                  </td>
+                  <td><label :for="'regid_'+idx">{{ reg }}</label></td>
+                  <td align="right">{{ r2[idx] | filterNum }}</td>
+                </tr>
+              </table>
+            </div>
+
+          </collapse>
+        </div>
+        <div class="campaign_actual">
+          <collapse :selected="false">
+            <div slot="collapse-header">
+              <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+                <b>Actual Historical Results<br/>during this period</b>
+                <img src="~@/img/help.svg"/>
+              </div>
+            </div>
+
+            <div slot="collapse-body">
+              <div class="actual_body">
+                Total Spent = {{ total_spent | filterNum }}<br/>Avg Spent = {{ avg_spent | filterNum }}
+              </div>
+              <div class="actual_body">
+                Total {{ roi_or_cpa ? 'Revenue = ' : 'Conversions = ' }}{{ total_revenue | filterNum }}
+                <br/>
+                Avg {{ roi_or_cpa ? 'revenue' : 'conv' }} / day = {{ avg_revenue | filterNum }}
+              </div>
+              <div class="actual_body">
+                Total {{ roi_or_cpa ? 'ROI' : 'CPA' }} for period = {{ total_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
+                <br/>
+                Avg daily {{ roi_or_cpa ? 'ROI' : 'CPA' }} = {{ avg_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
+              </div>
+            </div>
+          </collapse>
         </div>
       </div>
-      <div class="campaign_optimize">
-        <collapse :selected="false">
-          <div slot="collapse-header">
-            <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-              <b>Optimize for ROI or CPA</b>
-              <img src="~@/img/help.svg"/>
-            </div>
-          </div>
-
-          <div slot="collapse-body">
-              <div>
-                <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
-                <label for="roi_optimial">ROI</label>
-              </div>
-              <div>
-                <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
-                <label for="cpa_optimial">CPA</label>
-              </div>
-              <div>
-                <input type="checkbox" v-model="outlier" id="remove_outlier"/>
-                <label for="remove_outlier">Remove outliers</label>
-              </div>
-            <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
-            <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
-          </div>
-        </collapse>
-      </div>
-
-      <div class="campaign_regress">
-        <collapse :selected="false">
-          <div slot="collapse-header">
-            <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-              <b>Regression Model for <br> best fit</b>
-              <img src="~@/img/help.svg"/>
-            </div>
-          </div>
-
-          <div slot="collapse-body">
-            <table>
-              <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td align="right">R<span class="super">2</span></td>
-              </tr>
-              <tr v-for="(reg,idx) in regressions">
-                <td>
-                  <input type="radio" v-model="kind_regress" :value="idx" :id="'regid_'+idx"/>
-                </td>
-                <td><label :for="'regid_'+idx">{{ reg }}</label></td>
-                <td align="right">{{ r2[idx] | filterNum }}</td>
-              </tr>
-            </table>
-          </div>
-
-        </collapse>
-      </div>
-      <div class="campaign_actual">
-        <collapse :selected="false">
-          <div slot="collapse-header">
-            <div class="center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-              <b>Actual Historical Results<br/>during this period</b>
-              <img src="~@/img/help.svg"/>
-            </div>
-          </div>
-
-          <div slot="collapse-body">
-            <div class="actual_body">
-              Total Spent = {{ total_spent | filterNum }}<br/>Avg Spent = {{ avg_spent | filterNum }}
-            </div>
-            <div class="actual_body">
-              Total {{ roi_or_cpa ? 'Revenue = ' : 'Conversions = ' }}{{ total_revenue | filterNum }}
-              <br/>
-              Avg {{ roi_or_cpa ? 'revenue' : 'conv' }} / day = {{ avg_revenue | filterNum }}
-            </div>
-            <div class="actual_body">
-              Total {{ roi_or_cpa ? 'ROI' : 'CPA' }} for period = {{ total_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
-              <br/>
-              Avg daily {{ roi_or_cpa ? 'ROI' : 'CPA' }} = {{ avg_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
-            </div>
-          </div>
-        </collapse>
+      <div class="sidebar_collapse" @click="toggleNav()">
+        <i id="collapseIcon" class="fa fa-caret-left custom_collapse" aria-hidden="true"></i>
       </div>
     </div>
     <div class="campaign_center">
@@ -169,6 +188,8 @@ export default
   {
     var a =
       {
+        active: true,
+        search: '',
         is_warn: false,
         warn_text: '',
         unpaid: false,
@@ -212,6 +233,14 @@ export default
       };
     return a;
   },
+
+  mounted: function()
+  {
+    this.$parent.$on('toggleNav', () => {
+      this.active = !this.active
+    })
+  },
+
   created: function()
   {
     this.fetchData();
@@ -228,18 +257,29 @@ export default
     {
       groupsROI: function ()
       {
-        return this.group_roi.sort(function (a, b)
-        {
-          return strCompare(a.title, b.title);
-        });
+        return (
+          this.group_roi.sort(function (a, b)
+          {
+            return strCompare(a.title, b.title);
+          }),
+          this.group_roi.filter(post => {
+            return post.title.toLowerCase().includes(this.search.toLowerCase())
+          })
+        )
       },
       groupsCPA: function ()
       {
-        return this.group_cpa.sort(function (a, b)
-        {
-          return strCompare(a.title, b.title);
-        });
+        return (
+          this.group_cpa.sort(function (a, b)
+          {
+            return strCompare(a.title, b.title);
+          }),
+          this.group_cpa.filter(post => {
+            return post.title.toLowerCase().includes(this.search.toLowerCase())
+          })
+        )
       },
+
     },
   methods:
     {
@@ -356,7 +396,7 @@ export default
         // update best fit R2
         //this.kind_regress = history.best_fit;
         this.r2 = history.r2;
-      }
+      },
       /*
       month_start: function()
       {
@@ -372,6 +412,19 @@ export default
         return d.toISOString().substr(0,10);
       }
       */
+      removeElement: function(event)
+      {
+        event.target.parentElement.setAttribute('style', 'display: none');
+      },
+
+      toggleNav: function() {
+        this.$parent.$emit('toggleNav');
+        if (this.active) {
+          document.getElementById('collapseIcon').className = "fa fa-caret-left custom_collapse";
+        } else {
+          document.getElementById('collapseIcon').className = "fa fa-caret-right custom_collapse";
+        }
+      }
     }
 }
 
@@ -385,6 +438,28 @@ export default
     height: 100%;
   }
 
+  .campaign_sidebar_wrapper
+  {
+    display: flex;
+  }
+
+  .sidebar_collapse
+  {
+    background: #4585cc;
+    margin: auto;
+    height: 45.4em;
+    width: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #555;
+  }
+
+  .custom_collapse
+  {
+    font-size: 30px;
+    color: white;
+  }
   .group_title
   {
     text-align: center;
@@ -401,6 +476,13 @@ export default
     vertical-align: middle;
   }
 
+  .group_title .cus_remove
+  {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+  }
+
   .group_name
   {
     /* flex: 1 1 auto; */
@@ -408,11 +490,6 @@ export default
     padding-left: 80px;
   }
 
-  .group_name i{
-    position: absolute;
-    right: 5px;
-    top: 0px;
-  }
   .camp_group li
   {
     padding: 0 5px;
@@ -421,9 +498,52 @@ export default
 
   .campaign_left
   {
-    display: flex;
+    display: none;
     flex-direction: column;
     width: 300px;
+  }
+
+  .active {
+    display: flex;
+  }
+
+  .search-wrapper
+  {
+    position: relative;
+  }
+
+  .search-wrapper label
+  {
+    position: absolute;
+    font-size: 12px;
+    color: rgba(0,0,0,.50);
+    top: 8px;
+    left: 12px;
+    z-index: -1;
+    transition: .15s all ease-in-out;
+  }
+
+  .search-wrapper input
+  {
+    width: 100%;
+    padding: 4px 12px;
+    color: rgba(0,0,0,.70);
+    border: 1px solid rgba(0,0,0,.12);
+    transition: .15s all ease-in-out;
+    background: white;
+    &:focus {
+      outline: none;
+      transform: scale(1.05);
+      & + label  {
+        font-size: 10px;
+        transform: translateY(-24px) translateX(-12px);
+      }
+    }
+    &::-webkit-input-placeholder {
+        font-size: 12px;
+        color: rgba(0,0,0,.50);
+        font-weight: 100;
+    }
   }
 
   .campaign_listing
@@ -489,6 +609,55 @@ export default
   {
     padding-left: 20px;
     padding-top: 8px;
+  }
+
+  .sidebar_tap_wrapper {
+    display: flex;
+    margin: 5px 5px 0px 5px;
+  }
+
+  .sidebar_tap_wrapper .roi_content
+  {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px;
+    background: #ed9999;
+    border-radius: 7px;
+  }
+
+  .sidebar_tap_wrapper .cpa_content
+  {
+    position: relative;
+    flex: 1;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px;
+    background: #bbb;
+    border-radius: 7px;
+    border: 1px solid #222;
+  }
+
+  input[type="radio"] {
+    visibility: hidden;
+  }
+
+  .sidebar_tap_wrapper img
+  {
+    display: inline-block;
+    margin-left: 6px;
+    width: 20px;
+    vertical-align: sub;
+    float: right;
+  }
+
+  .sidebar_tap_wrapper label
+  {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    font-size: 20px;
   }
 
   .campaign_panel
