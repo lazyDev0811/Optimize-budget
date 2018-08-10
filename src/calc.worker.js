@@ -40,23 +40,46 @@ function do_regress(reg_type,campaign,outliers)
 {
   if(outliers)
   {
-    // remove the outliers
-    campaign.points.sort(function(a,b)
-    {
-      let c = a[1] - b[1];
-      if(c==0) c = a[0] - b[0];
-      return c;
-    });
-    // find median, 1st and 3rd quartiles - http://www.mathwords.com/f/first_quartile.htm
-    let pts = campaign.points, leng = pts.length, len1 = Math.floor(leng/4), len3 = Math.floor(leng*3/4),
-        q1 = (leng % 4 ? pts[len1][1] : (pts[len1][1] + pts[len1-1][1])/2),
-        q2 = (leng % 4 ? pts[len3][1] : (pts[len3][1] + pts[len3-1][1])/2),
-        iqr = (q2 - q1) * 1.5; // inter-quartile range
-    // remove any point below "q1 - iqr" or above "q2 + iqr"
-    campaign.points = campaign.points.filter(function(item)
-    {
-      return item[1] >= q1 - iqr && item[1] <= q2 + iqr;
-    });
+    if(campaign.points.length > 0){
+        // remove the outliers
+        campaign.points.sort(function(a,b)
+        {
+          let c = a[1] - b[1];
+          if(c==0) c = a[0] - b[0];
+          return c;
+        });
+        // find median, 1st and 3rd quartiles - http://www.mathwords.com/f/first_quartile.htm
+        let pts = campaign.points, leng = pts.length, len1 = Math.floor(leng/4), len3 = Math.floor(leng*3/4),
+          lenh = Math.round(leng/2), leng2= Math.floor(leng/4),
+            q1 = 0, q2 = 0, iqr = 0;
+
+            if(leng % 4 == 0){
+              q1 = (pts[len1][1] + pts[len1-1][1]) / 2;
+              q2 = (pts[len3][1] + pts[len3-1][1]) / 2;
+            }
+            else if(leng % 4 == 1){
+              q1 = (pts[len1][1]);
+              
+              if(leng > 5){
+                q2 = (pts[len3][1] + pts[len3+1][1]) / 2;
+              }else{
+                q2 = pts[len3][1];
+              }
+              
+            } 
+            else if(leng % 4 == 2 || leng % 4 == 3){
+              q1 = (pts[len1][1]);
+              q2 = (pts[len1+lenh][1]);
+            }
+            
+            iqr = (q2 - q1) * 1.5;
+
+        // remove any point below "q1 - iqr" or above "q2 + iqr"
+        campaign.points = campaign.points.filter(function(item)
+        {
+          return item[1] >= q1 - iqr && item[1] <= q2 + iqr;
+        });
+    }
   }
   // find regression
   campaign.regressions = new Array(6);
