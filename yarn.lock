@@ -2864,10 +2864,6 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
-jquery@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
-
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.5.tgz#e293cd3c7c82f070d700fc7a1ca0a2e69f101f92"
@@ -5225,10 +5221,6 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-collapse@^1.0.31:
-  version "1.0.31"
-  resolved "https://registry.yarnpkg.com/vue-collapse/-/vue-collapse-1.0.31.tgz#800e690eb33bd183fbb7eb0b6169e56d4b0cfb0c"
-
 vue-hot-reload-api@^2.1.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.0.tgz#97976142405d13d8efae154749e88c4e358cf926"
@@ -5250,10 +5242,6 @@ vue-loader@^12.1.0:
     vue-hot-reload-api "^2.1.0"
     vue-style-loader "^3.0.0"
     vue-template-es2015-compiler "^1.2.2"
-
-vue-responsive@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vue-responsive/-/vue-responsive-1.0.1.tgz#7bd8afb154821ce99652369d6eee44d980d4714a"
 
 vue-router@2.7.0:
   version "2.7.0"
