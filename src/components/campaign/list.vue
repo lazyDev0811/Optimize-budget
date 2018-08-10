@@ -26,7 +26,8 @@
             </div>
             <div class="search-wrapper">
               <input type="text" v-model="search" placeholder="Search campaign.."/>
-                  <label>Search title:</label>
+              <label>Search title:</label>
+              <i class="fa fa-search" aria-hidden="true"></i>
             </div>
             <template v-if="roi_or_cpa==1">
               <template v-for="grp in groupsROI">
@@ -522,6 +523,7 @@ export default
   .search-wrapper
   {
     position: relative;
+    padding: 5px;
   }
 
   .search-wrapper label
@@ -537,10 +539,10 @@ export default
 
   .search-wrapper input
   {
-    width: 100%;
+    width: 91%;
     padding: 4px 12px;
     color: rgba(0,0,0,.70);
-    border: 1px solid rgba(0,0,0,.12);
+    border: 0px;
     transition: .15s all ease-in-out;
     background: white;
     &:focus {
@@ -556,6 +558,11 @@ export default
         color: rgba(0,0,0,.50);
         font-weight: 100;
     }
+  }
+
+  .search-wrapper i
+  {
+    color: white;
   }
 
   .campaign_listing
