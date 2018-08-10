@@ -87,11 +87,11 @@
         </div>
         <div class="campaign_optimize">
           <div slot="collapse-body">
-              <div class="tooltip-bottom" data-tooltip="Outliers are abnormal observations that can skew results. Removing outliers is recommended.">
                 <input type="checkbox" v-model="outlier" id="remove_outlier"/>
                 <label for="remove_outlier">Remove outliers</label>
-                <img src="~@/img/help.svg"/>
-              </div>
+                <span class="tooltip-bottom tooltip" data-tooltip="Outliers are abnormal observations that can skew results. Removing outliers is recommended.">
+                  <img src="~@/img/help.svg"/>
+                </span>
             <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
             <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
           </div>
@@ -100,10 +100,10 @@
         <div class="campaign_regress">
           <collapse :selected="false">
             <div slot="collapse-header">
-              <div class="center help_sign tooltip-bottom" data-tooltip="r-squared is a statistical measure of how close the regression line fits the data points.  R-squared lies between 0 & 1.  The higher the r-squared value the better the fit.  We have auto selected the model with the highest r-squared value, however you can adjust the model.">
-                <b>Regression Model for <br> best fit</b>
-                <img src="~@/img/help.svg"/>
-              </div>
+                <b>Regression Model for best fit</b>
+                <span class="center help_sign tooltip-bottom tooltip" data-tooltip="r-squared is a statistical measure of how close the regression line fits the data points.  R-squared lies between 0 & 1.  The higher the r-squared value the better the fit.  We have auto selected the model with the highest r-squared value, however you can adjust the model.">
+                  <img src="~@/img/help.svg"/>
+                </span>
             </div>
 
             <div slot="collapse-body">
@@ -128,10 +128,10 @@
         <div class="campaign_actual">
           <collapse :selected="false">
             <div slot="collapse-header">
-              <div class="center help_sign tooltip-bottom" data-tooltip="These are actual results from your data within the selected time frame.  Compare these numbers with results from the model to see the difference in the predictions vs actual results.">
                 <b>Actual Historical Results<br/>during this period</b>
-                <img src="~@/img/help.svg"/>
-              </div>
+                <div class="center help_sign tooltip-bottom tooltip custom-help" data-tooltip="These are actual results from your data within the selected time frame.  Compare these numbers with results from the model to see the difference in the predictions vs actual results.">
+                  <img src="~@/img/help.svg"/>
+                </div>
             </div>
 
             <div slot="collapse-body">
@@ -430,7 +430,6 @@ export default
   {
     display: flex;
     width: 100%;
-    height: 100%;
   }
 
   .campaign_sidebar_wrapper
@@ -442,7 +441,7 @@ export default
   {
     background: #4585cc;
     margin: auto;
-    height: 45.4em;
+    height: 100%;
     width: 18px;
     display: flex;
     align-items: center;
@@ -599,9 +598,11 @@ export default
   .campaign_delete
   {
     position: absolute;
-    right: 12px;
+    right: 32px;
     top: 50%;
     transform: translateY(-40%);
+    padding: 4px;
+    font-size: 14px;
   }
 
   .campaign_regress td:last-child
@@ -740,6 +741,7 @@ export default
 
   .campaign_regress .collapse .collapse-header{
     background-color: black !important;
+    padding: 15px 15px 15px 10px;
   }
 
   .campaign_actual .collapse .collapse-header{
@@ -748,12 +750,19 @@ export default
 
   .collapse .collapse-header::before{
     left: auto !important;
-    right: 10px;
+    right: 0px;
   }
 
   .group_title .collapse-header{
     padding: 0 !important;
     background: inherit !important;
+  }
+
+  .custom-help
+  {
+    position: absolute;
+    bottom: 17px;
+    right: 79px;
   }
 
   @media screen and (max-width:480px) {
