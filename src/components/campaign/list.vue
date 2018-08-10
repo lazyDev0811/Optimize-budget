@@ -7,20 +7,23 @@
           <div class="roi_content" >
             <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
             <label for="roi_optimial">ROI</label>
-            <span class="tooltip-bottom" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
+            <span class="tooltip-bottom tooltip" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
               <img src="~@/img/help.svg"/>
             </span>
           </div>
           <div class="cpa_content">
             <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
             <label for="cpa_optimial">CPA</label>
-            <span class="tooltip-bottom" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
+            <span class="tooltip-bottom tooltip" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
               <img src="~@/img/help.svg"/>
             </span>
           </div>
         </div>
         <div class="campaign_panel">
           <div class="campaign_listing">
+            <div class="campaign_header">
+              <h3>Campaigns</h3>
+            </div>
             <div class="search-wrapper">
               <input type="text" v-model="search" placeholder="Search campaign.."/>
                   <label>Search title:</label>
@@ -495,6 +498,24 @@ export default
     width: 300px;
   }
 
+  .campaign_header
+  {
+    background: black;
+    color: white;
+    text-align: center;
+  }
+
+  .campaign_header h3
+  {
+    margin: 0px;
+  }
+
+  .tooltip
+  {
+    display: inline-block;
+    float: right;
+  }
+
   .active {
     display: flex;
   }
@@ -611,14 +632,14 @@ export default
   }
 
   .sidebar_tap_wrapper {
-    display: flex;
-    margin: 5px 5px 0px 5px;
+    margin: 5px;
   }
 
   .sidebar_tap_wrapper .roi_content
   {
+    width: 49%;
+    display: inline-block;
     position: relative;
-    flex: 1;
     text-align: center;
     vertical-align: middle;
     padding: 5px;
@@ -628,8 +649,9 @@ export default
 
   .sidebar_tap_wrapper .cpa_content
   {
+    width: 49%;
+    display: inline-block;
     position: relative;
-    flex: 1;
     text-align: center;
     vertical-align: middle;
     padding: 5px;
