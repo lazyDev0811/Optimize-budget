@@ -153,7 +153,7 @@
           </collapse>
         </div>
       </div>
-      <div class="sidebar_collapse" @click="toggleNav()">
+      <div class="sidebar_collapse" @click="toggleNav($event)">
         <i id="collapseIcon" class="fa fa-caret-left custom_collapse" aria-hidden="true"></i>
       </div>
     </div>
@@ -413,12 +413,14 @@ export default
         event.target.parentElement.setAttribute('style', 'display: none');
       },
 
-      toggleNav: function() {
+      toggleNav: function(event) {
         this.$parent.$emit('toggleNav');
         if (this.active) {
           document.getElementById('collapseIcon').className = "fa fa-caret-left custom_collapse";
+          event.target.parentElement.setAttribute('style', 'height: 100%');
         } else {
           document.getElementById('collapseIcon').className = "fa fa-caret-right custom_collapse";
+          event.target.parentElement.setAttribute('style', 'height: 89vh');
         }
       }
     }
