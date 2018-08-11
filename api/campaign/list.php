@@ -8,6 +8,17 @@ $uid = has_login();
 
 $res = $db->query('SELECT mm_campaign.id,kind,campaign AS title,COALESCE(upload_id,"z") AS upload_id,COALESCE(upload,"") AS upload,COALESCE(unpaid,0) AS unpaid
   FROM mm_campaign LEFT JOIN mm_upload ON upload_id = mm_upload.id WHERE user_id = '.$uid);
+
+  if(mysqli_num_rows($res) == 0){
+    $res = $db->query('(SELECT mm_campaign.id,kind,campaign AS title,COALESCE(upload_id,"z") AS upload_id,
+                          COALESCE(upload,"") AS upload,COALESCE(unpaid,0) AS unpaid
+                            FROM mm_campaign LEFT JOIN mm_upload ON upload_id = mm_upload.id WHERE kind = 1 LIMIT 1) 
+                        UNION 
+                        (SELECT mm_campaign.id,kind,campaign AS title,COALESCE(upload_id,"z") AS upload_id,
+                            COALESCE(upload,"") AS upload,COALESCE(unpaid,0) AS unpaid
+                              FROM mm_campaign LEFT JOIN mm_upload ON upload_id = mm_upload.id WHERE kind = 2 LIMIT 1)');
+  }
+
 $info['groups_roi'] = Array();
 $info['groups_cpa'] = Array();
 $unpaid = FALSE;
