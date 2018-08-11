@@ -499,6 +499,19 @@ export default
     width: 20px;
   }
 
+  @media screen and (max-width:1024px)
+  {
+    .op_main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .op_graph
+    {
+      margin-bottom: 50px;
+    }
+  }
+
   @media screen and (max-width: 480px) {
     .op_main
     {

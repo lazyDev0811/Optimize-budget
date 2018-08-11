@@ -777,20 +777,14 @@ export default
   @media screen and (max-width:480px) {
     .campaigns_screen
     {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      flex-direction: column;
+      display: inherit;
       overflow: scroll;
-      align-items: center;
-      padding: 20px;
-      margin-bottom: 20px;
     }
-    .campaign_center
+    .campaign_center, .campaign_left
     {
-      flex: none;
-      overflow: inherit;
-      margin-top: 20px;
+      display: block;
+      width: 100%;
+      padding: 10px;
     }
     .no_list
     {

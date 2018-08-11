@@ -12,9 +12,9 @@
         <span class="log_info">&nbsp;</span>
         <div class="btn_right">
           <a href=""></a>
-          <a class="login btn" href="#/contact" @click="func1()">Support</a>
-          <a class="login btn" href="#/signup" @click="func1()">Sign up</a>
           <a class="login btn" href="#/login" @click="func1()">Login</a>
+          <a class="login btn" href="#/contact" @click="func1()">Features</a>
+          <a class="login btn" href="#/about" @click="func1()">About</a>
         </div>
       </template>
       <a href="javascript:void(0);" class="icon" @click="myFunction()">
