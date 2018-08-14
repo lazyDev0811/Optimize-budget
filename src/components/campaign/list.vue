@@ -239,6 +239,7 @@ export default
 
   created: function()
   {
+    this.initDate();
     this.fetchData();
   },
   filters:
@@ -318,6 +319,14 @@ export default
           else this.group_roi = [];
         if(isArray(resp.groups_cpa) && resp.groups_cpa.length) this.group_cpa = resp.groups_cpa;
           else this.group_cpa = [];
+      },
+      initDate: function(){
+        var todayTime = new Date();
+        var year = todayTime.getFullYear();
+        var month = todayTime.getMonth() + 1 > 9 ? todayTime.getMonth() + 1 : "0" + (todayTime.getMonth() + 1);
+        var day = todayTime.getDate() > 9 ? todayTime.getDate() : "0" + todayTime.getDate();
+        this.to_date = year + '-' + month + '-' + day;
+        this.from_date = (year-1) + '-' + month + '-' + day;
       },
       doOptimal: function (list)
       {
