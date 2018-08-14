@@ -17,6 +17,7 @@ import privacyPolicy from './components/privacy'
 import userData from './components/account/campaigns'
 import userEvents from './components/admin/events'
 import upgrade from './components/account/upgrade'
+import about from './components/about'
 import { jsonCookieValue } from '@/tool/cook'
 
 export default new Router({
@@ -165,6 +166,15 @@ export default new Router({
       meta:
         {
           title: 'Paid subscription'
+        }
+    },
+
+    {
+      path: '/about',
+      component: about,
+      meta:
+        {
+            title: 'ABOUT'
         }
     },
 

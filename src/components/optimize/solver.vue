@@ -6,13 +6,17 @@
         <thead>
           <tr>
             <th>&nbsp;</th>
-            <th colspan="2" class="bord help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+            <th colspan="2" class="bord">
               CONSTRAINTS
-              <img src="~@/img/help.svg"/>
+              <span class="tooltip-bottom tooltip" data-tooltip="Input minimum & maximum budgets for each campaign and for the entire account.">
+                <img src="~@/img/help.svg"/>
+              </span>
             </th>
-            <th class="bord help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+            <th class="bord">
               IMPROVEMENT
-              <img src="~@/img/help.svg"/>
+              <span class="tooltip-bottom tooltip" data-tooltip="Input expected improvement to account for upcoming events such as a sale">
+                <img src="~@/img/help.svg"/>
+              </span>
             </th>
             <th colspan="3" class="bord">OUTPUT</th>
           </tr>
@@ -47,8 +51,11 @@
             </td>
             <td class="bt"><div class="const_total">{{ total_cost | filterNum }}</div></td>
             <td class="bt"><div class="const_total">{{ total_result | filterNum }}</div></td>
-            <td class="bt help_sign tooltip-top" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-              <div class="major_total">{{ total_optimal | filterNum }}{{ kind==1 ? '%' : '' }}</div><img src="~@/img/help.svg"/>
+            <td class="bt help_sign">
+              <div class="major_total">{{ total_optimal | filterNum }}{{ kind==1 ? '%' : '' }}</div>
+              <span class="tooltip-top tooltip" data-tooltip="We are optimizing for maximum ROI or minimum CPA of the whole account by adjusting daily budgets at the campaign level">
+                <img src="~@/img/help.svg"/>
+              </span>
             </td>
           </tr>
         </tfoot>
@@ -185,6 +192,10 @@ export default
 </script>
 
 <style>
+  .inline .op_main
+  {
+    display: inherit;
+  }
   .solve_header
   {
     background-color: #70AD47;

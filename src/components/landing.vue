@@ -1,28 +1,8 @@
 <template>
-  <div class="landing">
-    <div class="land_left">
-      <div class="video_panel">
-        <div v-for="item in video_list" class="youtube-player">
-          <h3>{{ item.title }}</h3>
-          <iframe :src="'https://www.youtube.com/embed/'+item.video" frameborder="0" allowfullscreen></iframe>
-        </div>
-      </div>
-      <div>
-        <br/><br/><br/>
-        <h1>Answer questions like:</h1>
-        <ul>
-          <li>What should I spend for my campaign to achieve it's optimal ROI or CPA?</li>
-          <li>How should I allocate budgets between my campaigns to achieve an overall optimal ROI outcome?</li>
-          <li>My campaign is currently spending $x per day, if I was to increase to $y / day, what kind of Revenue & ROI/CPA change should I expect?</li>
-        </ul>
-        <br/><br/><br/>
-      </div>
-    </div>
-    <div class="land_right">
-      <div class="lang_right_container">
-        <div class="graph_panel">
-          <img src="~@/img/graph.svg" />
-        </div>
+  <div class="landing_wrapper">
+    <div class="land_header">
+      <div class="container_left">
+        <div :id="'graph'+_uid" class="graph_panel"></div>
         <div class="center">
           <div class="confident">
             Regression formula: <strong class="code">Y = 4766.53 * Ln(X) -29535.3</strong>
@@ -50,11 +30,54 @@
           </tr>
         </table>
       </div>
+      <div class="container_right">
+        <h2>Optimize Budget allocation, forecast performance & predict results with Machine Learning</h2>
+        <div class="slider_panel">
+          <label>See how it works:</label>
+          <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord"/>
+          <div class="create_content"><a class="login btn create_account" href="#/signup" @click="func1()">Create a free account</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="text_content">
+      <br/>
+      <h1>Budget Optimize can answer these questions::</h1>
+      <ul>
+        <li>What should I spend for my campaign to achieve it's optimal ROI or CPA?</li>
+        <li>How should I allocate budgets between my campaigns to achieve an overall optimal ROI outcome?</li>
+        <li>My campaign is currently spending $x per day, if I was to increase to $y / day, what kind of Revenue & ROI/CPA change should I expect?</li>
+      </ul>
+      <br/>
+    </div>
+    <div class="word_content">
+      <br/>
+      <h1>What our customers say</h1>
+    </div>
+    <div class="video_panel" id="feature">
+      <div v-for="item in video_list" class="youtube-player">
+        <h3>{{ item.title }}</h3>
+        <iframe :src="'https://www.youtube.com/embed/'+item.video" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="sample_optimize">
+      <div>
+        <h1>Map campaigns using regression models to find optimal performance</h1>
+        <img class="first_img" src="~@/img/graR.png"/>
+      </div>
+      <div>
+        <h1>Forecast performance with increased budgets</h1>
+        <img class="second_img" src="~@/img/CalR.png" />
+      </div>
+      <div>
+        <h1>Find optimal campaign budget allocation that you can plug back into your account</h1>
+        <img class="third_img" src="~@/img/oR.png"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+require('@/css/range.scss');
 
 export default
 {
@@ -76,7 +99,8 @@ export default
           title: 'Understanding the Output',
           video: '0RGYaLLZiLE'
         }
-      ]
+      ],
+      var_cost: 0,
     };
     return a;
   },
@@ -85,36 +109,41 @@ export default
       start_video(item)
       {
         if(!item.clicked) this.$set(item,'clicked',true);
-      }
+      },
     }
 }
 
 </script>
 
 <style scoped>
-  .landing
+  .landing_wrapper
   {
-    display: flex;
+    /* display: flex;
     justify-content: center;
     padding: 0 50px;
-    align-items: flex-start;
+    align-items: flex-start; */
   }
 
-  .land_left
+  .land_header
   {
-    flex: 1 1 70%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding: 10px;
+    background: #eee;
+    margin: 30px 10px 0px 10px;
   }
 
-  .land_right
+  .container_left, .container_right
   {
-    flex: 1 1 30%;
-    margin: 10px;
-    text-align: center;
+    flex: 1;
+    padding: 10px 20px;
   }
 
+  .container_right h2
+  {
+    margin: 20px 40px;
+    text-align: center;
+    font-weight: bold;
+  }
   .lang_right_container
   {
     background-color: #eee;
@@ -162,6 +191,13 @@ export default
     width: 100%;
   }
 
+  .text_content, .word_content
+  {
+    margin: 10px;
+    background: #eee;
+    padding: 10px;
+  }
+
   .video_panel
   {
     display: flex;
@@ -184,6 +220,63 @@ export default
     height: 100%;
     background: transparent;
   }
+
+  .slider_panel
+  {
+    text-align: center;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .no_bord
+  {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .create_content
+  {
+    margin-top: 50px;
+  }
+
+  .create_account
+  {
+    background-color: #d7e4cf;
+    color: black;
+    padding: 15px 30px;
+  }
+
+  .sample_optimize
+  {
+    display: flex;
+    background: #eee;
+    margin: 50px 10px;
+    padding: 10px;
+  }
+
+  .sample_optimize div
+  {
+    flex: 1;
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  .sample_optimize div img
+  {
+    width: 300px;
+  }
+
+  .sample_optimize .first_img
+  {
+    margin-top: 53px;
+  }
+
+  .sample_optimize .second_img
+  {
+    margin-top: 96px;
+  }
+
 
   @media screen and (max-width: 420px) {
     .landing
