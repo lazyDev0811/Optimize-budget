@@ -445,6 +445,7 @@ export default
   {
     display: flex;
     width: 100%;
+    overflow: hidden;
   }
 
   .campaign_sidebar_wrapper
@@ -587,6 +588,11 @@ export default
     flex: 1 1 auto;
   }
 
+  .campaign_listing ul{
+    overflow: auto;
+    max-height: 100px;
+  }
+
   .campaign_dates
   {
     display: flex;
@@ -718,6 +724,9 @@ export default
     overflow: auto;
   }
 
+  .campaign_center div{
+    overflow: hidden;
+  }
   .help_sign img
   {
     display: inline-block;

@@ -376,7 +376,6 @@ export default
       init_Data: function ()
       {
 
-        console.log("HHHH",this.defaultList);
         AJAX.ajax_post(this,"api/campaign/load.php",
           function(resp)
           {

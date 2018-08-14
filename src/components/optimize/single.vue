@@ -70,10 +70,11 @@
         </div>
     </div>
     <div class="graphs">
-      <div class="op_graph">
-          <div class="op_title">
+      <div class="op_title">
             <h2 class="op_header" :title="campaign.title" >{{ campaign.title }}</h2>
-          </div>
+      </div>
+
+      <div class="op_graph">
           <div :id="'graph'+_uid" class="graph_panel"></div>
           <div class="top_space">
             Regression formula: <strong class="code">{{ regression.string }}</strong>
@@ -232,7 +233,7 @@ export default
             },
             title:
             {
-              text: 'Regression Cost vs '+this.text_kind
+              text: 'Cost vs '+this.text_kind
             },
             xAxis:
             {
@@ -316,6 +317,7 @@ export default
                 data: [[this.var_cost*Math.abs(-1),this.projected_value(this.var_cost)]]
               },
               {
+                name: '(Cost, CPA)',
                 data: reg_data,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
@@ -325,8 +327,6 @@ export default
                   {
                     enabled: false
                   },
-                name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '
-                      + round(isNaN(this.regression.r2) ? 0 : this.regression.r2),
                 showInLegend: false
               },
               {
@@ -396,7 +396,7 @@ export default
             },
             title:
             {
-              text: 'Regression Cost vs '+this.text_kind
+              text: 'Cost vs '+this.text_kind
             },
             xAxis:
             {
@@ -489,8 +489,7 @@ export default
                   {
                     enabled: false
                   },
-                name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '
-                      + round(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+                name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '+round(isNaN(this.regression.r2) ? 0 : this.regression.r2) + '<br/>',
                 showInLegend: false
               },
               {
@@ -522,7 +521,7 @@ export default
             },
             title:
             {
-              text: 'CPA vs Conversion'
+              text: 'CPA vs Cost'
             },
             xAxis:
             {
@@ -610,8 +609,7 @@ export default
                   {
                     enabled: false
                   },
-                name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '
-                      + round(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+                name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '+round(isNaN(this.regression.r2) ? 0 : this.regression.r2)+'<br/>',
                 showInLegend: false
               }
             ],
@@ -777,7 +775,7 @@ export default
             },
             title:
             {
-              text: 'Regression Cost vs '+this.text_kind
+              text: 'Cost vs '+this.text_kind
             },
             xAxis:
             {
@@ -865,8 +863,7 @@ export default
                   {
                     enabled: false
                   },
-                name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '
-                      + round(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+                name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '+round(isNaN(this.regression.r2) ? 0 : this.regression.r2)+'<br/>',
                 showInLegend: false
               },
               {
@@ -898,7 +895,7 @@ export default
             },
             title:
             {
-              text: 'CPA vs Conversion'
+              text: 'CPA vs Cost'
             },
             xAxis:
             {
@@ -972,6 +969,7 @@ export default
             series:
             [
               {
+                name: '(Cost, CPA)',
                 data: reg_data1,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
@@ -981,8 +979,6 @@ export default
                   {
                     enabled: false
                   },
-                name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '
-                      + round(isNaN(this.regression.r2) ? 0 : this.regression.r2),
                 showInLegend: false
               }
             ],
@@ -1006,6 +1002,7 @@ export default
     width: 100%;
     position: relative;
     display: inline-block;
+    background-color: #eee;
   }
 
   .item_content{
@@ -1028,14 +1025,11 @@ export default
     float: left;
   }
 
-  .second_graph
-  {
-    padding-bottom: 42px;
-  }
 
-  .second_graph .graph_panel
+
+  .second_graph .top_space
   {
-    margin-top: 72px;
+    margin-top: 22px;
   }
 
   .op_detail{
