@@ -305,7 +305,6 @@ export default
           }
         );
       },
-
       getResult(resp)
       {
         this.select_roi = [];
@@ -586,6 +585,7 @@ export default
     margin-bottom: 4px;
     overflow: auto;
     flex: 1 1 auto;
+    max-height: 366px;
   }
 
   .campaign_listing ul{
@@ -714,7 +714,8 @@ export default
     display: flex;
     flex-direction: column;
     padding: 3px;
-    min-height: 412px;
+    height: 412px;
+    max-height: 412px;
   }
 
   .campaign_panel,
