@@ -247,9 +247,68 @@ export default
           this.optimal_result = this.optimum + ' (' + this.optimal_cost.toFixed(2) + '/' + this.optimal_value.toFixed(2) + ')';
         }
       },
+      connectPlot: function(x = 0, y = 0){
+        var init_x = x, init_y = y, length = this.regression.points.length;
+        var plot;
+
+        if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Linear"){
+          init_y = this.regression.equation[0] * init_x + this.regression.equation[1];
+          if(init_y < 0){
+            init_x = -(this.regression.equation[1]/this.regression.equation[0])
+            init_y = 0;
+          }
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Exponential"){
+          init_y = this.regression.equation[0] * Math.exp(this.regression.equation[1] * init_x);
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Logarithmic"){
+          if(init_x == 0){
+            init_x = Math.pow(Math.E,-(this.regression.equation[0]/this.regression.equation[1]));
+          }else{
+            init_y = this.regression.equation[0] + (this.regression.equation[1] * Math.log(init_x));
+          }
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Polynomial"){
+          if(init_x == 0){
+            init_y = this.regression.equation[this.regression.equation.length - 1];
+            if(init_y < 0){
+              if(this.regression.equation.length == 2){
+                init_x = -(this.regression.equation[1]/this.regression.equation[0])
+                init_y = 0;
+              }else if(this.regression.equation.length == 3){
+
+                init_x = ((-this.regression.equation[1]) + Math.sqrt(this.regression.equation[0] * this.regression.equation[0] - (4 * this.regression.equation[0] * this.regression.equation[2]))) / (2 * this.regression.equation[0]);
+                var init_x2 = ((-this.regression.equation[1]) - Math.sqrt(this.regression.equation[0] * this.regression.equation[0] - (4 * this.regression.equation[0] * this.regression.equation[2]))) / (2 * this.regression.equation[0]);
+                init_y = 0;
+
+                if(init_x > 0 && init_x2 > 0){
+                  this.regression.points[length+1] = [init_x2, init_y];
+                }else if(init_x2 > 0 && init_x < 0){
+                  init_x = init_x2; 
+                }
+              }
+            }
+          }else{
+
+          }
+          
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Power"){
+          if(init_x == 0){
+            init_y = init_x = 0;
+          }else{
+            init_y = this.regression.equation[0] * (init_x ** this.regression.equation[1]);
+          }
+        }
+
+        plot = [init_x, init_y];
+        return plot;        
+      },
       initChart: function ()
       {
         this.optimal_regress();
+        var init_plot = this.connectPlot();
+        this.regression.points[length] = init_plot;
         var reg_data = this.regression.points.sort(function (a,b)
         {
           return a[0] - b[0];
@@ -258,6 +317,7 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
+
         if(this.chart!=null) this.chart = null;
         Highcharts.setOptions(
           {
@@ -290,6 +350,132 @@ export default
               },
               startOnTick: true,
               endOnTick: true,
+              showLastLabel: true
+            },
+            yAxis:
+            {
+              title:
+              {
+                text: this.text_kind
+              }
+            },
+            legend:
+            {
+              layout: 'vertical',
+              align: 'left',
+              verticalAlign: 'top',
+              x: 90,
+              y: 60,
+              floating: true,
+              backgroundColor: '#FFFFFF',
+              borderWidth: 1
+            },
+            plotOptions:
+            {
+              scatter:
+              {
+                marker:
+                {
+                  radius: 3,
+                  lineColor: "#0000ff",
+                  states:
+                  {
+                    hover:
+                    {
+                      enabled: true,
+                      lineColor: '#0000ff'
+                    }
+                  }
+                },
+                states:
+                {
+                  hover:
+                  {
+                    marker:
+                    {
+                      enabled: false
+                    }
+                  }
+                },
+                tooltip:
+                {
+                  headerFormat: '<b>{series.name}</b><br>',
+                  pointFormat: '{point.x}, {point.y}'
+                }
+              },
+              series:
+                {
+                  animation: false
+                }
+            },
+            series:
+            [
+              {
+                name: 'Day (Cost, ' + this.text_kind + ')',
+                color: 'rgba(223, 83, 83, .5)',
+                data: this.campaign.points
+              },
+              {
+                data: reg_data,
+                color: 'rgba(40, 100, 255, .9)',
+                lineWidth: 2,
+                type: 'line',
+                dashStyle: 'solid',
+                marker:
+                  {
+                    enabled: false
+                  },
+                name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '
+                      + round(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+                showInLegend: false
+              },
+              {
+                data:
+                [
+                  [this.optimal_cost,0],
+                  [this.optimal_cost,this.optimal_value * 2]
+                ],
+                color: 'rgba(70, 160, 50, .9)',
+                lineWidth: 3,
+                type: 'line',
+                dashStyle: 'solid',
+                name: this.optimal_text + ' = ' + this.optimal_result,
+                showInLegend: false
+              }
+            ],
+            credits:
+            {
+              enabled: false
+            }
+          });
+
+          init_plot = this.connectPlot(this.chart.xAxis[0].max, this.chart.yAxis[0].max);
+          reg_data[reg_data.length] = init_plot;
+
+          this.chart = Highcharts.chart(
+          {
+            chart:
+            {
+              renderTo: 'graph'+this._uid,
+              type: 'scatter',
+              zoomType: 'xy'
+            },
+            title:
+            {
+              text: 'Regression Cost vs '+this.text_kind
+            },
+            xAxis:
+            {
+              min: 0,
+              ceiling: init_plot[0],
+              max: init_plot[0],
+              title:
+              {
+                enabled: true,
+                text: 'Cost'
+              },
+              startOnTick: true,
+              // endOnTick: true,
               showLastLabel: true
             },
             yAxis:
