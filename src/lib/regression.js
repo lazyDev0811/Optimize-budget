@@ -1,3 +1,5 @@
+
+
 const DEFAULT_OPTIONS = { order: 2, precision: 2, period: null };
 
 /**
@@ -132,12 +134,21 @@ export default {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => ([
+      round(x, DEFAULT_OPTIONS.precision),
+      round(x/((gradient * x) + intercept), DEFAULT_OPTIONS.precision)]
+    );
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [gradient, intercept],
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
       string: intercept === 0 ? `Y = ${gradient} * X` : `Y = ${gradient} * X` + (intercept<0 ? ' ' : ' + ') + `${intercept}`,
+      string1: intercept === 0 ? `Y = X / ${gradient} * X` : `Y = X / (${gradient} * X` + (intercept<0 ? ' ' : ' + ') + `${intercept})`,
     };
   },
 
@@ -167,11 +178,20 @@ export default {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => ([
+      round(x, DEFAULT_OPTIONS.precision),
+      round(x/(coeffA * Math.exp(coeffB * x)), DEFAULT_OPTIONS.precision),
+    ]);
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * Exp(${coeffB} * X)`,
+      string1: `Y = X / (${coeffA} * Exp(${coeffB} * X))`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
     };
   },
@@ -200,11 +220,20 @@ export default {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => ([
+      round(x, DEFAULT_OPTIONS.precision),
+      round(round(x/(coeffA + (coeffB * Math.log(x))), DEFAULT_OPTIONS.precision), DEFAULT_OPTIONS.precision),
+    ]);
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [coeffA, coeffB],
       string: `Y = ${coeffB} * Ln(X)` + (coeffA<0 ? ' ' : ' + ') + `${coeffA}`,
+      string1: `Y = X / (${coeffB} * Ln(X)` + (coeffA<0 ? ' ' : ' + ') + `${coeffA})`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
     };
   },
@@ -234,11 +263,20 @@ export default {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => ([
+      round(x, DEFAULT_OPTIONS.precision),
+      round(round(x/(coeffA * (x ** coeffB)), DEFAULT_OPTIONS.precision), DEFAULT_OPTIONS.precision),
+    ]);
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * X ^ ${coeffB}`,
+      string1: `Y = X / (${coeffA} * X ^ ${coeffB})`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
     };
   },
@@ -287,6 +325,16 @@ export default {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => ([
+      round(x, DEFAULT_OPTIONS.precision),
+      round(
+        x/(coefficients.reduce((sum, coeff, power) => sum + (coeff * (x ** power)), 0)),
+        DEFAULT_OPTIONS.precision,
+      ),
+    ]);
+
+    const points1 = data.map(point => predict1(point[0]));
+
     let string = 'Y = ';
     for (let i = coefficients.length - 1; i >= 0; i--) {
       if (i > 1) {
@@ -298,10 +346,23 @@ export default {
       }
     }
 
+    let string1 = 'Y = X / (';
+    for (let i = coefficients.length - 1; i >= 0; i--) {
+      if (i > 1) {
+        string1 += `${coefficients[i]} * X ^ ${i} + `;
+      } else if (i === 1) {
+        string1 += `${coefficients[i]} * X + `;
+      } else {
+        string1 += coefficients[i]+')';
+      }
+    }
+
     return {
       string,
+      string1,
       points,
       predict,
+      points1,
       equation: [...coefficients].reverse(),
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
     };

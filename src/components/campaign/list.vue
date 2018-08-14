@@ -564,7 +564,7 @@ export default
 
   .search-wrapper i
   {
-    color: white;
+    color:  #ccc;
   }
 
   .campaign_listing
