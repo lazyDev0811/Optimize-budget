@@ -791,5 +791,10 @@ export default
       max-height: 200px;
       overflow: scroll;
     }
+
+    .sidebar_collapse
+    {
+      display: none;
+    }
   }
 </style>

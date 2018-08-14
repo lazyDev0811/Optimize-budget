@@ -1,28 +1,8 @@
 <template>
-  <div class="landing">
-    <div class="land_left">
-      <div class="video_panel">
-        <div v-for="item in video_list" class="youtube-player">
-          <h3>{{ item.title }}</h3>
-          <iframe :src="'https://www.youtube.com/embed/'+item.video" frameborder="0" allowfullscreen></iframe>
-        </div>
-      </div>
-      <div>
-        <br/><br/><br/>
-        <h1>Answer questions like:</h1>
-        <ul>
-          <li>What should I spend for my campaign to achieve it's optimal ROI or CPA?</li>
-          <li>How should I allocate budgets between my campaigns to achieve an overall optimal ROI outcome?</li>
-          <li>My campaign is currently spending $x per day, if I was to increase to $y / day, what kind of Revenue & ROI/CPA change should I expect?</li>
-        </ul>
-        <br/><br/><br/>
-      </div>
-    </div>
-    <div class="land_right">
-      <div class="lang_right_container">
-        <div class="graph_panel">
-          <img src="~@/img/graph.svg" />
-        </div>
+  <div class="landing_wrapper">
+    <div class="land_header">
+      <div class="container_left">
+        <div :id="'graph'+_uid" class="graph_panel"></div>
         <div class="center">
           <div class="confident">
             Regression formula: <strong class="code">Y = 4766.53 * Ln(X) -29535.3</strong>
@@ -50,14 +30,80 @@
           </tr>
         </table>
       </div>
+      <div class="container_right">
+        <h2>Optimize Budget allocation, forecast performance & predict results with Machine Learning</h2>
+        <div class="slider_panel">
+          <label>See how it works:</label>
+          <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord"/>
+          <div class="create_content"><a class="login btn create_account" href="#/signup" @click="func1()">Create a free account</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="text_content">
+      <br/>
+      <h1>Budget Optimize can answer these questions::</h1>
+      <ul>
+        <li>What should I spend for my campaign to achieve it's optimal ROI or CPA?</li>
+        <li>How should I allocate budgets between my campaigns to achieve an overall optimal ROI outcome?</li>
+        <li>My campaign is currently spending $x per day, if I was to increase to $y / day, what kind of Revenue & ROI/CPA change should I expect?</li>
+      </ul>
+      <br/>
+    </div>
+    <div class="word_content">
+      <br/>
+      <h1>What our customers say</h1>
+    </div>
+    <div class="video_panel" id="feature">
+      <div v-for="item in video_list" class="youtube-player">
+        <h3>{{ item.title }}</h3>
+        <iframe :src="'https://www.youtube.com/embed/'+item.video" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="sample_optimize">
+      <div>
+        <h1>Map campaigns using regression models to find optimal performance</h1>
+        <img class="first_img" src="~@/img/graR.png"/>
+      </div>
+      <div>
+        <h1>Forecast performance with increased budgets</h1>
+        <img class="second_img" src="~@/img/CalR.png" />
+      </div>
+      <div>
+        <h1>Find optimal campaign budget allocation that you can plug back into your account</h1>
+        <img class="third_img" src="~@/img/oR.png"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Highcharts from 'highcharts'
+import { predict } from '@/lib/regression'
+import { round } from '@/tool/util'
+require('@/css/range.scss');
 
 export default
 {
+  props:
+    {
+      campaign:
+        {
+          type: Object
+        },
+      kind: // 1 = ROI, 2 = CPA
+        {
+          type: Number,
+          default: 1
+        },
+      type_reg:
+        {
+          type: Number
+        },
+      reg_names:
+        {
+          type: Array
+        }
+    },
   data: function()
   {
     var a =
@@ -76,45 +122,336 @@ export default
           title: 'Understanding the Output',
           video: '0RGYaLLZiLE'
         }
-      ]
+      ],
+      var_cost: 0,
+      chart: null,
+      optimal_cost: 0,
+      optimal_value: 0, // either Revenue or Conversions
+      optimum: 0, // either ROI or CPA
+      optimal_result: '', // used by the Legend
+      var_cost: 0,
     };
     return a;
   },
-  methods:
+  mounted: function ()
+  {
+    this.initChart();
+  },
+  watch:
     {
-      start_video(item)
+      'campaign': 'initChart',
+      'type_reg': 'initChart'
+    },
+  filters:
+    {
+      filterNum: function (num)
       {
-        if(!item.clicked) this.$set(item,'clicked',true);
+        if(num==null || isNaN(num)) return 0;
+        return round(num);
       }
-    }
+    },
+  computed:
+    {
+      reg_type: function()
+      {
+        return this.type_reg ? this.type_reg : this.campaign.best_fit;
+      },
+      regression: function()
+      {
+        return this.campaign.regressions[this.reg_type];
+      },
+      text_kind: function ()
+      {
+        return (this.kind==1 ? 'Revenue' : 'Conversions');
+      },
+      optimal_text: function ()
+      {
+        return (this.kind==1 ? 'Max ROI' : 'Min CPA');
+      },
+      max_value: function()
+      {
+        // compute the cost for the max ROI or max CPA - using the predicted values from regression
+        var i, p, cost = 5000, tmp, points = this.regression.points, len = points.length;
+        // if(this.kind==1)
+          for(i=0;i<len;i++)
+          {
+            p = points[i];
+            // tmp = p[1] - p[0];
+            if(p[0] > cost)
+            {
+              cost = p[0];
+            }
+          }
+        // else
+        //   for(i=0;i<len;i++)
+        //   {
+        //     p = points[i];
+        //     if(p[1] > max_v)
+        //     {
+        //       max_v = p[1];
+        //       cost = p[0];
+        //     }
+        //   }
+        cost = Math.min(cost, 10000);
+        return cost;
+        /*
+        var v = 0;
+        // compute the cost for the max ROI or max CPA - by differentiating the regression equation
+        switch(this.reg_type)
+        {
+          case 1: // linear
+            v = Math.max.apply(null,this.campaign.points.map(function(item)
+            {
+              return item[0];
+            }));
+            break;
+          case 2: // exponential
+            v = (this.regression.equation[1] ? 1 / this.regression.equation[1] : 0);
+            break;
+          case 3: // logarithmic
+            v = (this.regression.equation[1] ? Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]) : 0);
+            break;
+          case 4: // polynomial
+            break;
+          case 5: // power
+            v = Math.min.apply(null,this.campaign.points.map(function(item)
+            {
+              return item[0];
+            }));
+            break;
+        }
+        return v;
+        */
+      },
+    },
+    methods:
+      {
+        start_video(item)
+        {
+          if(!item.clicked) this.$set(item,'clicked',true);
+        },
+        projected_value: function (cost)
+        {
+          return Math.min(predict(cost,this.reg_type,this.regression.equation), 10000);
+        },
+        projected_optimal: function (cost)
+        {
+          return this.projected_roi(cost,this.projected_value(cost));
+        },
+        projected_roi: function(cost,revenue)
+        {
+          return (this.kind==1 ? (cost ? 100*(revenue - cost)/cost : 0) : (revenue ? cost / revenue : 0));
+        },
+        optimal_regress: function()
+        {
+          // this.optimal_cost = Math.min(this.max_value, 10000);
+          // this.optimal_value = this.projected_value(this.optimal_cost);
+          // this.optimum = Math.round(100 * this.projected_roi(this.optimal_cost,this.optimal_value))/100;
+          var optimum = 1000000, optimal_cost = 0, tmp;
+          if(this.kind == 1) optimum = 0;
+          for(var v_cost=0; v_cost<=this.max_value ; v_cost+=0.01){
+            tmp = Math.round(100 * this.projected_roi(v_cost,this.projected_value(v_cost))) / 100;
+            if(this.kind == 1){
+              if(optimum < tmp) {
+                optimum = tmp;
+                optimal_cost = v_cost;
+              }
+            } else if(tmp > 0 && optimum > tmp){
+              optimum = tmp;
+              optimal_cost = v_cost;
+            }
+          }
+
+          this.optimum = optimum;
+          this.optimal_cost = optimal_cost;
+          this.optimal_value = this.projected_value(optimal_cost);
+          if(this.kind==1)
+          {
+            // the cost with maximum ROI
+            this.optimal_result = (this.optimum < 0 ? '<span style="color:red">' + this.optimum + '</span>' : this.optimum) + '% (' + this.optimal_cost.toFixed(2) + '/' + this.optimal_value.toFixed(2) + ')';
+          }
+          else
+          {
+            // the cost with minimum CPA
+            this.optimal_result = this.optimum + ' (' + this.optimal_cost.toFixed(2) + '/' + this.optimal_value.toFixed(2) + ')';
+          }
+        },
+        initChart: function ()
+        {
+          this.optimal_regress();
+          var reg_data = this.regression.points.sort(function (a,b)
+          {
+            return a[0] - b[0];
+          }).map(function(item)
+          {
+            if(item[1]<0) item[1] = 0;
+            return item;
+          });
+          if(this.chart!=null) this.chart = null;
+          Highcharts.setOptions(
+            {
+              lang:
+                {
+                  thousandsSep: ''
+                }
+            }
+          );
+          this.chart = Highcharts.chart(
+            {
+              chart:
+              {
+                renderTo: 'graph'+this._uid,
+                type: 'scatter',
+                zoomType: 'xy'
+              },
+              title:
+              {
+                text: 'Regression Cost vs '+this.text_kind
+              },
+              xAxis:
+              {
+                min: 0,
+                ceiling: 10000,
+                title:
+                {
+                  enabled: true,
+                  text: 'Cost'
+                },
+                startOnTick: true,
+                endOnTick: true,
+                showLastLabel: true
+              },
+              yAxis:
+              {
+                title:
+                {
+                  text: this.text_kind
+                }
+              },
+              legend:
+              {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 90,
+                y: 60,
+                floating: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1
+              },
+              plotOptions:
+              {
+                scatter:
+                {
+                  marker:
+                  {
+                    radius: 3,
+                    lineColor: "#0000ff",
+                    states:
+                    {
+                      hover:
+                      {
+                        enabled: true,
+                        lineColor: '#0000ff'
+                      }
+                    }
+                  },
+                  states:
+                  {
+                    hover:
+                    {
+                      marker:
+                      {
+                        enabled: false
+                      }
+                    }
+                  },
+                  tooltip:
+                  {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    pointFormat: '{point.x}, {point.y}'
+                  }
+                },
+                series:
+                  {
+                    animation: false
+                  }
+              },
+              series:
+              [
+                {
+                  name: 'Day (Cost, ' + this.text_kind + ')',
+                  color: 'rgba(223, 83, 83, .5)',
+                  data: this.campaign.points
+                },
+                {
+                  data: reg_data,
+                  color: 'rgba(40, 100, 255, .9)',
+                  lineWidth: 2,
+                  type: 'line',
+                  dashStyle: 'solid',
+                  marker:
+                    {
+                      enabled: false
+                    },
+                  name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '
+                        + round(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+                  showInLegend: false
+                },
+                {
+                  data:
+                  [
+                    [this.optimal_cost,0],
+                    [this.optimal_cost,this.optimal_value * 2]
+                  ],
+                  color: 'rgba(70, 160, 50, .9)',
+                  lineWidth: 3,
+                  type: 'line',
+                  dashStyle: 'solid',
+                  name: this.optimal_text + ' = ' + this.optimal_result,
+                  showInLegend: false
+                }
+              ],
+              credits:
+              {
+                enabled: false
+              }
+            });
+        }
+      }
 }
 
 </script>
 
 <style scoped>
-  .landing
+  .landing_wrapper
   {
-    display: flex;
+    /* display: flex;
     justify-content: center;
     padding: 0 50px;
-    align-items: flex-start;
+    align-items: flex-start; */
   }
 
-  .land_left
+  .land_header
   {
-    flex: 1 1 70%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding: 10px;
+    background: #eee;
+    margin: 30px 10px 0px 10px;
   }
 
-  .land_right
+  .container_left, .container_right
   {
-    flex: 1 1 30%;
-    margin: 10px;
-    text-align: center;
+    flex: 1;
+    padding: 10px 20px;
   }
 
+  .container_right h2
+  {
+    margin: 20px 40px;
+    text-align: center;
+    font-weight: bold;
+  }
   .lang_right_container
   {
     background-color: #eee;
@@ -162,6 +499,13 @@ export default
     width: 100%;
   }
 
+  .text_content, .word_content
+  {
+    margin: 10px;
+    background: #eee;
+    padding: 10px;
+  }
+
   .video_panel
   {
     display: flex;
@@ -184,6 +528,63 @@ export default
     height: 100%;
     background: transparent;
   }
+
+  .slider_panel
+  {
+    text-align: center;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .no_bord
+  {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .create_content
+  {
+    margin-top: 50px;
+  }
+
+  .create_account
+  {
+    background-color: #d7e4cf;
+    color: black;
+    padding: 15px 30px;
+  }
+
+  .sample_optimize
+  {
+    display: flex;
+    background: #eee;
+    margin: 50px 10px;
+    padding: 10px;
+  }
+
+  .sample_optimize div
+  {
+    flex: 1;
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  .sample_optimize div img
+  {
+    width: 300px;
+  }
+
+  .sample_optimize .first_img
+  {
+    margin-top: 53px;
+  }
+
+  .sample_optimize .second_img
+  {
+    margin-top: 96px;
+  }
+
 
   @media screen and (max-width: 420px) {
     .landing
