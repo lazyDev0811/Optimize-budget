@@ -2,7 +2,11 @@
   <div>
     <nav class="campaign_toolbar">
       <button v-if="cur_tab!=1" class="btn_camp" @click="cur_tab=1">Combined data</button>
-      <div v-if="cur_tab==1" class="btn_camp_cur">Combined data</div>
+      <div v-if="cur_tab==1" class="btn_camp_cur">Combined data
+        <div class="center help_sign tooltip-bottom tooltip" data-tooltip="This output combines campaigns and plots them together.  Here you are able to quickly see overall account performance">
+          <img src="~@/img/help.svg"/>
+        </div>
+      </div>
       <button v-if="cur_tab!=2" class="btn_camp" @click="cur_tab=2">Individual campaigns</button>
       <div v-if="cur_tab==2" class="btn_camp_cur">Individual campaigns</div>
       <button v-if="cur_tab!=3" class="btn_camp" @click="cur_tab=3">Optimisation table</button>
