@@ -35,7 +35,7 @@
         <div class="slider_panel">
           <label>See how it works:</label>
           <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord"/>
-          <div class="create_content"><a class="login btn create_account" href="#/signup" @click="func1()">Create a free account</a></div>
+          <div class="create_content"><a class="login btn create_account" href="#/signup">Create a free account</a></div>
         </div>
       </div>
     </div>
