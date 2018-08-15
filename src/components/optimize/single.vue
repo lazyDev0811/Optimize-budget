@@ -11,9 +11,12 @@
               <td align="center">CPA</td>
             </tr>
             <tr>
-              <td align="center"><div class="full_width center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-              Your optimal result for this campaign is:
-              <img src="~@/img/help.svg"/>
+              <td align="center">
+                <div class="full_width">
+                  Your optimal result for this campaign is:
+                  <div class="help_sign tooltip-bottom tooltip" data-tooltip="The solver has found the optimal daily spend to achieve max ROI or min CP">
+                    <img src="~@/img/help.svg"/>
+                  </div>
                 </div>
               </td>
               <td align="center"><div class="const_field">{{ optimal_cost | filterNum }}</div></td>
@@ -24,7 +27,7 @@
                 C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7
                 C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"/>
                 </svg>
-                </button><div class="full_width center help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+                </button><div class="full_width center help_sign tooltip-bottom" data-tooltip="Recalculate data from the lowest observed cost on reg. line for more realistic results">
                 <img style="padding-top: 6px;" src="~@/img/help.svg"/>
                 </div></div>
               </td>
@@ -37,9 +40,12 @@
               </td>
             </tr>
             <tr>
-              <td align="center"><div class="center full_width help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-                Calculate your projected &nbsp;<strong>{{ optimal_text }}</strong>&nbsp; at different cost:
-                <img src="~@/img/help.svg"/>
+              <td align="center">
+                <div class="center full_width">
+                  Calculate your projected &nbsp;<strong>{{ optimal_text }}</strong>&nbsp; at different cost:
+                  <div class="help_sign tooltip-bottom tooltip" data-tooltip="Calculate ROI or CPA at different spends by moving the slider or input a certain cost.  View results also on the graph">
+                    <img src="~@/img/help.svg"/>
+                  </div>
                 </div>
               </td>
               <td align="center"><input type="number" class="num_field" v-model="var_cost" onClick="this.select()"/></td>
@@ -64,15 +70,16 @@
         </div>
     </div>
     <div class="graphs">
-
       <div class="op_graph">
-          <div class="op_title help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-            <h2 class="op_header" :title="campaign.title" >{{ campaign.title }}<img src="~@/img/help.svg"/></h2>
+          <div class="op_title">
+            <h2 class="op_header" :title="campaign.title" >{{ campaign.title }}</h2>
           </div>
           <div :id="'graph'+_uid" class="graph_panel"></div>
-          <div class="top_space help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+          <div class="top_space">
             Regression formula: <strong class="code">{{ regression.string }}</strong>
-            <img src="~@/img/help.svg"/>
+            <div class="help_sign tooltip-bottom tooltip" data-tooltip="The regression formula is generated from the selected model.  This function is graphed above">
+              <img src="~@/img/help.svg"/>
+            </div>
           </div>
           <div class="top_space">
             Confidence of regression: <span :class="{r_low: regression.r2 < 0.1}"><strong class="code">R<span class="super">2</span> = {{ regression.r2 | filterNum }}</strong></span>&nbsp; ({{ campaign.points.length }} pts)
@@ -83,13 +90,12 @@
       </div>
 
       <div class="op_graph second_graph">
-          <div class="op_title help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
-            <h2 class="op_header" :title="campaign.title" >{{ campaign.title }}<img src="~@/img/help.svg"/></h2>
-          </div>
           <div :id="'graph1'+_uid" class="graph_panel"></div>
-          <div class="top_space help_sign tooltip-bottom" data-tooltip="Note the question marks, when hovered over these should display informational text. I will provide you with this text separately.">
+          <div class="top_space">
             CPA: <strong class="code">{{ regression.string1 }}</strong>
-            <img src="~@/img/help.svg"/>
+            <div class="help_sign tooltip-bottom tooltip" data-tooltip="The graph above is a plot of this function, it helps you visualise optimal solutions">
+              <img src="~@/img/help.svg"/>
+            </div>
           </div>
           <div class="top_space">
             Based on: <strong class="code">{{ reg_names[type_reg ? type_reg : campaign.best_fit] }}</strong> regression
@@ -953,8 +959,6 @@ export default
     display: block;
     margin: 10px;
     padding: 20px;
-    min-width: 400px;
-    justify-content: space-around;
   }
 
   .op_graph{
@@ -966,7 +970,12 @@ export default
 
   .second_graph
   {
-    padding-bottom: 60px;
+    padding-bottom: 42px;
+  }
+
+  .second_graph .graph_panel
+  {
+    margin-top: 72px;
   }
 
   .op_detail{
@@ -984,12 +993,17 @@ export default
     background-color: #eee;
   }
 
-  .op_header
+  .op_title
   {
     background-color: #259AD6;
+    display: flex;
+    align-items: center;
+  }
+
+  .op_header
+  {
     color: white;
     padding: 4px 10px 0;
-    margin-top: 0;
     max-height: 2em;
     overflow: hidden;
     display: flex;
@@ -1056,6 +1070,11 @@ export default
     display: inline-block;
     margin-left: 6px;
     width: 20px;
+  }
+
+  .highcharts-container
+  {
+    width: 100% !important;
   }
 
   @media screen and (max-width:1024px)
