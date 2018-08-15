@@ -5,6 +5,7 @@ import signupForm from './components/login/signup_form'
 import resetForm from './components/login/reset_form'
 import resetPass from './components/login/password_reset'
 import landing from './components/landing'
+import feature from './components/landing'
 import myProfile from './components/account/my_profile'
 import dataImport from './components/import/import'
 import campaignList from './components/campaign/list'
@@ -63,6 +64,14 @@ export default new Router({
       meta:
         {
           title: 'Password Reset'
+        }
+    },
+    {
+      path: '/feature',
+      component: feature,
+      meta:
+        {
+          title: 'Video'
         }
     },
     {
