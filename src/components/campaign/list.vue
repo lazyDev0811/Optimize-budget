@@ -39,9 +39,9 @@
                     <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
                     {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
                   </div>
-                  <i class="fa fa-remove cus_remove" @click="removeElement($event)"></i>
+                  <i class="fa fa-remove cus_remove" @click="removeElement($event, grp)"></i>
                 </div>
-                <ul class="no_list camp_group" v-if="grp.collapsed">
+                <ul v-bind:id="grp.id + 'list'" class="no_list camp_group" v-if="grp.collapsed">
                   <li v-for="item in sortedROI(grp)">
                     <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
                     <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
@@ -59,9 +59,9 @@
                     <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
                     {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
                   </div>
-                  <i class="fa fa-remove cus_remove" @click="removeElement($event)"></i>
+                  <i class="fa fa-remove cus_remove" @click="removeElement($event, grp)"></i>
                 </div>
-                <ul class="no_list camp_group" v-if="grp.collapsed">
+                <ul v-bind:id="grp.id" class="no_list camp_group" v-if="grp.collapsed">
                   <li v-for="item in sortedCPA(grp)">
                     <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
                     <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
@@ -408,9 +408,12 @@ export default
         return d.toISOString().substr(0,10);
       }
       */
-      removeElement: function(event)
+      removeElement: function(event, grp)
       {
         event.target.parentElement.setAttribute('style', 'display: none');
+        if (grp.collapsed) {
+          document.getElementById(grp.id + 'list').setAttribute('style', 'display: none');
+        }
       },
 
       toggleNav: function(event) {
