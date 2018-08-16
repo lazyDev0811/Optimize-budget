@@ -262,7 +262,7 @@ export default
   {
     display: flex;
     justify-content: center;
-    margin-bottom: 6px;
+    margin: 0 10px;
   }
 
   .btn_camp,
@@ -272,20 +272,24 @@ export default
     border-style: solid;
     border-radius: 0;
     padding: 0.25rem 1rem 0.5rem;
-    margin: 0 8px;
+    flex: 1;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    outline: none;
   }
 
   .btn_camp_cur
   {
-    background-color: #FFC000;
-    border-color: #BC8C00;
+    background-color: #259AD6;
+    border-color: transparent;
+    color: white;
   }
 
   .btn_camp
   {
-    background-color: #ED7D31;
-    border-color: #AE5A21;
-    color: white;
+    background-color: #eee;
+    border-color: #555;
+    color: black;
   }
 
   .campaign_list

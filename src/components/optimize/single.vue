@@ -1016,8 +1016,9 @@ export default
   {
     text-align: -webkit-center;
     display: block;
-    margin: 10px;
+    margin: 0px 10px;
     padding: 20px;
+    background: #CFE2F3;
   }
 
   .op_graph{
