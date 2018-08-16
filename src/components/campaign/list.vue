@@ -5,14 +5,14 @@
       <div class="campaign_left" :class="{ active: active}">
         <div class="sidebar_tap_wrapper">
           <div class="roi_content" >
-            <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1"/>
+            <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
             <label for="roi_optimial">ROI</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
               <img src="~@/img/help.svg"/>
             </span>
           </div>
           <div class="cpa_content">
-            <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0"/>
+            <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
             <label for="cpa_optimial">CPA</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
               <img src="~@/img/help.svg"/>
@@ -323,7 +323,16 @@ export default
       doOptimal: function (list)
       {
         this.valid_msg = '';
-        if(!list.length) this.valid_msg = 'Please select at least 1 campaign';
+        if(!list.length) {
+          this.valid_msg = 'Please select at least 1 campaign';
+          this.total_spent = 0;
+          this.avg_spent = 0;
+          this.total_revenue = 0;
+          this.avg_revenue = 0;
+          this.total_roi = 0;
+          this.avg_roi = 0;
+
+        }
         else if(!(this.$root.info && this.$root.info.confirmed)) this.valid_msg = '<b>Forbidden</b><br/>Confirm your e-mail first<br/>or <a href="#/profile" class="link">re-issue</a> another activation';
         else {
           this.kind_regress = 0;
