@@ -272,7 +272,6 @@ export default
       sortedROI: function (grp)
       {
         // slice is needed to prevent infinite render loop
-        console.log("@@@@", this.campaign_roi[grp.id].slice())
         return (
           this.campaign_roi[grp.id].slice().sort(function (a,b)
           {

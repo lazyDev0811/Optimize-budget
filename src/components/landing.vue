@@ -3,30 +3,17 @@
     <div class="land_header">
       <div class="container_left">
         <div :id="'graph'+_uid" class="graph_panel"></div>
-        <div class="center">
-          <div class="confident">
-            Regression formula: <strong class="code">Y = 4766.53 * Ln(X) -29535.3</strong>
-            <br/>
-            Confidence of regression: <span class=""><strong class="code">R<span class="super">2</span> = 0.44</strong></span>
-            <hr size="2" width="100%" color="#70AD47">
-          </div>
-        </div>
-        <div class="center">Your optimal result for this campaign is:</div>
+
         <table align="center">
-          <tr>
+         <tr>
             <td align="right">Cost/day</td>
-            <td>&nbsp;</td>
-            <td align="center"><div class="const_field">1334.61</div></td>
-          </tr>
-          <tr>
             <td align="right">Revenue</td>
-            <td>&nbsp;</td>
-            <td align="center"><div class="const_field">4766.53</div></td>
+            <td align="right">Max ROI</td>
           </tr>
           <tr>
-            <td align="right">Max ROI</td>
-            <td>&nbsp;</td>
-            <td align="center"><div class="const_field">257.15%</div></td>
+            <td align="center"><div class="const_field">{{ optimal_cost | filterNum }}</div></td>
+            <td align="center"><div class="const_field">{{ optimal_value | filterNum }}</div></td>
+            <td align="center"><div class="const_field">{{ optimum | filterNum }}{{ kind==1 ? '%' : '' }}</div></td>
           </tr>
         </table>
       </div>
@@ -34,8 +21,8 @@
         <h2>Optimize Budget allocation, forecast performance & predict results with Machine Learning</h2>
         <div class="slider_panel">
           <label>See how it works:</label>
-          <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord"/>
-          <div class="create_content"><a class="login btn create_account" href="#/signup">Create a free account</a></div>
+          <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord" v-on:input="setPoint()"/>
+          <div class="create_content"><a class="login btn create_account" href="#/signup" @click="func1()">Create a free account</a></div>
         </div>
       </div>
     </div>
@@ -77,6 +64,12 @@
 </template>
 
 <script>
+import Highcharts from 'highcharts'
+import { round } from '@/tool/util'
+import AJAX from '@/tool/ajax'
+import { predict } from '@/lib/regression'
+import CalcWorker from '@/calc.worker.js'
+require('@/css/tooltip.css');
 require('@/css/range.scss');
 
 export default
@@ -101,15 +94,459 @@ export default
         }
       ],
       var_cost: 0,
+      combined: null,
+      individual: [],
+      optimal_cost: 0,
+      optimal_value: 0, // either Revenue or Conversions
+      optimum: 0,
+      kind: 1,
+      defaultList: 0,
+      worker: new CalcWorker()
     };
     return a;
   },
+  created: function()
+  {
+    // Setup an event listener that will handle messages received from the worker.
+    this.worker.addEventListener('message', this.worker_ready, false);
+  },
+  beforeDestroy: function()
+  {
+    this.worker.terminate();
+  },
+  mounted: function ()
+  {
+    this.defaultData();
+  },
+  computed: {
+    max_value: function()
+    {
+      // compute the cost for the max ROI or max CPA - using the predicted values from regression
+      var i, p, cost = 5000, tmp, points = this.combined.regressions[3].points, len = points.length;
+        for(i=0;i<len;i++)
+        {
+          p = points[i];
+          if(p[0] > cost)
+          {
+            cost = p[0];
+          }
+        }
+      cost = Math.min(cost, 10000);
+      return cost;
+    }
+  },
+  filters:
+  {
+    filterNum: function (num)
+    {
+      if(num==null || isNaN(num)) return 0;
+      return round(num);
+    }
+  },
   methods:
     {
+      setPoint: function()
+      {
+        this.optimal_cost=this.var_cost;
+        this.optimal_value=this.projected_value(this.optimal_cost);
+        this.optimum=this.projected_roi(this.optimal_cost, this.optimal_value);
+        var reg_data = this.combined.regressions[3].points.sort(function (a,b)
+        {
+          return a[0] - b[0];
+        }).map(function(item)
+        {
+          if(item[1]<0) item[1] = 0;
+          return item;
+        });
+
+        if(this.chart!=null) this.chart = null;
+        Highcharts.setOptions(
+          {
+            lang:
+              {
+                thousandsSep: ''
+              }
+          }
+        );
+        this.chart = Highcharts.chart(
+          {
+            chart:
+            {
+              renderTo: 'graph'+this._uid,
+              type: 'scatter',
+              zoomType: 'xy'
+            },
+            title:
+            {
+              text: 'Regression Cost'
+            },
+            xAxis:
+            {
+              min: 0,
+              ceiling: 10000,
+              title:
+              {
+                enabled: true,
+                text: 'Cost'
+              },
+              startOnTick: true,
+              endOnTick: true,
+              showLastLabel: true
+            },
+            yAxis:
+            {
+              title:
+              {
+                text: 'Revenue'
+              }
+            },
+            legend:
+            {
+              layout: 'vertical',
+              align: 'left',
+              verticalAlign: 'top',
+              x: 90,
+              y: 60,
+              floating: true,
+              backgroundColor: '#FFFFFF',
+              borderWidth: 1
+            },
+            plotOptions:
+            {
+              scatter:
+              {
+                marker:
+                {
+                  radius: 3,
+                  lineColor: "#0000ff",
+                  states:
+                  {
+                    hover:
+                    {
+                      enabled: true,
+                      lineColor: '#0000ff'
+                    }
+                  }
+                },
+                states:
+                {
+                  hover:
+                  {
+                    marker:
+                    {
+                      enabled: false
+                    }
+                  }
+                },
+                tooltip:
+                {
+                  headerFormat: '<b>{series.name}</b><br>',
+                  pointFormat: '{point.x}, {point.y}'
+                }
+              },
+              series:
+                {
+                  animation: false
+                }
+            },
+            series:
+            [
+              {
+                name: 'State',
+                color: "blue",
+                data: [[this.var_cost*Math.abs(-1), this.projected_value(this.var_cost)]]
+              },
+                            {
+                name: 'Day (Cost, ' + this.text_kind + ')',
+                color: 'rgba(223, 83, 83, .5)',
+                data: this.combined.points
+              },
+              {
+                data: reg_data,
+                color: 'rgba(40, 100, 255, .9)',
+                lineWidth: 2,
+                type: 'line',
+                dashStyle: 'solid',
+                marker:
+                  {
+                    enabled: false
+                  },
+                showInLegend: false
+              },
+              {
+                data:
+                [
+                  [this.optimal_cost,0],
+                  [this.optimal_cost,this.optimal_value * 2]
+                ],
+                color: 'rgba(70, 160, 50, .9)',
+                lineWidth: 3,
+                type: 'line',
+                dashStyle: 'solid',
+                name: this.optimal_text + ' = ' + this.optimal_result,
+                showInLegend: false
+              }
+            ],
+            credits:
+            {
+              enabled: false
+            }
+          });
+      },
       start_video(item)
       {
         if(!item.clicked) this.$set(item,'clicked',true);
       },
+      projected_value: function (cost)
+      {
+        return Math.min(predict(cost,3,this.combined.regressions[3].equation), 10000);
+      },
+      projected_roi: function(cost,revenue)
+      {
+        return (this.kind==1 ? (cost ? 100*(revenue - cost)/cost : 0) : (revenue ? cost / revenue : 0));
+      },
+      recalc: function(step)
+      {
+        this.solved = false;
+        this.worker.postMessage(
+          {
+            cmd: 1,
+            param: this.combined,
+            regression: 3
+          });
+      },
+      worker_ready: function (e)
+      {
+        switch(e.data.cmd)
+        {
+          case 1: // regression of combined data
+            this.combined = e.data.param;
+            this.initChart();
+            break;
+        }
+      },
+      optimal_regress: function()
+      {
+        var optimum = 1000000, optimal_cost = 0, tmp;
+        if(this.kind == 1) optimum = 0;
+        for(var v_cost=0; v_cost<=this.max_value ; v_cost+=0.01){
+          tmp = Math.round(100 * this.projected_roi(v_cost,this.projected_value(v_cost))) / 100;
+          if(this.kind == 1){
+            if(optimum < tmp) {
+              optimum = tmp;
+              optimal_cost = v_cost;
+            }
+          } else if(tmp > 0 && optimum > tmp){
+            optimum = tmp;
+            optimal_cost = v_cost;
+          }
+        }
+
+        this.optimum = optimum;
+        this.optimal_cost = optimal_cost;
+        this.optimal_value = this.projected_value(optimal_cost);
+        if(this.kind==1)
+        {
+          // the cost with maximum ROI
+          this.optimal_result = (this.optimum < 0 ? '<span style="color:red">' + this.optimum + '</span>' : this.optimum) + '% (' + this.optimal_cost.toFixed(2) + '/' + this.optimal_value.toFixed(2) + ')';
+        }
+        else
+        {
+          // the cost with minimum CPA
+          this.optimal_result = this.optimum + ' (' + this.optimal_cost.toFixed(2) + '/' + this.optimal_value.toFixed(2) + ')';
+        }
+      },
+      defaultData: function()
+      {
+        AJAX.ajax_get(this,"api/campaign/default.php", this.getResult,
+          function(stat,resp)
+          {
+
+          }
+        );
+      },
+
+      getResult(resp)
+      {
+        this.defaultList = resp.id;
+        this.init_Data();
+        // console.log("default",this.defaultList);
+      },
+
+      init_Data: function ()
+      {
+
+        console.log("HHHH",this.defaultList);
+        AJAX.ajax_post(this,"api/campaign/load.php",
+          function(resp)
+          {
+            if(isArray(resp) && resp.length)
+            {
+              if(resp.length>1) this.combined = resp.shift();
+                else this.combined = resp[0];
+              this.individual = resp;
+              this.recalc();
+            }
+            else
+            {
+              this.combined = null;
+              this.individual = [];
+            }
+
+          },
+          function(stat,resp)
+          {
+            this.$emit('error',resp);
+          },
+          JSON.stringify(
+            {
+              list: this.defaultList
+            }
+          )
+        );
+      },
+
+      initChart: function ()
+      {
+        this.optimal_regress();
+        var reg_data = this.combined.regressions[3].points.sort(function (a,b)
+        {
+          return a[0] - b[0];
+        }).map(function(item)
+        {
+          if(item[1]<0) item[1] = 0;
+          return item;
+        });
+
+        if(this.chart!=null) this.chart = null;
+        Highcharts.setOptions(
+          {
+            lang:
+              {
+                thousandsSep: ''
+              }
+          }
+        );
+        this.chart = Highcharts.chart(
+          {
+            chart:
+            {
+              renderTo: 'graph'+this._uid,
+              type: 'scatter',
+              zoomType: 'xy'
+            },
+            title:
+            {
+              text: 'Regression Cost'
+            },
+            xAxis:
+            {
+              min: 0,
+              ceiling: 10000,
+              title:
+              {
+                enabled: true,
+                text: 'Cost'
+              },
+              startOnTick: true,
+              endOnTick: true,
+              showLastLabel: true
+            },
+            yAxis:
+            {
+              title:
+              {
+                text: this.text_kind
+              }
+            },
+            legend:
+            {
+              layout: 'vertical',
+              align: 'left',
+              verticalAlign: 'top',
+              x: 90,
+              y: 60,
+              floating: true,
+              backgroundColor: '#FFFFFF',
+              borderWidth: 1
+            },
+            plotOptions:
+            {
+              scatter:
+              {
+                marker:
+                {
+                  radius: 3,
+                  lineColor: "#0000ff",
+                  states:
+                  {
+                    hover:
+                    {
+                      enabled: true,
+                      lineColor: '#0000ff'
+                    }
+                  }
+                },
+                states:
+                {
+                  hover:
+                  {
+                    marker:
+                    {
+                      enabled: false
+                    }
+                  }
+                },
+                tooltip:
+                {
+                  headerFormat: '<b>{series.name}</b><br>',
+                  pointFormat: '{point.x}, {point.y}'
+                }
+              },
+              series:
+                {
+                  animation: false
+                }
+            },
+            series:
+            [
+              {
+                name: 'Day (Cost, ' + this.text_kind + ')',
+                color: 'rgba(223, 83, 83, .5)',
+                data: this.combined.points
+              },
+              {
+                data: reg_data,
+                color: 'rgba(40, 100, 255, .9)',
+                lineWidth: 2,
+                type: 'line',
+                dashStyle: 'solid',
+                marker:
+                  {
+                    enabled: false
+                  },
+                showInLegend: false
+              },
+              {
+                data:
+                [
+                  [this.optimal_cost,0],
+                  [this.optimal_cost,this.optimal_value * 2]
+                ],
+                color: 'rgba(70, 160, 50, .9)',
+                lineWidth: 3,
+                type: 'line',
+                dashStyle: 'solid',
+                name: this.optimal_text + ' = ' + this.optimal_result,
+                showInLegend: false
+              }
+            ],
+            credits:
+            {
+              enabled: false
+            }
+          });
+      }
     }
 }
 
