@@ -669,9 +669,68 @@ export default
           this.optimal_result = this.optimum + ' (' + this.optimal_cost.toFixed(2) + '/' + this.optimal_value.toFixed(2) + ')';
         }
       },
+      connectPlot: function(x = 0, y = 0){
+        var init_x = x, init_y = y, length = this.regression.points.length;
+        var plot;
+
+        if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Linear"){
+          init_y = this.regression.equation[0] * init_x + this.regression.equation[1];
+          if(init_y < 0){
+            init_x = -(this.regression.equation[1]/this.regression.equation[0])
+            init_y = 0;
+          }
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Exponential"){
+          init_y = this.regression.equation[0] * Math.exp(this.regression.equation[1] * init_x);
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Logarithmic"){
+          if(init_x == 0){
+            init_x = Math.pow(Math.E,-(this.regression.equation[0]/this.regression.equation[1]));
+          }else{
+            init_y = this.regression.equation[0] + (this.regression.equation[1] * Math.log(init_x));
+          }
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Polynomial"){
+          if(init_x == 0){
+            init_y = this.regression.equation[this.regression.equation.length - 1];
+            if(init_y < 0){
+              if(this.regression.equation.length == 2){
+                init_x = -(this.regression.equation[1]/this.regression.equation[0])
+                init_y = 0;
+              }else if(this.regression.equation.length == 3){
+
+                init_x = ((-this.regression.equation[1]) + Math.sqrt(this.regression.equation[0] * this.regression.equation[0] - (4 * this.regression.equation[0] * this.regression.equation[2]))) / (2 * this.regression.equation[0]);
+                var init_x2 = ((-this.regression.equation[1]) - Math.sqrt(this.regression.equation[0] * this.regression.equation[0] - (4 * this.regression.equation[0] * this.regression.equation[2]))) / (2 * this.regression.equation[0]);
+                init_y = 0;
+
+                if(init_x > 0 && init_x2 > 0){
+                  this.regression.points[length+1] = [init_x2, init_y];
+                }else if(init_x2 > 0 && init_x < 0){
+                  init_x = init_x2;
+                }
+              }
+            }
+          }else{
+
+          }
+
+        }
+        else if(this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Power"){
+          if(init_x == 0){
+            init_y = init_x = 0;
+          }else{
+            init_y = this.regression.equation[0] * (init_x ** this.regression.equation[1]);
+          }
+        }
+
+        plot = [init_x, init_y];
+        return plot;
+      },
       initChart: function ()
       {
         this.optimal_regress();
+        var init_plot = this.connectPlot();
+        this.regression.points[length] = init_plot;
         var reg_data = this.regression.points.sort(function (a,b)
         {
           return a[0] - b[0];
