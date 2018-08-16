@@ -200,13 +200,13 @@ module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGlu
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(60)
+  __webpack_require__(64)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(36),
+  __webpack_require__(40),
   /* template */
-  __webpack_require__(101),
+  __webpack_require__(108),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -477,6 +477,8 @@ function jsonCookieValue(a, def) {
 "use strict";
 /* unused harmony export DEFAULT_OPTIONS */
 /* harmony export (immutable) */ __webpack_exports__["a"] = predict;
+
+
 const DEFAULT_OPTIONS = { order: 2, precision: 2, period: null };
 
 /**
@@ -608,12 +610,18 @@ function round(number, precision) {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / (gradient * x + intercept), DEFAULT_OPTIONS.precision)];
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [gradient, intercept],
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
-      string: intercept === 0 ? `Y = ${gradient} * X` : `Y = ${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept}`
+      string: intercept === 0 ? `Y = ${gradient} * X` : `Y = ${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept}`,
+      string1: intercept === 0 ? `Y = X / ${gradient} * X` : `Y = X / (${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept})`
     };
   },
 
@@ -640,11 +648,17 @@ function round(number, precision) {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / (coeffA * Math.exp(coeffB * x)), DEFAULT_OPTIONS.precision)];
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * Exp(${coeffB} * X)`,
+      string1: `Y = X / (${coeffA} * Exp(${coeffB} * X))`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -670,11 +684,17 @@ function round(number, precision) {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(round(x / (coeffA + coeffB * Math.log(x)), DEFAULT_OPTIONS.precision), DEFAULT_OPTIONS.precision)];
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [coeffA, coeffB],
       string: `Y = ${coeffB} * Ln(X)` + (coeffA < 0 ? ' ' : ' + ') + `${coeffA}`,
+      string1: `Y = X / (${coeffB} * Ln(X)` + (coeffA < 0 ? ' ' : ' + ') + `${coeffA})`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -701,11 +721,17 @@ function round(number, precision) {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(round(x / (coeffA * x ** coeffB), DEFAULT_OPTIONS.precision), DEFAULT_OPTIONS.precision)];
+
+    const points1 = data.map(point => predict1(point[0]));
+
     return {
       points,
       predict,
+      points1,
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * X ^ ${coeffB}`,
+      string1: `Y = X / (${coeffA} * X ^ ${coeffB})`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -748,6 +774,10 @@ function round(number, precision) {
 
     const points = data.map(point => predict(point[0]));
 
+    const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / coefficients.reduce((sum, coeff, power) => sum + coeff * x ** power, 0), DEFAULT_OPTIONS.precision)];
+
+    const points1 = data.map(point => predict1(point[0]));
+
     let string = 'Y = ';
     for (let i = coefficients.length - 1; i >= 0; i--) {
       if (i > 1) {
@@ -759,10 +789,23 @@ function round(number, precision) {
       }
     }
 
+    let string1 = 'Y = X / (';
+    for (let i = coefficients.length - 1; i >= 0; i--) {
+      if (i > 1) {
+        string1 += `${coefficients[i]} * X ^ ${i} + `;
+      } else if (i === 1) {
+        string1 += `${coefficients[i]} * X + `;
+      } else {
+        string1 += coefficients[i] + ')';
+      }
+    }
+
     return {
       string,
+      string1,
       points,
       predict,
+      points1,
       equation: [...coefficients].reverse(),
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
@@ -838,53 +881,36 @@ function predict(cost, reg_kind, reg_coef) {
 /* 19 */
 /***/ (function(module, exports) {
 
-module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSI1MSAxNDEgNTEwIDUxMCI+DQogIDxwYXRoIGZpbGw9IiNERjdGN0YiIGQ9Ik0zMDYsMTQxQzE2NS43NSwxNDEsNTEsMjU1Ljc1LDUxLDM5NnMxMTQuNzUsMjU1LDI1NSwyNTVzMjU1LTExNC43NSwyNTUtMjU1UzQ0Ni4yNSwxNDEsMzA2LDE0MXoiLz4NCiAgPHBvbHlnb24gZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSI0MzAuOTQ5LDQ4NS4yNSAzOTUuMjUsNTIwLjk1IDMwNiw0MzEuNyAyMTYuNzUsNTIwLjk1IDE4MS4wNSw0ODUuMjUgMjcwLjMsMzk2IDE4MS4wNSwzMDYuNzUgDQoJICAyMTYuNzUsMjcxLjA1IDMwNiwzNjAuMyAzOTUuMjUsMjcxLjA1IDQzMC45NDksMzA2Ljc1IDM0MS42OTksMzk2ICIvPg0KPC9zdmc+DQo="
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 20 */
 /***/ (function(module, exports) {
 
-module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+DQogIDxjaXJjbGUgZmlsbD0iIzVDRDA1MyIgY3g9IjY0IiBjeT0iNjQiIHI9IjY0Ii8+DQogIDxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik01NC4zLDk3LjJMMjQuOCw2Ny43Yy0wLjQtMC40LTAuNC0xLDAtMS40bDguNS04LjVjMC40LTAuNCwxLTAuNCwxLjQsMEw1NSw3OC4xbDM4LjItMzguMg0KICAgIGMwLjQtMC40LDEtMC40LDEuNCwwbDguNSw4LjVjMC40LDAuNCwwLjQsMSwwLDEuNEw1NS43LDk3LjJDNTUuMyw5Ny42LDU0LjcsOTcuNiw1NC4zLDk3LjJ6Ii8+DQo8L3N2Zz4NCg=="
+module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSI1MSAxNDEgNTEwIDUxMCI+DQogIDxwYXRoIGZpbGw9IiNERjdGN0YiIGQ9Ik0zMDYsMTQxQzE2NS43NSwxNDEsNTEsMjU1Ljc1LDUxLDM5NnMxMTQuNzUsMjU1LDI1NSwyNTVzMjU1LTExNC43NSwyNTUtMjU1UzQ0Ni4yNSwxNDEsMzA2LDE0MXoiLz4NCiAgPHBvbHlnb24gZmlsbD0iI0ZGRkZGRiIgcG9pbnRzPSI0MzAuOTQ5LDQ4NS4yNSAzOTUuMjUsNTIwLjk1IDMwNiw0MzEuNyAyMTYuNzUsNTIwLjk1IDE4MS4wNSw0ODUuMjUgMjcwLjMsMzk2IDE4MS4wNSwzMDYuNzUgDQoJICAyMTYuNzUsMjcxLjA1IDMwNiwzNjAuMyAzOTUuMjUsMjcxLjA1IDQzMC45NDksMzA2Ljc1IDM0MS42OTksMzk2ICIvPg0KPC9zdmc+DQo="
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(61)
-}
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(44),
-  /* template */
-  __webpack_require__(103),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
+module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+DQogIDxjaXJjbGUgZmlsbD0iIzVDRDA1MyIgY3g9IjY0IiBjeT0iNjQiIHI9IjY0Ii8+DQogIDxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik01NC4zLDk3LjJMMjQuOCw2Ny43Yy0wLjQtMC40LTAuNC0xLDAtMS40bDguNS04LjVjMC40LTAuNCwxLTAuNCwxLjQsMEw1NSw3OC4xbDM4LjItMzguMg0KICAgIGMwLjQtMC40LDEtMC40LDEuNCwwbDguNSw4LjVjMC40LDAuNCwwLjQsMSwwLDEuNEw1NS43LDk3LjJDNTUuMyw5Ny42LDU0LjcsOTcuNiw1NC4zLDk3LjJ6Ii8+DQo8L3N2Zz4NCg=="
 
 /***/ }),
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(55)
+  __webpack_require__(67)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(45),
+  __webpack_require__(42),
   /* template */
-  __webpack_require__(90),
+  __webpack_require__(113),
   /* styles */
   injectStyle,
   /* scopeId */
-  null,
+  "data-v-5bac2ca1",
   /* moduleIdentifier (server only) */
   null
 )
@@ -897,13 +923,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(62)
+  __webpack_require__(65)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(47),
+  __webpack_require__(48),
   /* template */
-  __webpack_require__(104),
+  __webpack_require__(110),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -917,47 +943,97 @@ module.exports = Component.exports
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function injectStyle (ssrContext) {
+  __webpack_require__(58)
+}
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(49),
+  /* template */
+  __webpack_require__(95),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function injectStyle (ssrContext) {
+  __webpack_require__(66)
+}
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(51),
+  /* template */
+  __webpack_require__(111),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_router__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_bad_route__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_login_login_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__ = __webpack_require__(90);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__ = __webpack_require__(88);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_landing__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_landing__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_landing___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__components_landing__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__ = __webpack_require__(78);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__components_import_import__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__components_campaign_list__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support__ = __webpack_require__(94);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11__components_support_support__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact__ = __webpack_require__(93);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_12__components_support_contact__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13__components_admin_stats__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy__ = __webpack_require__(87);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15__components_privacy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events__ = __webpack_require__(74);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_17__components_admin_events__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__tool_cook__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_19__components_about__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__tool_cook__ = __webpack_require__(10);
+
+
 
 
 
@@ -1011,6 +1087,12 @@ module.exports = Component.exports
     component: __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset___default.a,
     meta: {
       title: 'Password Reset'
+    }
+  }, {
+    path: '/feature',
+    component: __WEBPACK_IMPORTED_MODULE_6__components_landing___default.a,
+    meta: {
+      title: 'Video'
     }
   }, {
     path: '/contact',
@@ -1092,6 +1174,12 @@ module.exports = Component.exports
       title: 'Paid subscription'
     }
   }, {
+    path: '/about',
+    component: __WEBPACK_IMPORTED_MODULE_19__components_about___default.a,
+    meta: {
+      title: 'ABOUT'
+    }
+  }, {
     path: '*', // should be last, otherwise matches everything
     component: __WEBPACK_IMPORTED_MODULE_1__components_bad_route___default.a,
     meta: {
@@ -1101,17 +1189,17 @@ module.exports = Component.exports
 }));
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(59)
+  __webpack_require__(63)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(26),
+  __webpack_require__(30),
   /* template */
-  __webpack_require__(100),
+  __webpack_require__(106),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -1124,11 +1212,139 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 26 */
+/* 28 */,
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "Collapse",
+
+  data() {
+    return {
+      active: false
+    };
+  },
+
+  props: {
+    selected: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
+
+  created() {
+    this._isCollapseItem = true;
+    this.active = this.selected;
+  },
+  ready() {
+    if (this.active) {
+      this.$emit('collapse-open', this.index);
+    }
+  },
+  methods: {
+    toggle() {
+      this.active = !this.active;
+      if (this.active) {
+        this.$emit('collapse-open', this.index);
+      }
+    }
+  }
+});
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1166,11 +1382,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     rt: function () {
       return this.$router;
     }
+  },
+  methods: {
+    myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "mainmenu") {
+        x.className += " responsive";
+        // console.log(x.className);
+      } else {
+        x.className = "mainmenu";
+        // console.log(x.className);
+      }
+    },
+    func1() {
+      // console.log('aaa');
+      var x = document.getElementById("myTopnav");
+      x.className = "mainmenu";
+    }
+
   }
 });
 
 /***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1303,7 +1537,7 @@ __webpack_require__(9);
 });
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1427,7 +1661,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1507,7 +1741,7 @@ __webpack_require__(12);
 });
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1575,7 +1809,7 @@ __webpack_require__(9);
 });
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1825,7 +2059,7 @@ __webpack_require__(9);
 });
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1834,6 +2068,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_err_panel__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tool_util__ = __webpack_require__(4);
+//
+//
 //
 //
 //
@@ -1930,7 +2166,7 @@ __webpack_require__(9);
 });
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1944,7 +2180,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1952,9 +2188,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_err_panel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__ = __webpack_require__(85);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tool_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse__ = __webpack_require__(74);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_vue_collapse__);
 //
 //
 //
@@ -2076,6 +2314,51 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -2087,10 +2370,13 @@ __webpack_require__(13);
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     'err-panel': __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default.a,
-    'optimizer': __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs___default.a
+    'optimizer': __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs___default.a,
+    Collapse: __WEBPACK_IMPORTED_MODULE_4_vue_collapse___default.a
   },
   data: function () {
     var a = {
+      active: true,
+      search: '',
       is_warn: false,
       warn_text: '',
       unpaid: false,
@@ -2123,6 +2409,13 @@ __webpack_require__(13);
     };
     return a;
   },
+
+  mounted: function () {
+    this.$parent.$on('toggleNav', () => {
+      this.active = !this.active;
+    });
+  },
+
   created: function () {
     this.fetchData();
   },
@@ -2143,18 +2436,24 @@ __webpack_require__(13);
         return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__tool_util__["a" /* strCompare */])(a.title, b.title);
       });
     }
+
   },
   methods: {
     sortedROI: function (grp) {
       // slice is needed to prevent infinite render loop
+      console.log("@@@@", this.campaign_roi[grp.id].slice());
       return this.campaign_roi[grp.id].slice().sort(function (a, b) {
         return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__tool_util__["a" /* strCompare */])(a.title.toLowerCase(), b.title.toLowerCase());
+      }), this.campaign_roi[grp.id].slice().filter(post => {
+        return post.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     sortedCPA: function (grp) {
       // slice is needed to prevent infinite render loop
       return this.campaign_cpa[grp.id].slice().sort(function (a, b) {
         return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__tool_util__["a" /* strCompare */])(a.title.toLowerCase(), b.title.toLowerCase());
+      }), this.campaign_cpa[grp.id].slice().filter(post => {
+        return post.title.toLowerCase().includes(this.search.toLowerCase());
       });
     },
     fetchData: function () {
@@ -2163,6 +2462,7 @@ __webpack_require__(13);
         this.warn_text = resp;
       });
     },
+
     getResult(resp) {
       this.select_roi = [];
       this.select_cpa = [];
@@ -2174,7 +2474,15 @@ __webpack_require__(13);
     },
     doOptimal: function (list) {
       this.valid_msg = '';
-      if (!list.length) this.valid_msg = 'Please select at least 1 campaign';else if (!(this.$root.info && this.$root.info.confirmed)) this.valid_msg = '<b>Forbidden</b><br/>Confirm your e-mail first<br/>or <a href="#/profile" class="link">re-issue</a> another activation';else {
+      if (!list.length) {
+        this.valid_msg = 'Please select at least 1 campaign';
+        this.total_spent = 0;
+        this.avg_spent = 0;
+        this.total_revenue = 0;
+        this.avg_revenue = 0;
+        this.total_roi = 0;
+        this.avg_roi = 0;
+      } else if (!(this.$root.info && this.$root.info.confirmed)) this.valid_msg = '<b>Forbidden</b><br/>Confirm your e-mail first<br/>or <a href="#/profile" class="link">re-issue</a> another activation';else {
         this.kind_regress = 0;
         this.optimizer_list = list.slice();
       }
@@ -2187,6 +2495,11 @@ __webpack_require__(13);
       }, JSON.stringify(list));
     },
     toggleCollapsed: function (grp) {
+      if (!grp.collapsed) {
+        document.getElementById(grp.id).className = "fa fa-angle-down";
+      } else if (grp.collapsed) {
+        document.getElementById(grp.id).className = "fa fa-angle-up";
+      }
       this.$set(grp, 'collapsed', !grp.collapsed);
     },
     toggleSelected: function (arr, list, grp) {
@@ -2223,7 +2536,7 @@ __webpack_require__(13);
       // update best fit R2
       //this.kind_regress = history.best_fit;
       this.r2 = history.r2;
-    }
+    },
     /*
     month_start: function()
     {
@@ -2239,23 +2552,44 @@ __webpack_require__(13);
       return d.toISOString().substr(0,10);
     }
     */
+    removeElement: function (event, grp) {
+      event.target.parentElement.setAttribute('style', 'display: none');
+      if (grp.collapsed) {
+        document.getElementById(grp.id + 'list').setAttribute('style', 'display: none');
+      }
+    },
+
+    toggleNav: function (event) {
+      this.$parent.$emit('toggleNav');
+      if (this.active) {
+        document.getElementById('collapseIcon').className = "fa fa-caret-left custom_collapse";
+        event.target.parentElement.setAttribute('style', 'height: 100%');
+      } else {
+        document.getElementById('collapseIcon').className = "fa fa-caret-right custom_collapse";
+        event.target.parentElement.setAttribute('style', 'height: 89vh');
+      }
+    }
   }
 });
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_optimize_single__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_optimize_single__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_optimize_single___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_optimize_single__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_optimize_solver__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_optimize_solver__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_optimize_solver___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_optimize_solver__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_regression__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__calc_worker_js__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__calc_worker_js__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__calc_worker_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__calc_worker_js__);
+//
+//
+//
+//
 //
 //
 //
@@ -2477,7 +2811,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2526,7 +2860,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 37 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2535,7 +2869,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_err_panel__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tool_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tool_util_file__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tool_util_file__ = __webpack_require__(56);
 //
 //
 //
@@ -2823,7 +3157,7 @@ function make_error(err) {
 }
 
 /***/ }),
-/* 38 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2884,7 +3218,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
+__webpack_require__(18);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function () {
@@ -2898,7 +3255,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }, {
         title: 'Understanding the Output',
         video: '0RGYaLLZiLE'
-      }]
+      }],
+      var_cost: 0
     };
     return a;
   },
@@ -2910,7 +3268,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 39 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2982,7 +3340,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 40 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3046,7 +3404,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 41 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3125,7 +3483,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 42 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3218,7 +3576,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 43 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3226,9 +3584,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_err_panel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__single__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__single__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__single___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__single__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__solver__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__solver__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__solver___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__solver__);
 //
 //
@@ -3325,12 +3683,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 44 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_highcharts__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_highcharts__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_highcharts___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_highcharts__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_regression__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tool_util__ = __webpack_require__(4);
@@ -3394,11 +3752,59 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 
-__webpack_require__(53);
+__webpack_require__(18);
 __webpack_require__(13);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3443,6 +3849,7 @@ __webpack_require__(13);
     }
   },
   computed: {
+
     reg_type: function () {
       return this.type_reg ? this.type_reg : this.campaign.best_fit;
     },
@@ -3463,58 +3870,335 @@ __webpack_require__(13);
           tmp,
           points = this.regression.points,
           len = points.length;
-      // if(this.kind==1)
       for (i = 0; i < len; i++) {
         p = points[i];
-        // tmp = p[1] - p[0];
         if (p[0] > cost) {
           cost = p[0];
         }
       }
-      // else
-      //   for(i=0;i<len;i++)
-      //   {
-      //     p = points[i];
-      //     if(p[1] > max_v)
-      //     {
-      //       max_v = p[1];
-      //       cost = p[0];
-      //     }
-      //   }
       cost = Math.min(cost, 10000);
       return cost;
-      /*
-      var v = 0;
-      // compute the cost for the max ROI or max CPA - by differentiating the regression equation
-      switch(this.reg_type)
-      {
-        case 1: // linear
-          v = Math.max.apply(null,this.campaign.points.map(function(item)
-          {
-            return item[0];
-          }));
-          break;
-        case 2: // exponential
-          v = (this.regression.equation[1] ? 1 / this.regression.equation[1] : 0);
-          break;
-        case 3: // logarithmic
-          v = (this.regression.equation[1] ? Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]) : 0);
-          break;
-        case 4: // polynomial
-          break;
-        case 5: // power
-          v = Math.min.apply(null,this.campaign.points.map(function(item)
-          {
-            return item[0];
-          }));
-          break;
-      }
-      return v;
-      */
     }
   },
   methods: {
+    moveGreenLine: function () {
+      this.optimal_regress();
+      var reg_data = this.regression.points.sort(function (a, b) {
+        return a[0] - b[0];
+      }).map(function (item) {
+        if (item[1] < 0) item[1] = 0;
+        return item;
+      });
+      if (this.chart != null) this.chart = null;
+      __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
+        lang: {
+          thousandsSep: ''
+        }
+      });
+      this.chart = __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.chart({
+        chart: {
+          renderTo: 'graph' + this._uid,
+          type: 'scatter',
+          zoomType: 'xy'
+        },
+        title: {
+          text: 'Regression Cost vs ' + this.text_kind
+        },
+        xAxis: {
+          min: 0,
+          ceiling: 10000,
+          title: {
+            enabled: true,
+            text: 'Cost'
+          },
+          startOnTick: true,
+          endOnTick: true,
+          showLastLabel: true
+        },
+        yAxis: {
+          title: {
+            text: this.text_kind
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'left',
+          verticalAlign: 'top',
+          x: 90,
+          y: 60,
+          floating: true,
+          backgroundColor: '#FFFFFF',
+          borderWidth: 1
+        },
+        plotOptions: {
+          scatter: {
+            marker: {
+              radius: 3,
+              lineColor: "#0000ff",
+              states: {
+                hover: {
+                  enabled: true,
+                  lineColor: '#0000ff'
+                }
+              }
+            },
+            states: {
+              hover: {
+                marker: {
+                  enabled: false
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<b>{series.name}</b><br>',
+              pointFormat: '{point.x}, {point.y}'
+            }
+          },
+          series: {
+            animation: false
+          }
+        },
+        series: [{
+          name: 'Day (Cost, ' + this.text_kind + ')',
+          color: 'rgba(223, 83, 83, .5)',
+          data: this.campaign.points
+        }, {
+          name: 'State',
+          color: 'blue',
+          data: [[this.var_cost * Math.abs(-1), this.projected_value(this.var_cost)]]
+        }, {
+          data: reg_data,
+          color: 'rgba(40, 100, 255, .9)',
+          lineWidth: 2,
+          type: 'line',
+          dashStyle: 'solid',
+          marker: {
+            enabled: false
+          },
+          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+          showInLegend: false
+        }, {
+          data: [[reg_data[0][0], 0], [reg_data[0][0], this.optimal_value * 2]],
+          color: 'rgba(70, 160, 50, .9)',
+          lineWidth: 3,
+          type: 'line',
+          dashStyle: 'solid',
+          name: this.optimal_text + ' = ' + this.optimal_result,
+          showInLegend: false
+        }],
+        credits: {
+          enabled: false
+        }
+      });
+    },
+    setPoint: function () {
+      this.optimal_regress();
+      var reg_data = this.regression.points.sort(function (a, b) {
+        return a[0] - b[0];
+      }).map(function (item) {
+        if (item[1] < 0) item[1] = 0;
+        return item;
+      });
+      if (this.chart != null) this.chart = null;
+      __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
+        lang: {
+          thousandsSep: ''
+        }
+      });
+      var reg_data1 = this.regression.points1.sort(function (a, b) {
+        return a[0] - b[0];
+      }).map(function (item) {
+        if (item[1] < 0) item[1] = 0;
+        return item;
+      });
+
+      if (this.chart != null) this.chart = null;
+      __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
+        lang: {
+          thousandsSep: ''
+        }
+      });
+      this.chart = __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.chart({
+        chart: {
+          renderTo: 'graph' + this._uid,
+          type: 'scatter',
+          zoomType: 'xy'
+        },
+        title: {
+          text: 'Regression Cost vs ' + this.text_kind
+        },
+        xAxis: {
+          min: 0,
+          ceiling: 10000,
+          title: {
+            enabled: true,
+            text: 'Cost'
+          },
+          startOnTick: true,
+          endOnTick: true,
+          showLastLabel: true
+        },
+        yAxis: {
+          title: {
+            text: this.text_kind
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'left',
+          verticalAlign: 'top',
+          x: 90,
+          y: 60,
+          floating: true,
+          backgroundColor: '#FFFFFF',
+          borderWidth: 1
+        },
+        plotOptions: {
+          scatter: {
+            marker: {
+              radius: 3,
+              lineColor: "#0000ff",
+              states: {
+                hover: {
+                  enabled: true,
+                  lineColor: '#0000ff'
+                }
+              }
+            },
+            states: {
+              hover: {
+                marker: {
+                  enabled: false
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<b>{series.name}</b><br>',
+              pointFormat: '{point.x}, {point.y}'
+            }
+          },
+          series: {
+            animation: false
+          }
+        },
+        series: [{
+          name: 'Day (Cost, ' + this.text_kind + ')',
+          color: 'rgba(223, 83, 83, .5)',
+          data: this.campaign.points
+        }, {
+          name: 'State',
+          color: 'blue',
+          data: [[this.var_cost * Math.abs(-1), this.projected_value(this.var_cost)]]
+        }, {
+          data: reg_data,
+          color: 'rgba(40, 100, 255, .9)',
+          lineWidth: 2,
+          type: 'line',
+          dashStyle: 'solid',
+          marker: {
+            enabled: false
+          },
+          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+          showInLegend: false
+        }, {
+          data: [[this.optimal_cost, 0], [this.optimal_cost, this.optimal_value * 2]],
+          color: 'rgba(70, 160, 50, .9)',
+          lineWidth: 3,
+          type: 'line',
+          dashStyle: 'solid',
+          name: this.optimal_text + ' = ' + this.optimal_result,
+          showInLegend: false
+        }],
+        credits: {
+          enabled: false
+        }
+      });
+      this.chart = __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.chart({
+        chart: {
+          renderTo: 'graph1' + this._uid,
+          type: 'scatter',
+          zoomType: 'xy'
+        },
+        title: {
+          text: 'CPA vs Conversion'
+        },
+        xAxis: {
+          min: 0,
+          ceiling: 10000,
+          title: {
+            enabled: true,
+            text: 'Cost'
+          },
+          startOnTick: true,
+          endOnTick: true,
+          showLastLabel: true
+        },
+        yAxis: {
+          title: {
+            text: 'CPA'
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'left',
+          verticalAlign: 'top',
+          x: 90,
+          y: 60,
+          floating: true,
+          backgroundColor: '#FFFFFF',
+          borderWidth: 1
+        },
+        plotOptions: {
+          scatter: {
+            marker: {
+              radius: 3,
+              lineColor: "#0000ff",
+              states: {
+                hover: {
+                  enabled: true,
+                  lineColor: '#0000ff'
+                }
+              }
+            },
+            states: {
+              hover: {
+                marker: {
+                  enabled: false
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<b>{series.name}</b><br>',
+              pointFormat: '{point.x}, {point.y}'
+            }
+          },
+          series: {
+            animation: false
+          }
+        },
+        series: [{
+          name: 'State',
+          color: 'blue',
+          data: [[this.var_cost * Math.abs(-1), this.var_cost / this.projected_value(this.var_cost)]]
+        }, {
+          data: reg_data1,
+          color: 'rgba(40, 100, 255, .9)',
+          lineWidth: 2,
+          type: 'line',
+          dashStyle: 'solid',
+          marker: {
+            enabled: false
+          },
+          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+          showInLegend: false
+        }],
+        credits: {
+          enabled: false
+        }
+      });
+    },
     projected_value: function (cost) {
+      //this.changeString();
       return Math.min(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_regression__["a" /* predict */])(cost, this.reg_type, this.regression.equation), 10000);
     },
     projected_optimal: function (cost) {
@@ -3523,6 +4207,7 @@ __webpack_require__(13);
     projected_roi: function (cost, revenue) {
       return this.kind == 1 ? cost ? 100 * (revenue - cost) / cost : 0 : revenue ? cost / revenue : 0;
     },
+
     optimal_regress: function () {
       // this.optimal_cost = Math.min(this.max_value, 10000);
       // this.optimal_value = this.projected_value(this.optimal_cost);
@@ -3555,14 +4240,81 @@ __webpack_require__(13);
         this.optimal_result = this.optimum + ' (' + this.optimal_cost.toFixed(2) + '/' + this.optimal_value.toFixed(2) + ')';
       }
     },
+    connectPlot: function (x = 0, y = 0) {
+      var init_x = x,
+          init_y = y,
+          length = this.regression.points.length;
+      var plot;
+
+      if (this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Linear") {
+        init_y = this.regression.equation[0] * init_x + this.regression.equation[1];
+        if (init_y < 0) {
+          init_x = -(this.regression.equation[1] / this.regression.equation[0]);
+          init_y = 0;
+        }
+      } else if (this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Exponential") {
+        init_y = this.regression.equation[0] * Math.exp(this.regression.equation[1] * init_x);
+      } else if (this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Logarithmic") {
+        if (init_x == 0) {
+          init_x = Math.pow(Math.E, -(this.regression.equation[0] / this.regression.equation[1]));
+        } else {
+          init_y = this.regression.equation[0] + this.regression.equation[1] * Math.log(init_x);
+        }
+      } else if (this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Polynomial") {
+        if (init_x == 0) {
+          init_y = this.regression.equation[this.regression.equation.length - 1];
+          if (init_y < 0) {
+            if (this.regression.equation.length == 2) {
+              init_x = -(this.regression.equation[1] / this.regression.equation[0]);
+              init_y = 0;
+            } else if (this.regression.equation.length == 3) {
+
+              init_x = (-this.regression.equation[1] + Math.sqrt(this.regression.equation[0] * this.regression.equation[0] - 4 * this.regression.equation[0] * this.regression.equation[2])) / (2 * this.regression.equation[0]);
+              var init_x2 = (-this.regression.equation[1] - Math.sqrt(this.regression.equation[0] * this.regression.equation[0] - 4 * this.regression.equation[0] * this.regression.equation[2])) / (2 * this.regression.equation[0]);
+              init_y = 0;
+
+              if (init_x > 0 && init_x2 > 0) {
+                this.regression.points[length + 1] = [init_x2, init_y];
+              } else if (init_x2 > 0 && init_x < 0) {
+                init_x = init_x2;
+              }
+            }
+          }
+        } else {}
+      } else if (this.reg_names[this.type_reg ? this.type_reg : this.campaign.best_fit] == "Power") {
+        if (init_x == 0) {
+          init_y = init_x = 0;
+        } else {
+          init_y = this.regression.equation[0] * init_x ** this.regression.equation[1];
+        }
+      }
+
+      plot = [init_x, init_y];
+      return plot;
+    },
     initChart: function () {
       this.optimal_regress();
+      var init_plot = this.connectPlot();
+      this.regression.points[length] = init_plot;
       var reg_data = this.regression.points.sort(function (a, b) {
         return a[0] - b[0];
       }).map(function (item) {
         if (item[1] < 0) item[1] = 0;
         return item;
       });
+      if (this.chart != null) this.chart = null;
+      __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
+        lang: {
+          thousandsSep: ''
+        }
+      });
+      var reg_data1 = this.regression.points1.sort(function (a, b) {
+        return a[0] - b[0];
+      }).map(function (item) {
+        if (item[1] < 0) item[1] = 0;
+        return item;
+      });
+
       if (this.chart != null) this.chart = null;
       __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
         lang: {
@@ -3660,18 +4412,104 @@ __webpack_require__(13);
           enabled: false
         }
       });
+      this.chart = __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.chart({
+        chart: {
+          renderTo: 'graph1' + this._uid,
+          type: 'scatter',
+          zoomType: 'xy'
+        },
+        title: {
+          text: 'CPA vs Conversion'
+        },
+        xAxis: {
+          min: 0,
+          ceiling: 10000,
+          title: {
+            enabled: true,
+            text: 'Cost'
+          },
+          startOnTick: true,
+          endOnTick: true,
+          showLastLabel: true
+        },
+        yAxis: {
+          title: {
+            text: 'CPA'
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'left',
+          verticalAlign: 'top',
+          x: 90,
+          y: 60,
+          floating: true,
+          backgroundColor: '#FFFFFF',
+          borderWidth: 1
+        },
+        plotOptions: {
+          scatter: {
+            marker: {
+              radius: 3,
+              lineColor: "#0000ff",
+              states: {
+                hover: {
+                  enabled: true,
+                  lineColor: '#0000ff'
+                }
+              }
+            },
+            states: {
+              hover: {
+                marker: {
+                  enabled: false
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<b>{series.name}</b><br>',
+              pointFormat: '{point.x}, {point.y}'
+            }
+          },
+          series: {
+            animation: false
+          }
+        },
+        series: [{
+          data: reg_data1,
+          color: 'rgba(40, 100, 255, .9)',
+          lineWidth: 2,
+          type: 'line',
+          dashStyle: 'solid',
+          marker: {
+            enabled: false
+          },
+          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+          showInLegend: false
+        }],
+        credits: {
+          enabled: false
+        }
+      });
     }
   }
 });
 
 /***/ }),
-/* 45 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_regression__ = __webpack_require__(11);
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3831,7 +4669,7 @@ __webpack_require__(13);
 });
 
 /***/ }),
-/* 46 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3840,7 +4678,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tool_ajax__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_err_panel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__instruct__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__instruct__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__instruct___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__instruct__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tool_util__ = __webpack_require__(4);
 //
@@ -3916,7 +4754,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-__webpack_require__(18);
+__webpack_require__(19);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -4000,13 +4838,13 @@ __webpack_require__(18);
 });
 
 /***/ }),
-/* 47 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_plyr_patched__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_plyr_patched__ = __webpack_require__(54);
 //
 //
 //
@@ -4048,7 +4886,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
  // patched for TITLE
-__webpack_require__(54);
+__webpack_require__(57);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function () {
@@ -4082,7 +4920,7 @@ __webpack_require__(54);
 });
 
 /***/ }),
-/* 48 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4091,7 +4929,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tool_ajax__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_err_panel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__instruct__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__instruct__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__instruct___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__instruct__);
 //
 //
@@ -4130,7 +4968,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-__webpack_require__(18);
+__webpack_require__(19);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -4174,15 +5012,15 @@ __webpack_require__(18);
 });
 
 /***/ }),
-/* 49 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function () {
-  return new Worker(__webpack_require__.p + "3040c6ed6f9a64ed0efc.worker.js");
+  return new Worker(__webpack_require__.p + "d8ab1f1a88262fd02317.worker.js");
 };
 
 /***/ }),
-/* 50 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7940,19 +8778,21 @@ function get(container) {
 });
 
 /***/ }),
-/* 51 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__routes__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__events__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tool_cook__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__config__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__App__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__App__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_responsive__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__routes__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__events__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__tool_cook__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__config__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__App__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__App__);
+
 
 
 
@@ -7964,8 +8804,9 @@ __webpack_require__(15);
 
 __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].config.productionTip = false;
 __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].use(__WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].use(__WEBPACK_IMPORTED_MODULE_2_vue_responsive__["a" /* default */]);
 
-__WEBPACK_IMPORTED_MODULE_2__routes__["a" /* default */].afterEach(function (to, from) {
+__WEBPACK_IMPORTED_MODULE_3__routes__["a" /* default */].afterEach(function (to, from) {
   var title = to.meta.title;
   document.title = 'ROI/CPA optimizer' + (title != null && title != '' ? ' - ' + title : '');
 });
@@ -8008,11 +8849,11 @@ __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].directive('focus', {
 
 new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
   el: '#app',
-  router: __WEBPACK_IMPORTED_MODULE_2__routes__["a" /* default */],
+  router: __WEBPACK_IMPORTED_MODULE_3__routes__["a" /* default */],
   created: function () {
-    this.info = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__tool_cook__["a" /* jsonCookieValue */])(__WEBPACK_IMPORTED_MODULE_5__config__["a" /* default */].cookie_info, {});
-    __WEBPACK_IMPORTED_MODULE_3__events__["a" /* default */].$on('show_spin', this.showSpin);
-    __WEBPACK_IMPORTED_MODULE_3__events__["a" /* default */].$on('hide_spin', this.hideSpin);
+    this.info = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__tool_cook__["a" /* jsonCookieValue */])(__WEBPACK_IMPORTED_MODULE_6__config__["a" /* default */].cookie_info, {});
+    __WEBPACK_IMPORTED_MODULE_4__events__["a" /* default */].$on('show_spin', this.showSpin);
+    __WEBPACK_IMPORTED_MODULE_4__events__["a" /* default */].$on('hide_spin', this.hideSpin);
   },
   data: function () {
     var a = {
@@ -8041,11 +8882,11 @@ new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
       if (this.spin_visible) this.spin_visible--;
     }
   },
-  render: h => h(__WEBPACK_IMPORTED_MODULE_6__App___default.a)
+  render: h => h(__WEBPACK_IMPORTED_MODULE_7__App___default.a)
 });
 
 /***/ }),
-/* 52 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8071,30 +8912,6 @@ function encodeFilename(str) {
   // so we can allow for a little better readability over the wire: |`^
   replace(/%(?:7C|60|5E)/g, unescape);
 }
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 55 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 56 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 57 */
@@ -8163,112 +8980,51 @@ function encodeFilename(str) {
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 68 */,
-/* 69 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 68 */
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__.p + "img/graph.d09b996.svg";
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 70 */
 /***/ (function(module, exports) {
 
-module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8c3ZnIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDYwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDkwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgxNTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMTgwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDIxMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgyNDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMjcwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgzMzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KPC9zdmc+ICAgCSAgICANCg=="
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 71 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(27),
-  /* template */
-  __webpack_require__(107),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
+// removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(28),
-  /* template */
-  __webpack_require__(95),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
+/* 72 */,
 /* 73 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8c3ZnIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDYwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDkwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgxNTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMTgwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDIxMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgyNDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMjcwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgzMzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KPC9zdmc+ICAgCSAgICANCg=="
+
+/***/ }),
+/* 74 */,
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(56)
+  __webpack_require__(60)
 }
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(29),
   /* template */
-  __webpack_require__(93),
+  __webpack_require__(99),
   /* styles */
   injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 74 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(30),
-  /* template */
-  __webpack_require__(109),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(31),
-  /* template */
-  __webpack_require__(97),
-  /* styles */
-  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8284,9 +9040,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(32),
+  null,
   /* template */
-  __webpack_require__(98),
+  __webpack_require__(107),
   /* styles */
   null,
   /* scopeId */
@@ -8302,16 +9058,13 @@ module.exports = Component.exports
 /* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(58)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(33),
+  __webpack_require__(31),
   /* template */
-  __webpack_require__(99),
+  __webpack_require__(114),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8325,16 +9078,13 @@ module.exports = Component.exports
 /* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(65)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(34),
+  __webpack_require__(32),
   /* template */
-  __webpack_require__(110),
+  __webpack_require__(101),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8349,13 +9099,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(57)
+  __webpack_require__(59)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(35),
+  __webpack_require__(33),
   /* template */
-  __webpack_require__(94),
+  __webpack_require__(98),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -8371,16 +9121,13 @@ module.exports = Component.exports
 /* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(66)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(37),
+  __webpack_require__(34),
   /* template */
-  __webpack_require__(112),
+  __webpack_require__(116),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8394,18 +9141,15 @@ module.exports = Component.exports
 /* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(63)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(38),
+  __webpack_require__(35),
   /* template */
-  __webpack_require__(106),
+  __webpack_require__(103),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
-  "data-v-5bac2ca1",
+  null,
   /* moduleIdentifier (server only) */
   null
 )
@@ -8419,9 +9163,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(39),
+  __webpack_require__(36),
   /* template */
-  __webpack_require__(102),
+  __webpack_require__(104),
   /* styles */
   null,
   /* scopeId */
@@ -8437,13 +9181,16 @@ module.exports = Component.exports
 /* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(62)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(40),
+  __webpack_require__(37),
   /* template */
   __webpack_require__(105),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8457,13 +9204,16 @@ module.exports = Component.exports
 /* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(69)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(41),
+  __webpack_require__(38),
   /* template */
-  __webpack_require__(92),
+  __webpack_require__(117),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8477,13 +9227,16 @@ module.exports = Component.exports
 /* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(61)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(42),
+  __webpack_require__(39),
   /* template */
-  __webpack_require__(91),
+  __webpack_require__(100),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8498,13 +9251,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(64)
+  __webpack_require__(70)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(43),
+  __webpack_require__(41),
   /* template */
-  __webpack_require__(108),
+  __webpack_require__(119),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -8520,16 +9273,13 @@ module.exports = Component.exports
 /* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(67)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  null,
+  __webpack_require__(43),
   /* template */
-  __webpack_require__(113),
+  __webpack_require__(109),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -8541,6 +9291,46 @@ module.exports = Component.exports
 
 /***/ }),
 /* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(44),
+  /* template */
+  __webpack_require__(112),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(45),
+  /* template */
+  __webpack_require__(97),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(0)(
@@ -8560,14 +9350,60 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 89 */
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function injectStyle (ssrContext) {
+  __webpack_require__(68)
+}
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(47),
+  /* template */
+  __webpack_require__(115),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function injectStyle (ssrContext) {
+  __webpack_require__(71)
+}
+var Component = __webpack_require__(0)(
+  /* script */
+  null,
+  /* template */
+  __webpack_require__(120),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(48),
+  __webpack_require__(50),
   /* template */
-  __webpack_require__(111),
+  __webpack_require__(102),
   /* styles */
   null,
   /* scopeId */
@@ -8580,7 +9416,27 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 90 */
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(52),
+  /* template */
+  __webpack_require__(118),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -8771,47 +9627,57 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "const_total"
   }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.total_result)))])]), _vm._v(" "), _c('td', {
-    staticClass: "bt help_sign tooltip-top",
-    attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
-    }
+    staticClass: "bt help_sign"
   }, [_c('div', {
     staticClass: "major_total"
-  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.total_optimal)) + _vm._s(_vm.kind == 1 ? '%' : ''))]), _c('img', {
-    attrs: {
-      "src": __webpack_require__(2)
-    }
-  })])])])])])])
+  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.total_optimal)) + _vm._s(_vm.kind == 1 ? '%' : ''))]), _vm._v(" "), _vm._m(1)])])])])])])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('tr', [_c('th', [_vm._v(" ")]), _vm._v(" "), _c('th', {
-    staticClass: "bord help_sign tooltip-bottom",
+    staticClass: "bord",
     attrs: {
-      "colspan": "2",
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
+      "colspan": "2"
     }
-  }, [_vm._v("\n            CONSTRAINTS\n            "), _c('img', {
+  }, [_vm._v("\n            CONSTRAINTS\n            "), _c('span', {
+    staticClass: "tooltip-bottom tooltip",
     attrs: {
-      "src": __webpack_require__(2)
+      "data-tooltip": "Input minimum & maximum budgets for each campaign and for the entire account."
     }
-  })]), _vm._v(" "), _c('th', {
-    staticClass: "bord help_sign tooltip-bottom",
-    attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
-    }
-  }, [_vm._v("\n            IMPROVEMENT\n            "), _c('img', {
+  }, [_c('img', {
     attrs: {
       "src": __webpack_require__(2)
     }
-  })]), _vm._v(" "), _c('th', {
+  })])]), _vm._v(" "), _c('th', {
+    staticClass: "bord"
+  }, [_vm._v("\n            IMPROVEMENT\n            "), _c('span', {
+    staticClass: "tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "Input expected improvement to account for upcoming events such as a sale"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])]), _vm._v(" "), _c('th', {
     staticClass: "bord",
     attrs: {
       "colspan": "3"
     }
   }, [_vm._v("OUTPUT")])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "tooltip-top tooltip",
+    attrs: {
+      "data-tooltip": "We are optimizing for maximum ROI or minimum CPA of the whole account by adjusting daily budgets at the campaign level"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
 }]}
 
 /***/ }),
-/* 91 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -9002,7 +9868,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 92 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -9071,7 +9937,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 93 */
+/* 98 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -9126,8 +9992,41 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 94 */
+/* 99 */
 /***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "collapse collapse-item",
+    class: {
+      'is-active': _vm.active
+    }
+  }, [_c('div', {
+    staticClass: "collapse-header touchable",
+    attrs: {
+      "role": "tab",
+      "aria-expanded": _vm.active ? 'true' : 'fase'
+    },
+    on: {
+      "click": function($event) {
+        $event.preventDefault();
+        _vm.toggle($event)
+      }
+    }
+  }, [_vm._t("collapse-header")], 2), _vm._v(" "), _c('transition', {
+    attrs: {
+      "name": "fade"
+    }
+  }, [(_vm.active) ? _c('div', {
+    staticClass: "collapse-content"
+  }, [_c('div', {
+    staticClass: "collapse-content-box"
+  }, [_vm._t("collapse-body")], 2)]) : _vm._e()])], 1)
+},staticRenderFns: []}
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('nav', {
@@ -9141,7 +10040,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_vm._v("Combined data")]) : _vm._e(), _vm._v(" "), (_vm.cur_tab == 1) ? _c('div', {
     staticClass: "btn_camp_cur"
-  }, [_vm._v("Combined data")]) : _vm._e(), _vm._v(" "), (_vm.cur_tab != 2) ? _c('button', {
+  }, [_vm._v("Combined data\n      "), _vm._m(0)]) : _vm._e(), _vm._v(" "), (_vm.cur_tab != 2) ? _c('button', {
     staticClass: "btn_camp",
     on: {
       "click": function($event) {
@@ -9198,10 +10097,21 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "optimize": _vm.solverResult
     }
   }) : _vm._e()], 1) : _vm._e()])
-},staticRenderFns: []}
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "center help_sign tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "This output combines campaigns and plots them together.  Here you are able to quickly see overall account performance"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
+}]}
 
 /***/ }),
-/* 95 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -9370,7 +10280,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 96 */
+/* 102 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -9652,7 +10562,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 97 */
+/* 103 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -9989,7 +10899,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 98 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10029,13 +10939,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }, [_vm._v(_vm._s(item.user_name))])]), _vm._v(" "), _c('td', [(item.confirmed) ? _c('img', {
       attrs: {
-        "src": __webpack_require__(20),
+        "src": __webpack_require__(21),
         "width": "16",
         "height": "16"
       }
     }) : _c('img', {
       attrs: {
-        "src": __webpack_require__(19),
+        "src": __webpack_require__(20),
         "width": "16",
         "height": "16"
       }
@@ -10043,15 +10953,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "align": "left"
       }
-    }, [_vm._v(_vm._s(item.full_name))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.created))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.roi_campaign)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.cpa_campaign)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.roi_data)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.cpa_data)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.industry))]), _vm._v(" "), _c('td', [(item.permit) ? _c('img', {
+    }, [_vm._v(_vm._s(item.full_name))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.created))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.roi_campaign)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.cpa_campaign)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.roi_data)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(_vm._f("thousand")(item.cpa_data)))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.ckind + '  /  ' + item.cupload))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.industry))]), _vm._v(" "), _c('td', [(item.permit) ? _c('img', {
       attrs: {
-        "src": __webpack_require__(20),
+        "src": __webpack_require__(21),
         "width": "16",
         "height": "16"
       }
     }) : _c('img', {
       attrs: {
-        "src": __webpack_require__(19),
+        "src": __webpack_require__(20),
         "width": "16",
         "height": "16"
       }
@@ -10063,7 +10973,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_vm._v(_vm._s(item.last_login))])]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.last_ip))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.login_wrong))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.login_disabled))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.login_pending))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(item.login_ok))])])
   }))]), _vm._v(" "), _c('br'), _vm._v(" "), _vm._m(1)], 1)
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('thead', [_c('tr', [_c('th', [_vm._v("Username")]), _vm._v(" "), _c('th', [_vm._v("Confirmed")]), _vm._v(" "), _c('th', [_vm._v("Full name")]), _vm._v(" "), _c('th', [_vm._v("Created")]), _vm._v(" "), _c('th', [_vm._v("ROI campaigns")]), _vm._v(" "), _c('th', [_vm._v("CPA campaigns")]), _vm._v(" "), _c('th', [_vm._v("ROI data-points")]), _vm._v(" "), _c('th', [_vm._v("CPA data-points")]), _vm._v(" "), _c('th', [_vm._v("Industry")]), _vm._v(" "), _c('th', [_vm._v("Aggregate data")]), _vm._v(" "), _c('th', [_vm._v("Last login")]), _vm._v(" "), _c('th', [_vm._v("Last IP address")]), _vm._v(" "), _c('th', [_vm._v("Wrong password")]), _vm._v(" "), _c('th', [_vm._v("Disabled logins")]), _vm._v(" "), _c('th', [_vm._v("Unconfirmed logins")]), _vm._v(" "), _c('th', [_vm._v("Normal logins")])])])
+  return _c('thead', [_c('tr', [_c('th', [_vm._v("Username")]), _vm._v(" "), _c('th', [_vm._v("Confirmed")]), _vm._v(" "), _c('th', [_vm._v("Full name")]), _vm._v(" "), _c('th', [_vm._v("Created")]), _vm._v(" "), _c('th', [_vm._v("ROI campaigns")]), _vm._v(" "), _c('th', [_vm._v("CPA campaigns")]), _vm._v(" "), _c('th', [_vm._v("ROI data-points")]), _vm._v(" "), _c('th', [_vm._v("CPA data-points")]), _vm._v(" "), _c('th', [_vm._v("Campaign upload")]), _vm._v(" "), _c('th', [_vm._v("Industry")]), _vm._v(" "), _c('th', [_vm._v("Aggregate data")]), _vm._v(" "), _c('th', [_vm._v("Last login")]), _vm._v(" "), _c('th', [_vm._v("Last IP address")]), _vm._v(" "), _c('th', [_vm._v("Wrong password")]), _vm._v(" "), _c('th', [_vm._v("Disabled logins")]), _vm._v(" "), _c('th', [_vm._v("Unconfirmed logins")]), _vm._v(" "), _c('th', [_vm._v("Normal logins")])])])
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "center"
@@ -10077,7 +10987,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 99 */
+/* 105 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10089,46 +10999,111 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 100 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "vue_app"
   }, [_c('nav', {
-    staticClass: "mainmenu"
-  }, [_vm._m(0), _vm._v(" "), (_vm.$root.is_loged) ? [_vm._l((_vm.$router.options.routes), function(page) {
+    staticClass: "mainmenu",
+    attrs: {
+      "id": "myTopnav"
+    }
+  }, [_vm._m(0), _vm._v(" "), (_vm.$root.is_loged) ? [_c('div', {
+    on: {
+      "click": function($event) {
+        _vm.func1()
+      }
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": ""
+    }
+  }), _vm._v(" "), _vm._l((_vm.$router.options.routes), function(page) {
     return (page.meta != null && (page.meta.menu || (page.meta.admin && _vm.$root.info && _vm.$root.info.is_admin == true))) ? _c('router-link', {
       key: page.path,
       attrs: {
         "to": page.path
       }
-    }, [_vm._v(_vm._s(page.meta.title))]) : _vm._e()
-  }), _vm._v(" "), _c('span', {
+    }, [_vm._v(" " + _vm._s(page.meta.title))]) : _vm._e()
+  })], 2), _vm._v(" "), _c('a', [_c('span', {
     staticClass: "log_info"
-  }, [_vm._v("Welcome, " + _vm._s(_vm.$root.user_name != '' ? _vm.$root.user_name : 'dear customer'))]), _vm._v(" "), _c('a', {
+  }, [_vm._v("Welcome, " + _vm._s(_vm.$root.user_name != '' ? _vm.$root.user_name : 'dear customer'))])]), _vm._v(" "), _c('a', {
     staticClass: "login pointer",
     attrs: {
       "href": "api/login/logout.php"
     }
   }, [_vm._v("Logout")])] : [_c('span', {
     staticClass: "log_info"
-  }, [_vm._v(" ")]), _vm._v(" "), _c('a', {
-    staticClass: "login",
+  }, [_vm._v(" ")]), _vm._v(" "), _c('div', {
+    staticClass: "btn_right"
+  }, [_c('a', {
     attrs: {
-      "href": "#/contact"
+      "href": ""
     }
-  }, [_vm._v("Support")]), _vm._v(" "), _c('a', {
-    staticClass: "login",
+  }), _vm._v(" "), _c('a', {
+    staticClass: "login btn",
     attrs: {
-      "href": "#/signup"
+      "href": "#login"
+    },
+    on: {
+      "click": function($event) {
+        _vm.func1()
+      }
     }
-  }, [_vm._v("Sign up")]), _vm._v(" "), _c('a', {
-    staticClass: "login",
+  }, [_vm._v("Login")]), _vm._v(" "), _c('a', {
+    staticClass: "login btn",
     attrs: {
-      "href": "#/login"
+      "href": "#feature"
+    },
+    on: {
+      "click": function($event) {
+        _vm.func1()
+      }
     }
-  }, [_vm._v("Login")])]], 2), _vm._v(" "), _c('div', {
+  }, [_vm._v("Features")]), _vm._v(" "), _c('a', {
+    staticClass: "login btn",
+    attrs: {
+      "href": "#about"
+    },
+    on: {
+      "click": function($event) {
+        _vm.func1()
+      }
+    }
+  }, [_vm._v("About")])])], _vm._v(" "), _c('a', {
+    staticClass: "icon",
+    attrs: {
+      "href": "javascript:void(0);"
+    },
+    on: {
+      "click": function($event) {
+        _vm.myFunction()
+      }
+    }
+  }, [_c('i', {
+    staticClass: "fa fa-bars",
+    staticStyle: {
+      "color": "#00a0b9",
+      "font-size": "30px"
+    }
+  })]), _vm._v(" "), _c('a', {
+    staticClass: "icon1",
+    attrs: {
+      "href": "javascript:void(0);"
+    },
+    on: {
+      "click": function($event) {
+        _vm.myFunction()
+      }
+    }
+  }, [_c('i', {
+    staticClass: "fa fa-times-circle-o",
+    staticStyle: {
+      "font-size": "33px"
+    }
+  })])], 2), _vm._v(" "), _c('div', {
     staticClass: "content"
   }, [_c('router-view')], 1), _vm._v(" "), _vm._m(1), _vm._v(" "), _c('div', {
     directives: [{
@@ -10171,7 +11146,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('img', {
     attrs: {
-      "src": __webpack_require__(70),
+      "src": __webpack_require__(73),
       "width": "100px",
       "height": "100px",
       "border": "0",
@@ -10181,7 +11156,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 101 */
+/* 107 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_vm._v("not ready")])
+},staticRenderFns: []}
+
+/***/ }),
+/* 108 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10194,7 +11177,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 102 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10298,116 +11281,74 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 103 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "op_main"
   }, [_c('div', {
-    staticClass: "op_title help_sign tooltip-bottom",
-    attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
-    }
-  }, [_c('h2', {
-    staticClass: "op_header",
-    attrs: {
-      "title": _vm.campaign.title
-    }
-  }, [_vm._v(_vm._s(_vm.campaign.title)), _c('img', {
-    attrs: {
-      "src": __webpack_require__(2)
-    }
-  })])]), _vm._v(" "), _c('div', {
-    staticClass: "graph_panel",
-    attrs: {
-      "id": 'graph' + _vm._uid
-    }
-  }), _vm._v(" "), _c('div', {
-    staticClass: "top_space help_sign tooltip-bottom",
-    attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
-    }
-  }, [_vm._v("\n    Regression formula: "), _c('strong', {
-    staticClass: "code"
-  }, [_vm._v(_vm._s(_vm.regression.string))]), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": __webpack_require__(2)
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "top_space"
-  }, [_vm._v("\n    Confidence of regression: "), _c('span', {
-    class: {
-      r_low: _vm.regression.r2 < 0.1
-    }
-  }, [_c('strong', {
-    staticClass: "code"
-  }, [_vm._v("R"), _c('span', {
-    staticClass: "super"
-  }, [_vm._v("2")]), _vm._v(" = " + _vm._s(_vm._f("filterNum")(_vm.regression.r2)))])]), _vm._v("  (" + _vm._s(_vm.campaign.points.length) + " pts)\n  ")]), _vm._v(" "), _c('div', {
-    staticClass: "top_space"
-  }, [_vm._v("\n    Kind of regression: "), _c('strong', {
-    staticClass: "code"
-  }, [_vm._v(_vm._s(_vm.reg_names[_vm.type_reg ? _vm.type_reg : _vm.campaign.best_fit]))])]), _vm._v(" "), _c('hr', {
-    attrs: {
-      "size": "2",
-      "width": "100%",
-      "color": "#70AD47"
-    }
-  }), _vm._v(" "), _vm._m(0), _vm._v(" "), _c('table', {
+    staticClass: "op_detail"
+  }, [_c('div', {
+    staticClass: "op_top"
+  }, [_c('table', {
+    staticClass: "collap_data",
     attrs: {
       "align": "center"
     }
-  }, [_c('tr', [_c('td', {
-    attrs: {
-      "align": "right"
-    }
-  }, [_vm._v("Cost/day")]), _vm._v(" "), _c('td', {
+  }, [_vm._m(0), _vm._v(" "), _c('tr', [_vm._m(1), _vm._v(" "), _c('td', {
     attrs: {
       "align": "center"
     }
   }, [_c('div', {
     staticClass: "const_field"
-  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.optimal_cost)))])])]), _vm._v(" "), _c('tr', [_c('td', {
-    attrs: {
-      "align": "right"
+  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.optimal_cost)))])]), _vm._v(" "), _c('td', [_c('div', {
+    staticClass: "item_content"
+  }, [_c('button', {
+    staticClass: "btn btn_dark btn-shadow",
+    staticStyle: {
+      "padding": "3px 6px 4px"
+    },
+    on: {
+      "click": function($event) {
+        _vm.moveGreenLine()
+      }
     }
-  }, [_vm._v(_vm._s(_vm.text_kind))]), _vm._v(" "), _c('td', {
+  }, [_c('svg', {
+    attrs: {
+      "width": "16px",
+      "height": "22px",
+      "viewBox": "0 0 16 22",
+      "xmlns": "http://www.w3.org/2000/svg"
+    }
+  }, [_c('path', {
+    attrs: {
+      "fill": "#fff",
+      "d": "M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3\n              C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7\n              C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"
+    }
+  })])]), _vm._m(2)])]), _vm._v(" "), _c('td', {
     attrs: {
       "align": "center"
     }
   }, [_c('div', {
     staticClass: "const_field"
-  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.optimal_value)))])])]), _vm._v(" "), _c('tr', [_c('td', {
-    attrs: {
-      "align": "right"
-    }
-  }, [_vm._v(_vm._s(_vm.optimal_text))]), _vm._v(" "), _c('td', {
+  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.optimal_value)))])]), _vm._v(" "), _c('td', {
     attrs: {
       "align": "center"
     }
   }, [_c('div', {
     staticClass: "const_field"
-  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.optimum)) + _vm._s(_vm.kind == 1 ? '%' : ''))])])])]), _vm._v(" "), _c('hr', {
-    attrs: {
-      "size": "2",
-      "width": "100%",
-      "color": "#70AD47"
-    }
-  }), _vm._v(" "), _c('div', {
-    staticClass: "center full_width help_sign tooltip-bottom",
-    attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
-    }
-  }, [_vm._v("\n    Calculate your projected  "), _c('strong', [_vm._v(_vm._s(_vm.optimal_text))]), _vm._v("  at different cost:\n    "), _c('img', {
-    attrs: {
-      "src": __webpack_require__(2)
-    }
-  })]), _vm._v(" "), _c('table', {
+  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.optimum)) + _vm._s(_vm.kind == 1 ? '%' : ''))])])]), _vm._v(" "), _vm._m(3), _vm._v(" "), _c('tr', [_c('td', {
     attrs: {
       "align": "center"
     }
-  }, [_c('tr', [_vm._m(1), _vm._v(" "), _c('td', [_c('input', {
+  }, [_c('div', {
+    staticClass: "center full_width"
+  }, [_vm._v("\n                Calculate your projected  "), _c('strong', [_vm._v(_vm._s(_vm.optimal_text))]), _vm._v("  at different cost:\n                "), _vm._m(4)])]), _vm._v(" "), _c('td', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('input', {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -10428,27 +11369,23 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.var_cost = $event.target.value
       }
     }
-  })])]), _vm._v(" "), _c('tr', [_c('td', {
-    attrs: {
-      "align": "right"
-    }
-  }, [_vm._v("Output:"), _c('br'), _vm._v("Projected " + _vm._s(_vm.text_kind))]), _vm._v(" "), _c('td', {
+  })]), _vm._v(" "), _c('td'), _vm._v(" "), _c('td', {
     attrs: {
       "align": "center"
     }
   }, [_c('div', {
     staticClass: "const_field"
-  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.projected_value(_vm.var_cost))))])])]), _vm._v(" "), _c('tr', [_c('td', {
-    attrs: {
-      "align": "right"
-    }
-  }, [_vm._v("Output:"), _c('br'), _vm._v("Projected " + _vm._s(_vm.optimal_text))]), _vm._v(" "), _c('td', {
+  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.projected_value(_vm.var_cost))))])]), _vm._v(" "), _c('td', {
     attrs: {
       "align": "center"
     }
   }, [_c('div', {
     staticClass: "const_field"
-  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.projected_roi(_vm.var_cost, _vm.projected_value(_vm.var_cost)))) + _vm._s(_vm.kind == 1 ? '%' : ''))])])])]), _vm._v(" "), _c('div', {
+  }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.projected_roi(_vm.var_cost, _vm.projected_value(_vm.var_cost)))) + _vm._s(_vm.kind == 1 ? '%' : ''))])])]), _vm._v(" "), _c('tr', [_c('td'), _vm._v(" "), _c('td', {
+    attrs: {
+      "colspan": "4"
+    }
+  }, [_c('div', {
     staticClass: "slider_panel"
   }, [_c('input', {
     directives: [{
@@ -10468,36 +11405,171 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": (_vm.var_cost)
     },
     on: {
+      "input": function($event) {
+        _vm.setPoint()
+      },
       "__r": function($event) {
         _vm.var_cost = $event.target.value
       }
     }
-  })])])
+  })])])]), _vm._v(" "), _vm._m(5)])])]), _vm._v(" "), _c('div', {
+    staticClass: "graphs"
+  }, [_c('div', {
+    staticClass: "op_graph"
+  }, [_c('div', {
+    staticClass: "op_title"
+  }, [_c('h2', {
+    staticClass: "op_header",
+    attrs: {
+      "title": _vm.campaign.title
+    }
+  }, [_vm._v(_vm._s(_vm.campaign.title))])]), _vm._v(" "), _c('div', {
+    staticClass: "graph_panel",
+    attrs: {
+      "id": 'graph' + _vm._uid
+    }
+  }), _vm._v(" "), _c('div', {
+    staticClass: "top_space"
+  }, [_vm._v("\n          Regression formula: "), _c('strong', {
+    staticClass: "code"
+  }, [_vm._v(_vm._s(_vm.regression.string))]), _vm._v(" "), _vm._m(6)]), _vm._v(" "), _c('div', {
+    staticClass: "top_space"
+  }, [_vm._v("\n          Confidence of regression: "), _c('span', {
+    class: {
+      r_low: _vm.regression.r2 < 0.1
+    }
+  }, [_c('strong', {
+    staticClass: "code"
+  }, [_vm._v("R"), _c('span', {
+    staticClass: "super"
+  }, [_vm._v("2")]), _vm._v(" = " + _vm._s(_vm._f("filterNum")(_vm.regression.r2)))])]), _vm._v("  (" + _vm._s(_vm.campaign.points.length) + " pts)\n        ")]), _vm._v(" "), _c('div', {
+    staticClass: "top_space"
+  }, [_vm._v("\n          Kind of regression: "), _c('strong', {
+    staticClass: "code"
+  }, [_vm._v(_vm._s(_vm.reg_names[_vm.type_reg ? _vm.type_reg : _vm.campaign.best_fit]))])])]), _vm._v(" "), _c('div', {
+    staticClass: "op_graph second_graph"
+  }, [_c('div', {
+    staticClass: "graph_panel",
+    attrs: {
+      "id": 'graph1' + _vm._uid
+    }
+  }), _vm._v(" "), _c('div', {
+    staticClass: "top_space"
+  }, [_vm._v("\n          CPA: "), _c('strong', {
+    staticClass: "code"
+  }, [_vm._v(_vm._s(_vm.regression.string1))]), _vm._v(" "), _vm._m(7)]), _vm._v(" "), _c('div', {
+    staticClass: "top_space"
+  }, [_vm._v("\n          Based on: "), _c('strong', {
+    staticClass: "code"
+  }, [_vm._v(_vm._s(_vm.reg_names[_vm.type_reg ? _vm.type_reg : _vm.campaign.best_fit]))]), _vm._v(" regression\n        ")])])])])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('tr', [_c('td', {
+    attrs: {
+      "align": "center"
+    }
+  }), _vm._v(" "), _c('td', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_vm._v("Cost/day")]), _vm._v(" "), _c('td'), _vm._v(" "), _c('td', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_vm._v("Conversions")]), _vm._v(" "), _c('td', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_vm._v("CPA")])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('td', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('div', {
+    staticClass: "full_width"
+  }, [_vm._v("\n                Your optimal result for this campaign is:\n                "), _c('div', {
+    staticClass: "help_sign tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "The solver has found the optimal daily spend to achieve max ROI or min CP"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "full_width center help_sign tooltip-bottom",
     attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
+      "data-tooltip": "Recalculate data from the lowest observed cost on reg. line for more realistic results"
     }
-  }, [_vm._v("\n    Your optimal result for this campaign is:\n    "), _c('img', {
+  }, [_c('img', {
+    staticStyle: {
+      "padding-top": "6px"
+    },
     attrs: {
       "src": __webpack_require__(2)
     }
   })])
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('td', {
+  return _c('tr', [_c('td', {
     attrs: {
-      "align": "right"
+      "colspan": "5"
     }
-  }, [_vm._v("Input:"), _c('br'), _vm._v("cost/day")])
+  }, [_c('div', {
+    staticClass: "bitLine"
+  })])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "help_sign tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "Calculate ROI or CPA at different spends by moving the slider or input a certain cost.  View results also on the graph"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('tr', [_c('td', {
+    attrs: {
+      "colspan": "5"
+    }
+  }, [_c('div', {
+    staticClass: "bitLine"
+  })])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "help_sign tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "The regression formula is generated from the selected model.  This function is graphed above"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "help_sign tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "The graph above is a plot of this function, it helps you visualise optimal solutions"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
 }]}
 
 /***/ }),
-/* 104 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_vm._m(0), _vm._v(" "), _vm._m(1), _vm._v(" "), _c('div', {
+  return _c('div', {
+    staticClass: "wrapper"
+  }, [_vm._m(0), _vm._v(" "), _vm._m(1), _vm._v(" "), _c('div', {
     staticClass: "video"
   }, _vm._l((_vm.videos), function(item) {
     return _c('div', {
@@ -10544,7 +11616,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 105 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10638,16 +11710,54 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 106 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 113 */
+/***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "landing"
+    staticClass: "landing_wrapper"
   }, [_c('div', {
-    staticClass: "land_left"
+    staticClass: "land_header"
   }, [_c('div', {
-    staticClass: "video_panel"
+    staticClass: "container_left"
+  }, [_c('div', {
+    staticClass: "graph_panel",
+    attrs: {
+      "id": 'graph' + _vm._uid
+    }
+  }), _vm._v(" "), _vm._m(0), _vm._v(" "), _c('div', {
+    staticClass: "center"
+  }, [_vm._v("Your optimal result for this campaign is:")]), _vm._v(" "), _vm._m(1)]), _vm._v(" "), _c('div', {
+    staticClass: "container_right"
+  }, [_c('h2', [_vm._v("Optimize Budget allocation, forecast performance & predict results with Machine Learning")]), _vm._v(" "), _c('div', {
+    staticClass: "slider_panel"
+  }, [_c('label', [_vm._v("See how it works:")]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.var_cost),
+      expression: "var_cost"
+    }],
+    staticClass: "slider no_bord",
+    attrs: {
+      "type": "range",
+      "min": "0",
+      "max": "5000",
+      "step": "0.01"
+    },
+    domProps: {
+      "value": (_vm.var_cost)
+    },
+    on: {
+      "__r": function($event) {
+        _vm.var_cost = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _vm._m(2)])])]), _vm._v(" "), _vm._m(3), _vm._v(" "), _vm._m(4), _vm._v(" "), _c('div', {
+    staticClass: "video_panel",
+    attrs: {
+      "id": "feature"
+    }
   }, _vm._l((_vm.video_list), function(item) {
     return _c('div', {
       staticClass: "youtube-player"
@@ -10658,21 +11768,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "allowfullscreen": ""
       }
     })])
-  })), _vm._v(" "), _vm._m(0)]), _vm._v(" "), _vm._m(1)])
+  })), _vm._v(" "), _vm._m(5)])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('br'), _c('br'), _c('br'), _vm._v(" "), _c('h1', [_vm._v("Answer questions like:")]), _vm._v(" "), _c('ul', [_c('li', [_vm._v("What should I spend for my campaign to achieve it's optimal ROI or CPA?")]), _vm._v(" "), _c('li', [_vm._v("How should I allocate budgets between my campaigns to achieve an overall optimal ROI outcome?")]), _vm._v(" "), _c('li', [_vm._v("My campaign is currently spending $x per day, if I was to increase to $y / day, what kind of Revenue & ROI/CPA change should I expect?")])]), _vm._v(" "), _c('br'), _c('br'), _c('br')])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "land_right"
-  }, [_c('div', {
-    staticClass: "lang_right_container"
-  }, [_c('div', {
-    staticClass: "graph_panel"
-  }, [_c('img', {
-    attrs: {
-      "src": __webpack_require__(69)
-    }
-  })]), _vm._v(" "), _c('div', {
     staticClass: "center"
   }, [_c('div', {
     staticClass: "confident"
@@ -10688,9 +11786,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "width": "100%",
       "color": "#70AD47"
     }
-  })])]), _vm._v(" "), _c('div', {
-    staticClass: "center"
-  }, [_vm._v("Your optimal result for this campaign is:")]), _vm._v(" "), _c('table', {
+  })])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('table', {
     attrs: {
       "align": "center"
     }
@@ -10724,11 +11822,32 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "const_field"
-  }, [_vm._v("257.15%")])])])])])])
+  }, [_vm._v("257.15%")])])])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "create_content"
+  }, [_c('a', {
+    staticClass: "login btn create_account",
+    attrs: {
+      "href": "#/signup"
+    }
+  }, [_vm._v("Create a free account")])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "text_content"
+  }, [_c('br'), _vm._v(" "), _c('h1', [_vm._v("Budget Optimize can answer these questions::")]), _vm._v(" "), _c('ul', [_c('li', [_vm._v("What should I spend for my campaign to achieve it's optimal ROI or CPA?")]), _vm._v(" "), _c('li', [_vm._v("How should I allocate budgets between my campaigns to achieve an overall optimal ROI outcome?")]), _vm._v(" "), _c('li', [_vm._v("My campaign is currently spending $x per day, if I was to increase to $y / day, what kind of Revenue & ROI/CPA change should I expect?")])]), _vm._v(" "), _c('br')])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "word_content"
+  }, [_c('br'), _vm._v(" "), _c('h1', [_vm._v("What our customers say")])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "sample_optimize"
+  }, [_c('div', [_c('h1', [_vm._v("Map campaigns using regression models to find optimal performance")])]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Forecast performance with increased budgets")])]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Find optimal campaign budget allocation that you can plug back into your account")])])])
 }]}
 
 /***/ }),
-/* 107 */
+/* 114 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10916,7 +12035,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 108 */
+/* 115 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10965,7 +12084,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 109 */
+/* 116 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10999,7 +12118,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 110 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11017,15 +12136,107 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       expression: "warn_text"
     }
   }), _vm._v(" "), _c('div', {
-    staticClass: "campaign_left"
+    staticClass: "campaign_sidebar_wrapper"
   }, [_c('div', {
+    staticClass: "campaign_left",
+    class: {
+      active: _vm.active
+    }
+  }, [_c('div', {
+    staticClass: "sidebar_tap_wrapper"
+  }, [_c('div', {
+    staticClass: "roi_content"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.roi_or_cpa),
+      expression: "roi_or_cpa"
+    }],
+    attrs: {
+      "type": "radio",
+      "id": "roi_optimial",
+      "value": "1"
+    },
+    domProps: {
+      "checked": _vm._q(_vm.roi_or_cpa, "1")
+    },
+    on: {
+      "click": function($event) {
+        _vm.doOptimal(_vm.roi_or_cpa == 1 ? _vm.select_roi : _vm.select_cpa)
+      },
+      "__c": function($event) {
+        _vm.roi_or_cpa = "1"
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    attrs: {
+      "for": "roi_optimial"
+    }
+  }, [_vm._v("ROI")]), _vm._v(" "), _vm._m(0)]), _vm._v(" "), _c('div', {
+    staticClass: "cpa_content"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.roi_or_cpa),
+      expression: "roi_or_cpa"
+    }],
+    attrs: {
+      "type": "radio",
+      "id": "cpa_optimial",
+      "value": "0"
+    },
+    domProps: {
+      "checked": _vm._q(_vm.roi_or_cpa, "0")
+    },
+    on: {
+      "click": function($event) {
+        _vm.doOptimal(_vm.roi_or_cpa == 1 ? _vm.select_roi : _vm.select_cpa)
+      },
+      "__c": function($event) {
+        _vm.roi_or_cpa = "0"
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    attrs: {
+      "for": "cpa_optimial"
+    }
+  }, [_vm._v("CPA")]), _vm._v(" "), _vm._m(1)])]), _vm._v(" "), _c('div', {
     staticClass: "campaign_panel"
   }, [_c('div', {
     staticClass: "campaign_listing"
-  }, [(_vm.roi_or_cpa == 1) ? [_vm._l((_vm.groupsROI), function(grp) {
+  }, [_vm._m(2), _vm._v(" "), _c('div', {
+    staticClass: "search-wrapper"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.search),
+      expression: "search"
+    }],
+    attrs: {
+      "type": "text",
+      "placeholder": "Search campaign.."
+    },
+    domProps: {
+      "value": (_vm.search)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.search = $event.target.value
+      }
+    }
+  }), _vm._v(" "), _c('label', [_vm._v("Search title:")]), _vm._v(" "), _c('i', {
+    staticClass: "fa fa-search",
+    attrs: {
+      "aria-hidden": "true"
+    }
+  })]), _vm._v(" "), (_vm.roi_or_cpa == 1) ? [_vm._l((_vm.groupsROI), function(grp) {
     return [_c('div', {
       staticClass: "group_title"
-    }, [(!grp.collapsed) ? _c('div', [_c('input', {
+    }, [(grp.collapsed) ? _c('div', [_c('input', {
       attrs: {
         "type": "checkbox"
       },
@@ -11044,8 +12255,24 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.toggleCollapsed(grp)
         }
       }
-    }, [_vm._v(_vm._s((grp.collapsed ? '+ ' : '- ') + (grp.title != '' ? grp.title : 'NO GROUP')))])]), _vm._v(" "), (!grp.collapsed) ? _c('ul', {
-      staticClass: "no_list camp_group"
+    }, [_c('i', {
+      staticClass: "fa fa-angle-up",
+      attrs: {
+        "id": grp.id,
+        "aria-hidden": "true"
+      }
+    }), _vm._v("\n                  " + _vm._s((grp.title != '' ? grp.title : 'NO GROUP')) + "\n                ")]), _vm._v(" "), _c('i', {
+      staticClass: "fa fa-remove cus_remove",
+      on: {
+        "click": function($event) {
+          _vm.removeElement($event, grp)
+        }
+      }
+    })]), _vm._v(" "), (grp.collapsed) ? _c('ul', {
+      staticClass: "no_list camp_group",
+      attrs: {
+        "id": grp.id + 'list'
+      }
     }, _vm._l((_vm.sortedROI(grp)), function(item) {
       return _c('li', [_c('input', {
         directives: [{
@@ -11093,7 +12320,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   })] : [_vm._l((_vm.groupsCPA), function(grp) {
     return [_c('div', {
       staticClass: "group_title"
-    }, [(!grp.collapsed) ? _c('div', [_c('input', {
+    }, [(grp.collapsed) ? _c('div', [_c('input', {
       attrs: {
         "type": "checkbox"
       },
@@ -11112,8 +12339,24 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.toggleCollapsed(grp)
         }
       }
-    }, [_vm._v(_vm._s((grp.collapsed ? '+ ' : '- ') + (grp.title != '' ? grp.title : 'NO GROUP')))])]), _vm._v(" "), (!grp.collapsed) ? _c('ul', {
-      staticClass: "no_list camp_group"
+    }, [_c('i', {
+      staticClass: "fa fa-angle-up",
+      attrs: {
+        "id": grp.id,
+        "aria-hidden": "true"
+      }
+    }), _vm._v("\n                  " + _vm._s((grp.title != '' ? grp.title : 'NO GROUP')) + "\n                ")]), _vm._v(" "), _c('i', {
+      staticClass: "fa fa-remove cus_remove",
+      on: {
+        "click": function($event) {
+          _vm.removeElement($event, grp)
+        }
+      }
+    })]), _vm._v(" "), (grp.collapsed) ? _c('ul', {
+      staticClass: "no_list camp_group",
+      attrs: {
+        "id": grp.id
+      }
     }, _vm._l((_vm.sortedCPA(grp)), function(item) {
       return _c('li', [_c('input', {
         directives: [{
@@ -11165,12 +12408,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }) : _vm._e(), _vm._v(" "), ((_vm.roi_or_cpa == 1 && _vm.campaign_roi.length == 0) || (_vm.roi_or_cpa != 1 && _vm.campaign_cpa.length == 0)) ? _c('div', {
     staticClass: "error_message"
-  }, [_vm._v("\n        Please "), _c('a', {
+  }, [_vm._v("\n          Please "), _c('a', {
     staticClass: "link",
     attrs: {
       "href": "#/import"
     }
-  }, [_vm._v("import")]), _vm._v(" some data\n      ")]) : _vm._e(), _vm._v(" "), _c('div', {
+  }, [_vm._v("import")]), _vm._v(" some data\n        ")]) : _vm._e(), _vm._v(" "), _c('div', {
     staticClass: "campaign_dates"
   }, [_c('input', {
     directives: [{
@@ -11230,59 +12473,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('path', {
     attrs: {
       "fill": "#fff",
-      "d": "M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3\n              C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7\n              C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"
+      "d": "M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3\n                C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7\n                C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"
     }
   })])])])]), _vm._v(" "), _c('div', {
     staticClass: "campaign_optimize"
-  }, [_vm._m(0), _vm._v(" "), _c('div', [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.roi_or_cpa),
-      expression: "roi_or_cpa"
-    }],
-    attrs: {
-      "type": "radio",
-      "id": "roi_optimial",
-      "value": "1"
-    },
-    domProps: {
-      "checked": _vm._q(_vm.roi_or_cpa, "1")
-    },
-    on: {
-      "__c": function($event) {
-        _vm.roi_or_cpa = "1"
-      }
-    }
-  }), _vm._v(" "), _c('label', {
-    attrs: {
-      "for": "roi_optimial"
-    }
-  }, [_vm._v("ROI")])]), _vm._v(" "), _c('div', [_c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.roi_or_cpa),
-      expression: "roi_or_cpa"
-    }],
-    attrs: {
-      "type": "radio",
-      "id": "cpa_optimial",
-      "value": "0"
-    },
-    domProps: {
-      "checked": _vm._q(_vm.roi_or_cpa, "0")
-    },
-    on: {
-      "__c": function($event) {
-        _vm.roi_or_cpa = "0"
-      }
-    }
-  }), _vm._v(" "), _c('label', {
-    attrs: {
-      "for": "cpa_optimial"
-    }
-  }, [_vm._v("CPA")])]), _vm._v(" "), _c('div', [_c('input', {
+  }, [_c('div', {
+    slot: "collapse-body"
+  }, [_c('input', {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -11318,7 +12515,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": "remove_outlier"
     }
-  }, [_vm._v("Remove outliers")])]), _vm._v(" "), (_vm.roi_or_cpa == 1 && _vm.select_roi.length > 0) ? _c('button', {
+  }, [_vm._v("Remove outliers")]), _vm._v(" "), _vm._m(3), _vm._v(" "), (_vm.roi_or_cpa == 1 && _vm.select_roi.length > 0) ? _c('button', {
     staticClass: "campaign_delete btn btn_dark",
     on: {
       "click": function($event) {
@@ -11332,9 +12529,32 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.delCampaign(_vm.select_cpa)
       }
     }
-  }, [_vm._v("Delete selected")]) : _vm._e()]), _vm._v(" "), _c('div', {
+  }, [_vm._v("Delete selected")]) : _vm._e()])]), _vm._v(" "), _c('div', {
     staticClass: "campaign_regress"
-  }, [_vm._m(1), _vm._v(" "), _c('table', [_vm._m(2), _vm._v(" "), _vm._l((_vm.regressions), function(reg, idx) {
+  }, [_c('collapse', {
+    attrs: {
+      "selected": false
+    }
+  }, [_c('div', {
+    slot: "collapse-header"
+  }, [_c('b', [_vm._v("Regression Model for best fit")]), _vm._v(" "), _c('span', {
+    staticClass: "center help_sign tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "r-squared is a statistical measure of how close the regression line fits the data points.  R-squared lies between 0 & 1.  The higher the r-squared value the better the fit.  We have auto selected the model with the highest r-squared value, however you can adjust the model."
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])]), _vm._v(" "), _c('div', {
+    slot: "collapse-body"
+  }, [_c('table', [_c('tr', [_c('td', [_vm._v(" ")]), _vm._v(" "), _c('td', [_vm._v(" ")]), _vm._v(" "), _c('td', {
+    attrs: {
+      "align": "right"
+    }
+  }, [_vm._v("R"), _c('span', {
+    staticClass: "super"
+  }, [_vm._v("2")])])]), _vm._v(" "), _vm._l((_vm.regressions), function(reg, idx) {
     return _c('tr', [_c('td', [_c('input', {
       directives: [{
         name: "model",
@@ -11364,15 +12584,45 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "align": "right"
       }
     }, [_vm._v(_vm._s(_vm._f("filterNum")(_vm.r2[idx])))])])
-  })], 2)]), _vm._v(" "), _c('div', {
+  })], 2)])])], 1), _vm._v(" "), _c('div', {
     staticClass: "campaign_actual"
-  }, [_vm._m(3), _vm._v(" "), _c('div', {
+  }, [_c('collapse', {
+    attrs: {
+      "selected": false
+    }
+  }, [_c('div', {
+    slot: "collapse-header"
+  }, [_c('b', [_vm._v("Actual Historical Results"), _c('br'), _vm._v("during this period")]), _vm._v(" "), _c('div', {
+    staticClass: "center help_sign tooltip-bottom tooltip custom-help",
+    attrs: {
+      "data-tooltip": "These are actual results from your data within the selected time frame.  Compare these numbers with results from the model to see the difference in the predictions vs actual results."
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])]), _vm._v(" "), _c('div', {
+    slot: "collapse-body"
+  }, [_c('div', {
     staticClass: "actual_body"
-  }, [_vm._v("\n        Total Spent = " + _vm._s(_vm._f("filterNum")(_vm.total_spent))), _c('br'), _vm._v("Avg Spent = " + _vm._s(_vm._f("filterNum")(_vm.avg_spent)) + "\n      ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n              Total Spent = " + _vm._s(_vm._f("filterNum")(_vm.total_spent))), _c('br'), _vm._v("Avg Spent = " + _vm._s(_vm._f("filterNum")(_vm.avg_spent)) + "\n            ")]), _vm._v(" "), _c('div', {
     staticClass: "actual_body"
-  }, [_vm._v("\n        Total " + _vm._s(_vm.roi_or_cpa ? 'Revenue = ' : 'Conversions = ') + _vm._s(_vm._f("filterNum")(_vm.total_revenue)) + "\n        "), _c('br'), _vm._v("\n        Avg " + _vm._s(_vm.roi_or_cpa ? 'revenue' : 'conv') + " / day = " + _vm._s(_vm._f("filterNum")(_vm.avg_revenue)) + "\n      ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n              Total " + _vm._s(_vm.roi_or_cpa ? 'Revenue = ' : 'Conversions = ') + _vm._s(_vm._f("filterNum")(_vm.total_revenue)) + "\n              "), _c('br'), _vm._v("\n              Avg " + _vm._s(_vm.roi_or_cpa ? 'revenue' : 'conv') + " / day = " + _vm._s(_vm._f("filterNum")(_vm.avg_revenue)) + "\n            ")]), _vm._v(" "), _c('div', {
     staticClass: "actual_body"
-  }, [_vm._v("\n        Total " + _vm._s(_vm.roi_or_cpa ? 'ROI' : 'CPA') + " for period = " + _vm._s(_vm._f("filterNum")(_vm.total_roi)) + _vm._s(_vm.roi_or_cpa ? '%' : '') + "\n        "), _c('br'), _vm._v("\n        Avg daily " + _vm._s(_vm.roi_or_cpa ? 'ROI' : 'CPA') + " = " + _vm._s(_vm._f("filterNum")(_vm.avg_roi)) + _vm._s(_vm.roi_or_cpa ? '%' : '') + "\n      ")])])]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n              Total " + _vm._s(_vm.roi_or_cpa ? 'ROI' : 'CPA') + " for period = " + _vm._s(_vm._f("filterNum")(_vm.total_roi)) + _vm._s(_vm.roi_or_cpa ? '%' : '') + "\n              "), _c('br'), _vm._v("\n              Avg daily " + _vm._s(_vm.roi_or_cpa ? 'ROI' : 'CPA') + " = " + _vm._s(_vm._f("filterNum")(_vm.avg_roi)) + _vm._s(_vm.roi_or_cpa ? '%' : '') + "\n            ")])])])], 1)]), _vm._v(" "), _c('div', {
+    staticClass: "sidebar_collapse",
+    on: {
+      "click": function($event) {
+        _vm.toggleNav($event)
+      }
+    }
+  }, [_c('i', {
+    staticClass: "fa fa-caret-left custom_collapse",
+    attrs: {
+      "id": "collapseIcon",
+      "aria-hidden": "true"
+    }
+  })])]), _vm._v(" "), _c('div', {
     staticClass: "campaign_center"
   }, [_c('optimizer', {
     attrs: {
@@ -11390,42 +12640,38 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   })], 1)], 1)
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "center help_sign tooltip-bottom",
+  return _c('span', {
+    staticClass: "tooltip-bottom tooltip",
     attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
+      "data-tooltip": "Select campaign data that contains revenue to optimise for ROI (Return on Investment)."
     }
-  }, [_c('b', [_vm._v("Optimize for ROI or CPA")]), _vm._v(" "), _c('img', {
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition)."
+    }
+  }, [_c('img', {
     attrs: {
       "src": __webpack_require__(2)
     }
   })])
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "center help_sign tooltip-bottom",
-    attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
-    }
-  }, [_c('b', [_vm._v("Regression Model for best fit")]), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": __webpack_require__(2)
-    }
-  })])
+    staticClass: "campaign_header"
+  }, [_c('h3', [_vm._v("Campaigns")])])
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('tr', [_c('td', [_vm._v(" ")]), _vm._v(" "), _c('td', [_vm._v(" ")]), _vm._v(" "), _c('td', {
+  return _c('span', {
+    staticClass: "tooltip-bottom tooltip",
     attrs: {
-      "align": "right"
+      "data-tooltip": "Outliers are abnormal observations that can skew results. Removing outliers is recommended."
     }
-  }, [_vm._v("R"), _c('span', {
-    staticClass: "super"
-  }, [_vm._v("2")])])])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "center help_sign tooltip-bottom",
-    attrs: {
-      "data-tooltip": "Note the question marks, when hovered over these should display informational text. I will provide you with this text separately."
-    }
-  }, [_c('b', [_vm._v("Actual Historical Results"), _c('br'), _vm._v("during this period")]), _vm._v(" "), _c('img', {
+  }, [_c('img', {
     attrs: {
       "src": __webpack_require__(2)
     }
@@ -11433,7 +12679,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 111 */
+/* 118 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11534,7 +12780,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 112 */
+/* 119 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12091,7 +13337,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 113 */
+/* 120 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12115,4 +13361,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ })
-],[51]);
+],[55]);

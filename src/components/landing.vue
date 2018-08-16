@@ -62,15 +62,15 @@
     <div class="sample_optimize">
       <div>
         <h1>Map campaigns using regression models to find optimal performance</h1>
-        <img class="first_img" src="~@/img/graR.png"/>
+        <!-- <img class="first_img" src="~@/img/graR.png"/> -->
       </div>
       <div>
         <h1>Forecast performance with increased budgets</h1>
-        <img class="second_img" src="~@/img/CalR.png" />
+        <!-- <img class="second_img" src="~@/img/CalR.png" /> -->
       </div>
       <div>
         <h1>Find optimal campaign budget allocation that you can plug back into your account</h1>
-        <img class="third_img" src="~@/img/oR.png"/>
+        <!-- <img class="third_img" src="~@/img/oR.png"/> -->
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 node_modules/*
-dist/*
 yarn.lock/*
 api/google/adwords-examples-36.0.0/*
 api/google/vendor/*
+api/vendor/*
