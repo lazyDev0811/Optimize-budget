@@ -253,27 +253,17 @@ export default
     {
       groupsROI: function ()
       {
-        return (
-          this.group_roi.sort(function (a, b)
+        return this.group_roi.sort(function (a, b)
           {
             return strCompare(a.title, b.title);
-          }),
-          this.group_roi.filter(post => {
-            return post.title.toLowerCase().includes(this.search.toLowerCase())
-          })
-        )
+          });
       },
       groupsCPA: function ()
       {
-        return (
-          this.group_cpa.sort(function (a, b)
+        return this.group_cpa.sort(function (a, b)
           {
             return strCompare(a.title, b.title);
-          }),
-          this.group_cpa.filter(post => {
-            return post.title.toLowerCase().includes(this.search.toLowerCase())
-          })
-        )
+          });
       },
 
     },
@@ -282,18 +272,29 @@ export default
       sortedROI: function (grp)
       {
         // slice is needed to prevent infinite render loop
-        return this.campaign_roi[grp.id].slice().sort(function (a,b)
-        {
-          return strCompare(a.title.toLowerCase(),b.title.toLowerCase());
-        });
+        console.log("@@@@", this.campaign_roi[grp.id].slice())
+        return (
+          this.campaign_roi[grp.id].slice().sort(function (a,b)
+          {
+            return strCompare(a.title.toLowerCase(),b.title.toLowerCase());
+          }),
+          this.campaign_roi[grp.id].slice().filter(post => {
+            return post.title.toLowerCase().includes(this.search.toLowerCase())
+          })
+        )
       },
       sortedCPA: function (grp)
       {
         // slice is needed to prevent infinite render loop
-        return this.campaign_cpa[grp.id].slice().sort(function (a,b)
-        {
-          return strCompare(a.title.toLowerCase(),b.title.toLowerCase());
-        });
+        return (
+          this.campaign_cpa[grp.id].slice().sort(function (a,b)
+          {
+            return strCompare(a.title.toLowerCase(),b.title.toLowerCase());
+          }),
+          this.campaign_cpa[grp.id].slice().filter(post => {
+            return post.title.toLowerCase().includes(this.search.toLowerCase())
+          })
+        )
       },
       fetchData: function()
       {
