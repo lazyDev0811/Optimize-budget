@@ -140,14 +140,14 @@
                 Total Spent = {{ total_spent | filterNum }}<br/>Avg Spent = {{ avg_spent | filterNum }}
               </div>
               <div class="actual_body">
-                Total {{ roi_or_cpa ? 'Revenue = ' : 'Conversions = ' }}{{ total_revenue | filterNum }}
+                Total {{ roi_or_cpa==1 ? 'Revenue = ' : 'Conversions = ' }}{{ total_revenue | filterNum }}
                 <br/>
-                Avg {{ roi_or_cpa ? 'revenue' : 'conv' }} / day = {{ avg_revenue | filterNum }}
+                Avg {{ roi_or_cpa==1 ? 'revenue' : 'conv' }} / day = {{ avg_revenue | filterNum }}
               </div>
               <div class="actual_body">
-                Total {{ roi_or_cpa ? 'ROI' : 'CPA' }} for period = {{ total_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
+                Total {{ roi_or_cpa==1 ? 'ROI' : 'CPA' }} for period = {{ total_roi | filterNum }}{{ roi_or_cpa==1 ? '%' : '' }}
                 <br/>
-                Avg daily {{ roi_or_cpa ? 'ROI' : 'CPA' }} = {{ avg_roi | filterNum }}{{ roi_or_cpa ? '%' : '' }}
+                Avg daily {{ roi_or_cpa==1 ? 'ROI' : 'CPA' }} = {{ avg_roi | filterNum }}{{ roi_or_cpa==1 ? '%' : '' }}
               </div>
             </div>
           </collapse>
