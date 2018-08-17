@@ -71,7 +71,7 @@
     </div>
     <div class="graphs">
       <div class="op_title">
-            <h2 class="op_header" :title="campaign.title" >{{ campaign.title }}</h2>
+            <h4 class="op_header" :title="campaign.title" >{{ campaign.title }}</h4>
       </div>
 
       <div class="op_graph">
@@ -216,7 +216,8 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
-                if(this.chart!=null) this.chart = null;
+        if(this.chart!=null) this.chart = null;
+
         Highcharts.setOptions(
           {
             lang:
@@ -231,7 +232,8 @@ export default
             {
               renderTo: 'graph'+this._uid,
               type: 'scatter',
-              zoomType: 'xy'
+              zoomType: 'xy',
+              height: (9 / 16 * 100) + '%'
             },
             title:
             {
@@ -334,8 +336,8 @@ export default
               {
                 data:
                 [
-                  [reg_data[0][0],0],
-                  [reg_data[0][0], this.optimal_value * 2]
+                  [reg_data[1][0],0],
+                  [reg_data[1][0], this.optimal_value * 2]
                 ],
                 color: 'rgba(70, 160, 50, .9)',
                 lineWidth: 3,
@@ -412,7 +414,9 @@ export default
             {
               renderTo: 'graph'+this._uid,
               type: 'scatter',
-              zoomType: 'xy'
+              zoomType: 'xy',
+              height: (9 / 16 * 100) + '%'
+              
             },
             title:
             {
@@ -537,7 +541,8 @@ export default
             {
               renderTo: 'graph1'+this._uid,
               type: 'scatter',
-              zoomType: 'xy'
+              zoomType: 'xy',
+              height: (9 / 16 * 100) + '%'
             },
             title:
             {
@@ -808,7 +813,8 @@ export default
             {
               renderTo: 'graph'+this._uid,
               type: 'scatter',
-              zoomType: 'xy'
+              zoomType: 'xy',
+              height: (9 / 16 * 100) + '%'
             },
             title:
             {
@@ -928,7 +934,8 @@ export default
             {
               renderTo: 'graph1'+this._uid,
               type: 'scatter',
-              zoomType: 'xy'
+              zoomType: 'xy',
+              height: (9 / 16 * 100) + '%'
             },
             title:
             {
@@ -1051,7 +1058,6 @@ export default
     text-align: -webkit-center;
     display: block;
     margin: 0px 10px;
-    padding: 20px;
     background: #CFE2F3;
   }
 
@@ -1074,8 +1080,7 @@ export default
   }
 
   .op_top{
-    margin-bottom: 50px;
-    padding: 12px;
+    margin-bottom: 15px;
     background-color: #CFE2F3;
   }
 
@@ -1094,7 +1099,7 @@ export default
   .op_header
   {
     color: white;
-    padding: 4px 10px 0;
+    padding: 0px 10px 0;
     max-height: 2em;
     overflow: hidden;
     display: flex;
@@ -1111,16 +1116,22 @@ export default
   .const_field
   {
     min-width: 6rem;
-    padding: 6px 10px;
+    padding: 3px 10px;
     background-color: #F6B59A;
     border: 1px solid #ED7D31;
 
   }
 
+  graph_panel
+  {
+    margin-bottom: 13px;
+  }
+
+
   .num_field
   {
+    text-align: center;
     width: 6rem;
-    padding: 6px 0 6px 10px;
     background-color: #DEEBF7;
     border: 1px solid #41719C;
   }
