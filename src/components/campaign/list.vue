@@ -4,14 +4,28 @@
     <div class="campaign_sidebar_wrapper">
       <div class="campaign_left" :class="{ active: active}">
         <div class="sidebar_tap_wrapper">
-          <div class="roi_content" >
+          <button v-if="roi_or_cpa!=1" class="roi_content">
+            <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
+            <label for="roi_optimial">ROI</label>
+            <span class="tooltip-bottom tooltip" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
+              <img src="~@/img/help.svg"/>
+            </span>
+          </button>
+          <div v-if="roi_or_cpa==1" class="roi_content actived_tav" >
             <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
             <label for="roi_optimial">ROI</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
               <img src="~@/img/help.svg"/>
             </span>
           </div>
-          <div class="cpa_content">
+          <button v-if="roi_or_cpa!=0" class="cpa_content">
+            <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
+            <label for="cpa_optimial">CPA</label>
+            <span class="tooltip-bottom tooltip" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
+              <img src="~@/img/help.svg"/>
+            </span>
+          </button>
+          <div v-if="roi_or_cpa==0" class="cpa_content actived_tav">
             <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
             <label for="cpa_optimial">CPA</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
@@ -695,6 +709,16 @@ export default
     background: #bbb;
     border-radius: 7px;
     border: 1px solid #222;
+  }
+
+  .roi_content, .cpa_content
+  {
+    outline: none;
+  }
+
+  .actived_tav
+  {
+    color: white;
   }
 
   input[type="radio"] {
