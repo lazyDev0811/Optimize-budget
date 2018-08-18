@@ -239,6 +239,7 @@ export default
 
   created: function()
   {
+    this.initDate();
     this.fetchData();
   },
   filters:
@@ -305,7 +306,6 @@ export default
           }
         );
       },
-
       getResult(resp)
       {
         this.select_roi = [];
@@ -319,6 +319,14 @@ export default
           else this.group_roi = [];
         if(isArray(resp.groups_cpa) && resp.groups_cpa.length) this.group_cpa = resp.groups_cpa;
           else this.group_cpa = [];
+      },
+      initDate: function(){
+        var todayTime = new Date();
+        var year = todayTime.getFullYear();
+        var month = todayTime.getMonth() + 1 > 9 ? todayTime.getMonth() + 1 : "0" + (todayTime.getMonth() + 1);
+        var day = todayTime.getDate() > 9 ? todayTime.getDate() : "0" + todayTime.getDate();
+        this.to_date = year + '-' + month + '-' + day;
+        this.from_date = (year-1) + '-' + month + '-' + day;
       },
       doOptimal: function (list)
       {
@@ -445,6 +453,7 @@ export default
   {
     display: flex;
     width: 100%;
+    overflow: hidden;
   }
 
   .campaign_sidebar_wrapper
@@ -585,6 +594,12 @@ export default
     margin-bottom: 4px;
     overflow: auto;
     flex: 1 1 auto;
+    max-height: 366px;
+  }
+
+  .campaign_listing ul{
+    overflow: auto;
+    max-height: 100px;
   }
 
   .campaign_dates
@@ -708,7 +723,8 @@ export default
     display: flex;
     flex-direction: column;
     padding: 3px;
-    min-height: 412px;
+    height: 412px;
+    max-height: 412px;
   }
 
   .campaign_panel,
@@ -718,6 +734,9 @@ export default
     overflow: auto;
   }
 
+  .campaign_center div{
+    overflow: hidden;
+  }
   .help_sign img
   {
     display: inline-block;

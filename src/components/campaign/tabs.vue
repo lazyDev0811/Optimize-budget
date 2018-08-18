@@ -216,24 +216,26 @@ export default
             this.combined = e.data.param;
             this.recalc(2);
             let i, hist = this.history, points = this.combined.points, len = points.length, spent = 0, revenue = 0, projected;
-            hist.r2 = this.combined.regressions.map(function(item)
-            {
-              return isNaN(item.r2) ? 0 : item.r2;
-            });
-            for(i=0;i<len;i++)
-            {
-              spent += points[i][0];
-              revenue += points[i][1];
+            if(len > 0){
+              hist.r2 = this.combined.regressions.map(function(item)
+              {
+                return isNaN(item.r2) ? 0 : item.r2;
+              });
+              for(i=0;i<len;i++)
+              {
+                spent += points[i][0];
+                revenue += points[i][1];
+              }
+              hist.total_spent = spent;
+              hist.total_revenue = revenue;
+              hist.avg_spent = (len ? spent / len : 0);
+              hist.avg_revenue = (len ? revenue / len : 0);
+              projected = predict(spent,this.combined.best_fit,this.combined.regressions[0].equation);
+              hist.total_roi = (this.kind==1 ? (spent ? 100*(projected - spent)/spent : 0) : (projected ? spent / projected : 0));
+              hist.avg_roi = (len ? hist.total_roi / len : 0);
+              this.$emit('history',hist);
+              break;
             }
-            hist.total_spent = spent;
-            hist.total_revenue = revenue;
-            hist.avg_spent = (len ? spent / len : 0);
-            hist.avg_revenue = (len ? revenue / len : 0);
-            projected = predict(spent,this.combined.best_fit,this.combined.regressions[0].equation);
-            hist.total_roi = (this.kind==1 ? (spent ? 100*(projected - spent)/spent : 0) : (projected ? spent / projected : 0));
-            hist.avg_roi = (len ? hist.total_roi / len : 0);
-            this.$emit('history',hist);
-            break;
           case 2: // regressions of individual campaigns
             this.individual = e.data.param;
             this.solved = true;
