@@ -7,8 +7,8 @@
         <table align="center">
          <tr>
             <td align="right">Cost/day</td>
-            <td align="right">Revenue</td>
-            <td align="right">Max ROI</td>
+            <td align="right">Conversion</td>
+            <td align="right">ROI</td>
           </tr>
           <tr>
             <td align="center"><div class="const_field">{{ optimal_cost | filterNum }}</div></td>
@@ -147,9 +147,7 @@ export default
     {
       setPoint: function()
       {
-        this.optimal_cost=this.var_cost;
-        this.optimal_value=this.projected_value(this.optimal_cost);
-        this.optimum=this.projected_roi(this.optimal_cost, this.optimal_value);
+        this.chart.destroy();
         var reg_data = this.combined.regressions[3].points.sort(function (a,b)
         {
           return a[0] - b[0];
@@ -158,7 +156,7 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
-
+        
         if(this.chart!=null) this.chart = null;
         Highcharts.setOptions(
           {
@@ -168,6 +166,7 @@ export default
               }
           }
         );
+
         this.chart = Highcharts.chart(
           {
             chart:
@@ -197,7 +196,7 @@ export default
             {
               title:
               {
-                text: 'Revenue'
+                text: 'Conversion'
               }
             },
             legend:
@@ -251,15 +250,16 @@ export default
             },
             series:
             [
+  
+              {
+                name: 'Day (Cost, Conversion)',
+                color: 'rgba(223, 83, 83, .5)',
+                data: this.combined.points
+              },
               {
                 name: 'State',
                 color: "blue",
-                data: [[this.var_cost*Math.abs(-1), this.projected_value(this.var_cost)]]
-              },
-                            {
-                name: 'Day (Cost, ' + this.text_kind + ')',
-                color: 'rgba(223, 83, 83, .5)',
-                data: this.combined.points
+                data: [[this.var_cost*Math.abs(1), this.projected_value(this.var_cost)]]
               },
               {
                 data: reg_data,
@@ -271,19 +271,6 @@ export default
                   {
                     enabled: false
                   },
-                showInLegend: false
-              },
-              {
-                data:
-                [
-                  [this.optimal_cost,0],
-                  [this.optimal_cost,this.optimal_value * 2]
-                ],
-                color: 'rgba(70, 160, 50, .9)',
-                lineWidth: 3,
-                type: 'line',
-                dashStyle: 'solid',
-                name: this.optimal_text + ' = ' + this.optimal_result,
                 showInLegend: false
               }
             ],
@@ -455,7 +442,7 @@ export default
             {
               title:
               {
-                text: this.text_kind
+                text: 'Conversion'
               }
             },
             legend:
@@ -525,19 +512,6 @@ export default
                     enabled: false
                   },
                 showInLegend: false
-              },
-              {
-                data:
-                [
-                  [this.optimal_cost,0],
-                  [this.optimal_cost,this.optimal_value * 2]
-                ],
-                color: 'rgba(70, 160, 50, .9)',
-                lineWidth: 3,
-                type: 'line',
-                dashStyle: 'solid',
-                name: this.optimal_text + ' = ' + this.optimal_result,
-                showInLegend: false
               }
             ],
             credits:
@@ -552,6 +526,10 @@ export default
 </script>
 
 <style scoped>
+  td{
+    text-align: center;
+  }
+
   .landing_wrapper
   {
     /* display: flex;
