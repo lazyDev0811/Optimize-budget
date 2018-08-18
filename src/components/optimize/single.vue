@@ -204,7 +204,9 @@ export default
     {
       moveGreenLine: function()
       {
+        this.initChart();
         this.optimal_regress();
+        this.var_cost=0;
         var reg_data = this.regression.points.sort(function (a,b)
         {
           return a[0] - b[0];
@@ -369,6 +371,24 @@ export default
           }
         );
         var reg_data1 = this.regression.points1.sort(function (a,b)
+        {
+          return a[0] - b[0];
+        }).map(function(item)
+        {
+          if(item[1]<0) item[1] = 0;
+          return item;
+        });
+
+        var maxValue=reg_data1[reg_data1.length-1][0];
+        reg_data1.splice(0, reg_data1.length);
+
+        for(var i=0; i<=maxValue; i++)
+        {
+          reg_data1.push([i, i/this.projected_value(i)]);
+        }
+        reg_data1.push([maxValue, i/this.projected_value(maxValue)]);
+
+        var reg_points1 = reg_data1.sort(function (a,b)
         {
           return a[0] - b[0];
         }).map(function(item)
@@ -601,7 +621,7 @@ export default
                 data: [[this.var_cost*Math.abs(-1), this.var_cost/this.projected_value(this.var_cost)]]
               },
               {
-                data: reg_data1,
+                data: reg_points1,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
                 type: 'line',
@@ -757,6 +777,23 @@ export default
           return item;
         });
 
+        var maxValue=reg_data1[reg_data1.length-1][0];
+        reg_data1.splice(0, reg_data1.length);
+
+        for(var i=0; i<=maxValue; i++)
+        {
+          reg_data1.push([i, i/this.projected_value(i)]);
+        }
+        reg_data1.push([maxValue, i/this.projected_value(maxValue)]);
+
+        var reg_points1 = reg_data1.sort(function (a,b)
+        {
+          return a[0] - b[0];
+        }).map(function(item)
+        {
+          if(item[1]<0) item[1] = 0;
+          return item;
+        });
 
         if(this.chart!=null) this.chart = null;
         Highcharts.setOptions(
