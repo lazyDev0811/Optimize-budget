@@ -758,9 +758,11 @@ export default
     overflow: auto;
   }
 
-  .campaign_center div{
+  .campaign_center
+  {
     overflow: hidden;
   }
+
   .help_sign img
   {
     display: inline-block;
