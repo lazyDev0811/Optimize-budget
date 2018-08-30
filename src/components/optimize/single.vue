@@ -416,7 +416,7 @@ export default
               type: 'scatter',
               zoomType: 'xy',
               height: (9 / 16 * 100) + '%'
-              
+
             },
             title:
             {
@@ -658,26 +658,33 @@ export default
         return (this.kind==1 ? (cost ? 100*(revenue - cost)/cost : 0) : (revenue ? cost / revenue : 0));
       },
 
+      derivative: function(x)
+      {
+        const fn = (x) => Math.pow(x, 2) * 0.5;
+        const memo = (fn, cache = {}) => (x) => (x in cache) ? cache[x] : cache[x] = fn(x);
+        const d_func= memo((fn,step = 0.01) => (x) => (fn(x + step) - fn(x - step)) / (2 * step))
+        return d_func(fn)(x)
+      },
+
       optimal_regress: function()
       {
         // this.optimal_cost = Math.min(this.max_value, 10000);
         // this.optimal_value = this.projected_value(this.optimal_cost);
         // this.optimum = Math.round(100 * this.projected_roi(this.optimal_cost,this.optimal_value))/100;
         var optimum = 1000000, optimal_cost = 0, tmp;
-        if(this.kind == 1) optimum = 0;
-        for(var v_cost=0; v_cost<=this.max_value ; v_cost+=0.01){
-          tmp = Math.round(100 * this.projected_roi(v_cost,this.projected_value(v_cost))) / 100;
+        for (var i = 0; i < this.max_value; i++) {
+          if(this.kind == 1) optimum = 0;
+          tmp = Math.round(100 * this.projected_roi(this.derivative(i),this.projected_value(this.derivative(i)))) / 100;
           if(this.kind == 1){
             if(optimum < tmp) {
               optimum = tmp;
-              optimal_cost = v_cost;
+              optimal_cost = this.derivative(i);
             }
           } else if(tmp > 0 && optimum > tmp){
             optimum = tmp;
-            optimal_cost = v_cost;
+            optimal_cost = this.derivative(i);
           }
         }
-
         this.optimum = optimum;
         this.optimal_cost = optimal_cost;
         this.optimal_value = this.projected_value(optimal_cost);
