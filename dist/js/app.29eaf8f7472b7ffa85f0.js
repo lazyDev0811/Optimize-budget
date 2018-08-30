@@ -206,7 +206,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(42),
   /* template */
-  __webpack_require__(108),
+  __webpack_require__(111),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -915,7 +915,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(44),
   /* template */
-  __webpack_require__(113),
+  __webpack_require__(116),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -938,7 +938,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(50),
   /* template */
-  __webpack_require__(110),
+  __webpack_require__(113),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -961,7 +961,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(51),
   /* template */
-  __webpack_require__(95),
+  __webpack_require__(98),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -984,7 +984,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(53),
   /* template */
-  __webpack_require__(111),
+  __webpack_require__(114),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -1002,43 +1002,43 @@ module.exports = Component.exports
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_router__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_bad_route__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form__ = __webpack_require__(87);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form__ = __webpack_require__(90);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_login_login_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__ = __webpack_require__(93);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_landing__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_landing___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__components_landing__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__components_import_import__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__components_campaign_list__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__ = __webpack_require__(94);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support__ = __webpack_require__(97);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11__components_support_support__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact__ = __webpack_require__(93);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact__ = __webpack_require__(96);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_12__components_support_contact__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats__ = __webpack_require__(85);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13__components_admin_stats__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy__ = __webpack_require__(92);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy__ = __webpack_require__(95);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15__components_privacy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__ = __webpack_require__(77);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_17__components_admin_events__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_19__components_about__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__tool_cook__ = __webpack_require__(12);
 
@@ -1208,7 +1208,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(32),
   /* template */
-  __webpack_require__(106),
+  __webpack_require__(109),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -2197,11 +2197,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_err_panel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__ = __webpack_require__(88);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tool_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse__ = __webpack_require__(74);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_vue_collapse__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2426,6 +2440,7 @@ __webpack_require__(11);
   },
 
   created: function () {
+    this.initDate();
     this.fetchData();
   },
   filters: {
@@ -2470,7 +2485,6 @@ __webpack_require__(11);
         this.warn_text = resp;
       });
     },
-
     getResult(resp) {
       this.select_roi = [];
       this.select_cpa = [];
@@ -2479,6 +2493,14 @@ __webpack_require__(11);
       if (isObject(resp.campaign_cpa)) this.campaign_cpa = resp.campaign_cpa;else this.campaign_cpa = [];
       if (isArray(resp.groups_roi) && resp.groups_roi.length) this.group_roi = resp.groups_roi;else this.group_roi = [];
       if (isArray(resp.groups_cpa) && resp.groups_cpa.length) this.group_cpa = resp.groups_cpa;else this.group_cpa = [];
+    },
+    initDate: function () {
+      var todayTime = new Date();
+      var year = todayTime.getFullYear();
+      var month = todayTime.getMonth() + 1 > 9 ? todayTime.getMonth() + 1 : "0" + (todayTime.getMonth() + 1);
+      var day = todayTime.getDate() > 9 ? todayTime.getDate() : "0" + todayTime.getDate();
+      this.to_date = year + '-' + month + '-' + day;
+      this.from_date = year - 1 + '-' + month + '-' + day;
     },
     doOptimal: function (list) {
       this.valid_msg = '';
@@ -2779,22 +2801,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
               spent = 0,
               revenue = 0,
               projected;
-          hist.r2 = this.combined.regressions.map(function (item) {
-            return isNaN(item.r2) ? 0 : item.r2;
-          });
-          for (i = 0; i < len; i++) {
-            spent += points[i][0];
-            revenue += points[i][1];
+          if (len > 0) {
+            hist.r2 = this.combined.regressions.map(function (item) {
+              return isNaN(item.r2) ? 0 : item.r2;
+            });
+            for (i = 0; i < len; i++) {
+              spent += points[i][0];
+              revenue += points[i][1];
+            }
+            hist.total_spent = spent;
+            hist.total_revenue = revenue;
+            hist.avg_spent = len ? spent / len : 0;
+            hist.avg_revenue = len ? revenue / len : 0;
+            projected = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_regression__["a" /* predict */])(spent, this.combined.best_fit, this.combined.regressions[0].equation);
+            hist.total_roi = this.kind == 1 ? spent ? 100 * (projected - spent) / spent : 0 : projected ? spent / projected : 0;
+            hist.avg_roi = len ? hist.total_roi / len : 0;
+            this.$emit('history', hist);
+            break;
           }
-          hist.total_spent = spent;
-          hist.total_revenue = revenue;
-          hist.avg_spent = len ? spent / len : 0;
-          hist.avg_revenue = len ? revenue / len : 0;
-          projected = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_regression__["a" /* predict */])(spent, this.combined.best_fit, this.combined.regressions[0].equation);
-          hist.total_roi = this.kind == 1 ? spent ? 100 * (projected - spent) / spent : 0 : projected ? spent / projected : 0;
-          hist.avg_roi = len ? hist.total_roi / len : 0;
-          this.$emit('history', hist);
-          break;
         case 2:
           // regressions of individual campaigns
           this.individual = e.data.param;
@@ -3313,9 +3337,7 @@ __webpack_require__(19);
   },
   methods: {
     setPoint: function () {
-      this.optimal_cost = this.var_cost;
-      this.optimal_value = this.projected_value(this.optimal_cost);
-      this.optimum = this.projected_roi(this.optimal_cost, this.optimal_value);
+      this.chart.destroy();
       var reg_data = this.combined.regressions[3].points.sort(function (a, b) {
         return a[0] - b[0];
       }).map(function (item) {
@@ -3329,6 +3351,7 @@ __webpack_require__(19);
           thousandsSep: ''
         }
       });
+
       this.chart = __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.chart({
         chart: {
           renderTo: 'graph' + this._uid,
@@ -3351,7 +3374,7 @@ __webpack_require__(19);
         },
         yAxis: {
           title: {
-            text: 'Revenue'
+            text: 'Conversion'
           }
         },
         legend: {
@@ -3393,13 +3416,13 @@ __webpack_require__(19);
           }
         },
         series: [{
-          name: 'State',
-          color: "blue",
-          data: [[this.var_cost * Math.abs(-1), this.projected_value(this.var_cost)]]
-        }, {
-          name: 'Day (Cost, ' + this.text_kind + ')',
+          name: 'Day (Cost, Conversion)',
           color: 'rgba(223, 83, 83, .5)',
           data: this.combined.points
+        }, {
+          name: 'State',
+          color: "blue",
+          data: [[this.var_cost * Math.abs(1), this.projected_value(this.var_cost)]]
         }, {
           data: reg_data,
           color: 'rgba(40, 100, 255, .9)',
@@ -3409,14 +3432,6 @@ __webpack_require__(19);
           marker: {
             enabled: false
           },
-          showInLegend: false
-        }, {
-          data: [[this.optimal_cost, 0], [this.optimal_cost, this.optimal_value * 2]],
-          color: 'rgba(70, 160, 50, .9)',
-          lineWidth: 3,
-          type: 'line',
-          dashStyle: 'solid',
-          name: this.optimal_text + ' = ' + this.optimal_result,
           showInLegend: false
         }],
         credits: {
@@ -3491,7 +3506,6 @@ __webpack_require__(19);
 
     init_Data: function () {
 
-      console.log("HHHH", this.defaultList);
       __WEBPACK_IMPORTED_MODULE_2__tool_ajax__["a" /* default */].ajax_post(this, "api/campaign/load.php", function (resp) {
         if (isArray(resp) && resp.length) {
           if (resp.length > 1) this.combined = resp.shift();else this.combined = resp[0];
@@ -3545,7 +3559,7 @@ __webpack_require__(19);
         },
         yAxis: {
           title: {
-            text: this.text_kind
+            text: 'Conversion'
           }
         },
         legend: {
@@ -3599,14 +3613,6 @@ __webpack_require__(19);
           marker: {
             enabled: false
           },
-          showInLegend: false
-        }, {
-          data: [[this.optimal_cost, 0], [this.optimal_cost, this.optimal_value * 2]],
-          color: 'rgba(70, 160, 50, .9)',
-          lineWidth: 3,
-          type: 'line',
-          dashStyle: 'solid',
-          name: this.optimal_text + ' = ' + this.optimal_result,
           showInLegend: false
         }],
         credits: {
@@ -4150,6 +4156,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -4232,7 +4239,9 @@ __webpack_require__(11);
   },
   methods: {
     moveGreenLine: function () {
+      this.initChart();
       this.optimal_regress();
+      this.var_cost = 0;
       var reg_data = this.regression.points.sort(function (a, b) {
         return a[0] - b[0];
       }).map(function (item) {
@@ -4240,6 +4249,7 @@ __webpack_require__(11);
         return item;
       });
       if (this.chart != null) this.chart = null;
+
       __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
         lang: {
           thousandsSep: ''
@@ -4249,10 +4259,11 @@ __webpack_require__(11);
         chart: {
           renderTo: 'graph' + this._uid,
           type: 'scatter',
-          zoomType: 'xy'
+          zoomType: 'xy',
+          height: 9 / 16 * 100 + '%'
         },
         title: {
-          text: 'Regression Cost vs ' + this.text_kind
+          text: 'Cost vs ' + this.text_kind
         },
         xAxis: {
           min: 0,
@@ -4317,6 +4328,7 @@ __webpack_require__(11);
           color: 'blue',
           data: [[this.var_cost * Math.abs(-1), this.projected_value(this.var_cost)]]
         }, {
+          name: '(Cost, CPA)',
           data: reg_data,
           color: 'rgba(40, 100, 255, .9)',
           lineWidth: 2,
@@ -4325,10 +4337,9 @@ __webpack_require__(11);
           marker: {
             enabled: false
           },
-          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
           showInLegend: false
         }, {
-          data: [[reg_data[0][0], 0], [reg_data[0][0], this.optimal_value * 2]],
+          data: [[reg_data[1][0], 0], [reg_data[1][0], this.optimal_value * 2]],
           color: 'rgba(70, 160, 50, .9)',
           lineWidth: 3,
           type: 'line',
@@ -4362,6 +4373,21 @@ __webpack_require__(11);
         return item;
       });
 
+      var maxValue = reg_data1[reg_data1.length - 1][0];
+      reg_data1.splice(0, reg_data1.length);
+
+      for (var i = 0; i <= maxValue; i++) {
+        reg_data1.push([i, i / this.projected_value(i)]);
+      }
+      reg_data1.push([maxValue, i / this.projected_value(maxValue)]);
+
+      var reg_points1 = reg_data1.sort(function (a, b) {
+        return a[0] - b[0];
+      }).map(function (item) {
+        if (item[1] < 0) item[1] = 0;
+        return item;
+      });
+
       if (this.chart != null) this.chart = null;
       __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
         lang: {
@@ -4372,10 +4398,12 @@ __webpack_require__(11);
         chart: {
           renderTo: 'graph' + this._uid,
           type: 'scatter',
-          zoomType: 'xy'
+          zoomType: 'xy',
+          height: 9 / 16 * 100 + '%'
+
         },
         title: {
-          text: 'Regression Cost vs ' + this.text_kind
+          text: 'Cost vs ' + this.text_kind
         },
         xAxis: {
           min: 0,
@@ -4448,7 +4476,7 @@ __webpack_require__(11);
           marker: {
             enabled: false
           },
-          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+          name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2) + '<br/>',
           showInLegend: false
         }, {
           data: [[this.optimal_cost, 0], [this.optimal_cost, this.optimal_value * 2]],
@@ -4467,10 +4495,11 @@ __webpack_require__(11);
         chart: {
           renderTo: 'graph1' + this._uid,
           type: 'scatter',
-          zoomType: 'xy'
+          zoomType: 'xy',
+          height: 9 / 16 * 100 + '%'
         },
         title: {
-          text: 'CPA vs Conversion'
+          text: 'CPA vs Cost'
         },
         xAxis: {
           min: 0,
@@ -4531,7 +4560,7 @@ __webpack_require__(11);
           color: 'blue',
           data: [[this.var_cost * Math.abs(-1), this.var_cost / this.projected_value(this.var_cost)]]
         }, {
-          data: reg_data1,
+          data: reg_points1,
           color: 'rgba(40, 100, 255, .9)',
           lineWidth: 2,
           type: 'line',
@@ -4539,7 +4568,7 @@ __webpack_require__(11);
           marker: {
             enabled: false
           },
-          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+          name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2) + '<br/>',
           showInLegend: false
         }],
         credits: {
@@ -4558,6 +4587,13 @@ __webpack_require__(11);
       return this.kind == 1 ? cost ? 100 * (revenue - cost) / cost : 0 : revenue ? cost / revenue : 0;
     },
 
+    derivative: function (x) {
+      const fn = x => Math.pow(x, 2) * 0.5;
+      const memo = (fn, cache = {}) => x => x in cache ? cache[x] : cache[x] = fn(x);
+      const d_func = memo((fn, step = 0.01) => x => (fn(x + step) - fn(x - step)) / (2 * step));
+      return d_func(fn)(x);
+    },
+
     optimal_regress: function () {
       // this.optimal_cost = Math.min(this.max_value, 10000);
       // this.optimal_value = this.projected_value(this.optimal_cost);
@@ -4565,20 +4601,19 @@ __webpack_require__(11);
       var optimum = 1000000,
           optimal_cost = 0,
           tmp;
-      if (this.kind == 1) optimum = 0;
-      for (var v_cost = 0; v_cost <= this.max_value; v_cost += 0.01) {
-        tmp = Math.round(100 * this.projected_roi(v_cost, this.projected_value(v_cost))) / 100;
+      for (var i = 0; i < this.max_value; i++) {
+        if (this.kind == 1) optimum = 0;
+        tmp = Math.round(100 * this.projected_roi(this.derivative(i), this.projected_value(this.derivative(i)))) / 100;
         if (this.kind == 1) {
           if (optimum < tmp) {
             optimum = tmp;
-            optimal_cost = v_cost;
+            optimal_cost = this.derivative(i);
           }
         } else if (tmp > 0 && optimum > tmp) {
           optimum = tmp;
-          optimal_cost = v_cost;
+          optimal_cost = this.derivative(i);
         }
       }
-
       this.optimum = optimum;
       this.optimal_cost = optimal_cost;
       this.optimal_value = this.projected_value(optimal_cost);
@@ -4665,6 +4700,21 @@ __webpack_require__(11);
         return item;
       });
 
+      var maxValue = reg_data1[reg_data1.length - 1][0];
+      reg_data1.splice(0, reg_data1.length);
+
+      for (var i = 0; i <= maxValue; i++) {
+        reg_data1.push([i, i / this.projected_value(i)]);
+      }
+      reg_data1.push([maxValue, i / this.projected_value(maxValue)]);
+
+      var reg_points1 = reg_data1.sort(function (a, b) {
+        return a[0] - b[0];
+      }).map(function (item) {
+        if (item[1] < 0) item[1] = 0;
+        return item;
+      });
+
       if (this.chart != null) this.chart = null;
       __WEBPACK_IMPORTED_MODULE_0_highcharts___default.a.setOptions({
         lang: {
@@ -4675,10 +4725,11 @@ __webpack_require__(11);
         chart: {
           renderTo: 'graph' + this._uid,
           type: 'scatter',
-          zoomType: 'xy'
+          zoomType: 'xy',
+          height: 9 / 16 * 100 + '%'
         },
         title: {
-          text: 'Regression Cost vs ' + this.text_kind
+          text: 'Cost vs ' + this.text_kind
         },
         xAxis: {
           min: 0,
@@ -4747,7 +4798,7 @@ __webpack_require__(11);
           marker: {
             enabled: false
           },
-          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
+          name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2) + '<br/>',
           showInLegend: false
         }, {
           data: [[this.optimal_cost, 0], [this.optimal_cost, this.optimal_value * 2]],
@@ -4766,10 +4817,11 @@ __webpack_require__(11);
         chart: {
           renderTo: 'graph1' + this._uid,
           type: 'scatter',
-          zoomType: 'xy'
+          zoomType: 'xy',
+          height: 9 / 16 * 100 + '%'
         },
         title: {
-          text: 'CPA vs Conversion'
+          text: 'CPA vs Cost'
         },
         xAxis: {
           min: 0,
@@ -4826,6 +4878,7 @@ __webpack_require__(11);
           }
         },
         series: [{
+          name: '(Cost, CPA)',
           data: reg_data1,
           color: 'rgba(40, 100, 255, .9)',
           lineWidth: 2,
@@ -4834,7 +4887,6 @@ __webpack_require__(11);
           marker: {
             enabled: false
           },
-          name: this.equation + '<br/>R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = ' + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__tool_util__["b" /* round */])(isNaN(this.regression.r2) ? 0 : this.regression.r2),
           showInLegend: false
         }],
         credits: {
@@ -9347,13 +9399,31 @@ function encodeFilename(str) {
 
 /***/ }),
 /* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "img/CalR.0429c68.svg";
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "img/graR.48f68b7.svg";
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "img/oR.d4f6fc9.svg";
+
+/***/ }),
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8c3ZnIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDYwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDkwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgxNTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMTgwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDIxMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgyNDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMjcwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgzMzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KPC9zdmc+ICAgCSAgICANCg=="
 
 /***/ }),
-/* 74 */,
-/* 75 */
+/* 77 */,
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
@@ -9363,69 +9433,9 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(31),
   /* template */
-  __webpack_require__(99),
+  __webpack_require__(102),
   /* styles */
   injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(0)(
-  /* script */
-  null,
-  /* template */
-  __webpack_require__(107),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(33),
-  /* template */
-  __webpack_require__(114),
-  /* styles */
-  null,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 78 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(34),
-  /* template */
-  __webpack_require__(101),
-  /* styles */
-  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9439,16 +9449,13 @@ module.exports = Component.exports
 /* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(60)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(35),
+  null,
   /* template */
-  __webpack_require__(98),
+  __webpack_require__(110),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9464,9 +9471,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(36),
+  __webpack_require__(33),
   /* template */
-  __webpack_require__(116),
+  __webpack_require__(117),
   /* styles */
   null,
   /* scopeId */
@@ -9484,9 +9491,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(37),
+  __webpack_require__(34),
   /* template */
-  __webpack_require__(103),
+  __webpack_require__(104),
   /* styles */
   null,
   /* scopeId */
@@ -9502,13 +9509,16 @@ module.exports = Component.exports
 /* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(60)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(38),
+  __webpack_require__(35),
   /* template */
-  __webpack_require__(104),
+  __webpack_require__(101),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9522,16 +9532,13 @@ module.exports = Component.exports
 /* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(63)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(39),
+  __webpack_require__(36),
   /* template */
-  __webpack_require__(105),
+  __webpack_require__(119),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9545,16 +9552,13 @@ module.exports = Component.exports
 /* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(70)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(40),
+  __webpack_require__(37),
   /* template */
-  __webpack_require__(117),
+  __webpack_require__(106),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9568,16 +9572,13 @@ module.exports = Component.exports
 /* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(62)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(41),
+  __webpack_require__(38),
   /* template */
-  __webpack_require__(100),
+  __webpack_require__(107),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9592,13 +9593,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(71)
+  __webpack_require__(63)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(43),
+  __webpack_require__(39),
   /* template */
-  __webpack_require__(119),
+  __webpack_require__(108),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -9614,13 +9615,16 @@ module.exports = Component.exports
 /* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(70)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(45),
+  __webpack_require__(40),
   /* template */
-  __webpack_require__(109),
+  __webpack_require__(120),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9634,13 +9638,16 @@ module.exports = Component.exports
 /* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(62)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(46),
+  __webpack_require__(41),
   /* template */
-  __webpack_require__(112),
+  __webpack_require__(103),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9654,13 +9661,16 @@ module.exports = Component.exports
 /* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(71)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(47),
+  __webpack_require__(43),
   /* template */
-  __webpack_require__(97),
+  __webpack_require__(122),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9676,9 +9686,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(48),
+  __webpack_require__(45),
   /* template */
-  __webpack_require__(96),
+  __webpack_require__(112),
   /* styles */
   null,
   /* scopeId */
@@ -9694,16 +9704,13 @@ module.exports = Component.exports
 /* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(69)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(49),
+  __webpack_require__(46),
   /* template */
   __webpack_require__(115),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9717,16 +9724,13 @@ module.exports = Component.exports
 /* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(72)
-}
 var Component = __webpack_require__(0)(
   /* script */
-  null,
+  __webpack_require__(47),
   /* template */
-  __webpack_require__(120),
+  __webpack_require__(100),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9742,9 +9746,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(52),
+  __webpack_require__(48),
   /* template */
-  __webpack_require__(102),
+  __webpack_require__(99),
   /* styles */
   null,
   /* scopeId */
@@ -9760,11 +9764,57 @@ module.exports = Component.exports
 /* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(69)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(54),
+  __webpack_require__(49),
   /* template */
   __webpack_require__(118),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+function injectStyle (ssrContext) {
+  __webpack_require__(72)
+}
+var Component = __webpack_require__(0)(
+  /* script */
+  null,
+  /* template */
+  __webpack_require__(123),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(52),
+  /* template */
+  __webpack_require__(105),
   /* styles */
   null,
   /* scopeId */
@@ -9777,7 +9827,27 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 95 */
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(54),
+  /* template */
+  __webpack_require__(121),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10018,7 +10088,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 96 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10209,7 +10279,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 97 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10278,7 +10348,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 98 */
+/* 101 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10333,7 +10403,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 99 */
+/* 102 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10366,7 +10436,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 100 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10452,7 +10522,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 101 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10621,7 +10691,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 102 */
+/* 105 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10903,7 +10973,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 103 */
+/* 106 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11240,7 +11310,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 104 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11328,7 +11398,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 105 */
+/* 108 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11340,7 +11410,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 106 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11487,7 +11557,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('img', {
     attrs: {
-      "src": __webpack_require__(73),
+      "src": __webpack_require__(76),
       "width": "100px",
       "height": "100px",
       "border": "0",
@@ -11497,7 +11567,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 107 */
+/* 110 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11505,7 +11575,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 108 */
+/* 111 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11518,7 +11588,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 109 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11622,7 +11692,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 110 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11756,15 +11826,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   })])])]), _vm._v(" "), _vm._m(5)])])]), _vm._v(" "), _c('div', {
     staticClass: "graphs"
   }, [_c('div', {
-    staticClass: "op_graph"
-  }, [_c('div', {
     staticClass: "op_title"
-  }, [_c('h2', {
+  }, [_c('h4', {
     staticClass: "op_header",
     attrs: {
       "title": _vm.campaign.title
     }
   }, [_vm._v(_vm._s(_vm.campaign.title))])]), _vm._v(" "), _c('div', {
+    staticClass: "op_graph"
+  }, [_c('div', {
     staticClass: "graph_panel",
     attrs: {
       "id": 'graph' + _vm._uid
@@ -11904,7 +11974,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 111 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11957,7 +12027,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 112 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12051,8 +12121,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 113 */
-/***/ (function(module, exports) {
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
@@ -12154,11 +12224,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "align": "right"
     }
-  }, [_vm._v("Revenue")]), _vm._v(" "), _c('td', {
+  }, [_vm._v("Conversion")]), _vm._v(" "), _c('td', {
     attrs: {
       "align": "right"
     }
-  }, [_vm._v("Max ROI")])])
+  }, [_vm._v("ROI")])])
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "text_content"
@@ -12170,11 +12240,26 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "sample_optimize"
-  }, [_c('div', [_c('h1', [_vm._v("Map campaigns using regression models to find optimal performance")])]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Forecast performance with increased budgets")])]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Find optimal campaign budget allocation that you can plug back into your account")])])])
+  }, [_c('div', [_c('h1', [_vm._v("Map campaigns using regression models to find optimal performance")]), _vm._v(" "), _c('img', {
+    staticClass: "first_img",
+    attrs: {
+      "src": __webpack_require__(74)
+    }
+  })]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Forecast performance with increased budgets")]), _vm._v(" "), _c('img', {
+    staticClass: "second_img",
+    attrs: {
+      "src": __webpack_require__(73)
+    }
+  })]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Find optimal campaign budget allocation that you can plug back into your account")]), _vm._v(" "), _c('img', {
+    staticClass: "third_img",
+    attrs: {
+      "src": __webpack_require__(75)
+    }
+  })])])
 }]}
 
 /***/ }),
-/* 114 */
+/* 117 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12362,7 +12447,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 115 */
+/* 118 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12411,7 +12496,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 116 */
+/* 119 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12445,7 +12530,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 117 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12471,7 +12556,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "sidebar_tap_wrapper"
-  }, [_c('div', {
+  }, [(_vm.roi_or_cpa != 1) ? _c('button', {
     staticClass: "roi_content"
   }, [_c('input', {
     directives: [{
@@ -12500,7 +12585,36 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": "roi_optimial"
     }
-  }, [_vm._v("ROI")]), _vm._v(" "), _vm._m(0)]), _vm._v(" "), _c('div', {
+  }, [_vm._v("ROI")]), _vm._v(" "), _vm._m(0)]) : _vm._e(), _vm._v(" "), (_vm.roi_or_cpa == 1) ? _c('div', {
+    staticClass: "roi_content actived_tav"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.roi_or_cpa),
+      expression: "roi_or_cpa"
+    }],
+    attrs: {
+      "type": "radio",
+      "id": "roi_optimial",
+      "value": "1"
+    },
+    domProps: {
+      "checked": _vm._q(_vm.roi_or_cpa, "1")
+    },
+    on: {
+      "click": function($event) {
+        _vm.doOptimal(_vm.roi_or_cpa == 1 ? _vm.select_roi : _vm.select_cpa)
+      },
+      "__c": function($event) {
+        _vm.roi_or_cpa = "1"
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    attrs: {
+      "for": "roi_optimial"
+    }
+  }, [_vm._v("ROI")]), _vm._v(" "), _vm._m(1)]) : _vm._e(), _vm._v(" "), (_vm.roi_or_cpa != 0) ? _c('button', {
     staticClass: "cpa_content"
   }, [_c('input', {
     directives: [{
@@ -12529,11 +12643,40 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": "cpa_optimial"
     }
-  }, [_vm._v("CPA")]), _vm._v(" "), _vm._m(1)])]), _vm._v(" "), _c('div', {
+  }, [_vm._v("CPA")]), _vm._v(" "), _vm._m(2)]) : _vm._e(), _vm._v(" "), (_vm.roi_or_cpa == 0) ? _c('div', {
+    staticClass: "cpa_content actived_tav"
+  }, [_c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.roi_or_cpa),
+      expression: "roi_or_cpa"
+    }],
+    attrs: {
+      "type": "radio",
+      "id": "cpa_optimial",
+      "value": "0"
+    },
+    domProps: {
+      "checked": _vm._q(_vm.roi_or_cpa, "0")
+    },
+    on: {
+      "click": function($event) {
+        _vm.doOptimal(_vm.roi_or_cpa == 1 ? _vm.select_roi : _vm.select_cpa)
+      },
+      "__c": function($event) {
+        _vm.roi_or_cpa = "0"
+      }
+    }
+  }), _vm._v(" "), _c('label', {
+    attrs: {
+      "for": "cpa_optimial"
+    }
+  }, [_vm._v("CPA")]), _vm._v(" "), _vm._m(3)]) : _vm._e()]), _vm._v(" "), _c('div', {
     staticClass: "campaign_panel"
   }, [_c('div', {
     staticClass: "campaign_listing"
-  }, [_vm._m(2), _vm._v(" "), _c('div', {
+  }, [_vm._m(4), _vm._v(" "), _c('div', {
     staticClass: "search-wrapper"
   }, [_c('input', {
     directives: [{
@@ -12842,7 +12985,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": "remove_outlier"
     }
-  }, [_vm._v("Remove outliers")]), _vm._v(" "), _vm._m(3), _vm._v(" "), (_vm.roi_or_cpa == 1 && _vm.select_roi.length > 0) ? _c('button', {
+  }, [_vm._v("Remove outliers")]), _vm._v(" "), _vm._m(5), _vm._v(" "), (_vm.roi_or_cpa == 1 && _vm.select_roi.length > 0) ? _c('button', {
     staticClass: "campaign_delete btn btn_dark",
     on: {
       "click": function($event) {
@@ -12934,9 +13077,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "actual_body"
   }, [_vm._v("\n              Total Spent = " + _vm._s(_vm._f("filterNum")(_vm.total_spent))), _c('br'), _vm._v("Avg Spent = " + _vm._s(_vm._f("filterNum")(_vm.avg_spent)) + "\n            ")]), _vm._v(" "), _c('div', {
     staticClass: "actual_body"
-  }, [_vm._v("\n              Total " + _vm._s(_vm.roi_or_cpa ? 'Revenue = ' : 'Conversions = ') + _vm._s(_vm._f("filterNum")(_vm.total_revenue)) + "\n              "), _c('br'), _vm._v("\n              Avg " + _vm._s(_vm.roi_or_cpa ? 'revenue' : 'conv') + " / day = " + _vm._s(_vm._f("filterNum")(_vm.avg_revenue)) + "\n            ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n              Total " + _vm._s(_vm.roi_or_cpa == 1 ? 'Revenue = ' : 'Conversions = ') + _vm._s(_vm._f("filterNum")(_vm.total_revenue)) + "\n              "), _c('br'), _vm._v("\n              Avg " + _vm._s(_vm.roi_or_cpa == 1 ? 'revenue' : 'conv') + " / day = " + _vm._s(_vm._f("filterNum")(_vm.avg_revenue)) + "\n            ")]), _vm._v(" "), _c('div', {
     staticClass: "actual_body"
-  }, [_vm._v("\n              Total " + _vm._s(_vm.roi_or_cpa ? 'ROI' : 'CPA') + " for period = " + _vm._s(_vm._f("filterNum")(_vm.total_roi)) + _vm._s(_vm.roi_or_cpa ? '%' : '') + "\n              "), _c('br'), _vm._v("\n              Avg daily " + _vm._s(_vm.roi_or_cpa ? 'ROI' : 'CPA') + " = " + _vm._s(_vm._f("filterNum")(_vm.avg_roi)) + _vm._s(_vm.roi_or_cpa ? '%' : '') + "\n            ")])])])], 1)]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n              Total " + _vm._s(_vm.roi_or_cpa == 1 ? 'ROI' : 'CPA') + " for period = " + _vm._s(_vm._f("filterNum")(_vm.total_roi)) + _vm._s(_vm.roi_or_cpa == 1 ? '%' : '') + "\n              "), _c('br'), _vm._v("\n              Avg daily " + _vm._s(_vm.roi_or_cpa == 1 ? 'ROI' : 'CPA') + " = " + _vm._s(_vm._f("filterNum")(_vm.avg_roi)) + _vm._s(_vm.roi_or_cpa == 1 ? '%' : '') + "\n            ")])])])], 1)]), _vm._v(" "), _c('div', {
     staticClass: "sidebar_collapse",
     on: {
       "click": function($event) {
@@ -12981,6 +13124,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('span', {
     staticClass: "tooltip-bottom tooltip",
     attrs: {
+      "data-tooltip": "Select campaign data that contains revenue to optimise for ROI (Return on Investment)."
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "tooltip-bottom tooltip",
+    attrs: {
+      "data-tooltip": "Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition)."
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": __webpack_require__(2)
+    }
+  })])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "tooltip-bottom tooltip",
+    attrs: {
       "data-tooltip": "Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition)."
     }
   }, [_c('img', {
@@ -13006,7 +13171,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 118 */
+/* 121 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -13107,7 +13272,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 119 */
+/* 122 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -13664,7 +13829,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 120 */
+/* 123 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
