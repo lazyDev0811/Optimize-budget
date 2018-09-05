@@ -10,102 +10,66 @@
       <br/>Please <a href="#/upgrade" class="link">upgrade</a> to our paid subscription (<b>10 USD</b>/month) for <u>unlimited</u> campaigns.
     </div>
     <div class="import_container full_width">
-      <div class="panel" v-if="$root.info && $root.info.confirmed">
-        <h2 class="panel_title">Importing <strong>Revenue</strong> data</h2>
-        <div class="help">
-          Only <strong>CSV</strong> and <strong>XLSX</strong> files are supported.<br/>
-          Header is <u>optional</u>. All <u>non-empty</u> sheets will be processed.<br/>
-          Cost and Revenue must <u>not</u> contain currency.<br/>
-          The first <strong>3</strong> columns for files containing <strong>1 campaign</strong> must be:<br/>
-          <span class="bg_cols">Day | Cost | Revenue</span> - in this order. <a href="Revenue_for_a_single_campaign.xlsx" class="example_file">Example</a><br/>
-          The first <strong>4</strong> columns for files containing <strong>several campaigns</strong> must be:<br/>
-          <span class="bg_cols">Day | Campaign Name | Cost | Revenue</span> - in this order. <a href="Revenue_for_several_campaigns.xlsx" class="example_file">Example</a><br/>
-          <strong>Append</strong> = old data isn't touched, new data is added<br/>
-          <strong>Update</strong> = old data is updated, new data is added<br/>
-          <strong>Replace</strong> = old data is removed, new data is added<br/>
-        </div>
-        <br/>
-        <fieldset class="new_campaign">
-          <legend>&nbsp;New campaign&nbsp;</legend>
-          <input type="text" class="full_width" v-model="new_roi" placeholder="Group name for campaign(s)"/>
-          <label><input type="checkbox" v-model="no_multi_roi"/> Treat a file with multiple campaigns as a single campaign</label>
-          <label><input type="checkbox" v-model="combine_roi"/> Combine multiple file uploads into 1 file for 1 campaign</label>
-          <input type="file" id="file_roi_new" class="file" accept=".csv,.xlsx" ref="file_new_roi" @change="newFileROI" multiple/>
-          <div class="center"><label for="file_roi_new" class="file full_width">Choose file(s)</label></div>
-          <ol class="list" v-if="file_roi_new.length">
-            <li v-for="item in file_roi_new">{{ item.name }}</li>
-          </ol>
-          <button type="button" class="btn-login block top_space" @click="uploadROI">UPLOAD</button>
-          <input type="text" class="full_width" v-model="roi_client_customer_id" placeholder="Customer Client ID for your adwords account"/>
-          <button type="button" class="btn-login block top_space" @click="connectROIAPI">Connect API</button>  
-        </fieldset>
-        <h2 class="center">OR</h2>
-        <fieldset class="new_campaign">
-          <legend>&nbsp;Old campaign&nbsp;</legend>
-          <select v-model="old_roi" class="full_width">
-            <option value="0">- Select campaign -</option>
-            <optgroup v-for="grp in groupsROI" :label="grp.title || 'NO GROUP'">
-              <option v-for="item in sortedROI(grp)" :value="item.id">{{ item.title }}</option>
-            </optgroup>
-          </select>
-          <input type="file" id="file_roi_old" class="file" accept=".csv,.xlsx" ref="file_old_roi" @change="oldFileROI" />
-          <div class="center"><label for="file_roi_old" class="file full_width">Choose a file</label></div>
-          <ol class="list" v-if="file_roi_old.length">
-            <li v-for="item in file_roi_old">{{ item.name }}</li>
-          </ol>
-          <button type="button" class="btn-login block top_space" @click="appendROI">Append to existing data</button>
-          <button type="button" class="btn-login block top_space" @click="updateROI">Update existing data</button>
-          <button type="button" class="btn-login block top_space" @click="replaceROI">Replace existing data</button>
-        </fieldset>
+      <div class="kind_panel" v-if="$root.info && $root.info.confirmed">
+          <button type="button" class="btn-api" @click="connectROIAPI">Import Campaigns <br/>via API</button>
+          <button type="button" class="btn-csv" >Upload CSV</button>  
       </div>
 
-      <div class="panel" v-if="$root.info && $root.info.confirmed">
-        <h2 class="panel_title">Importing <strong>Conversion</strong> data</h2>
-        <div class="help">
-          Only <strong>CSV</strong> and <strong>XLSX</strong> files are supported.<br/>
-          Header is <u>optional</u>. All <u>non-empty</u> sheets will be processed.<br/>
-          Cost must <u>not</u> contain currency.<br/>
-          The first <strong>3</strong> columns for files containing <strong>1 campaign</strong> must be:<br/>
-          <span class="bg_cols">Day | Cost | Conversions</span> - in this order. <a href="Conversions_for_a_single_campaign.xlsx" class="example_file">Example</a><br/>
-          The first <strong>4</strong> columns for files containing <strong>several campaigns</strong> must be:<br/>
-          <span class="bg_cols">Day | Campaign Name | Cost | Conversions</span> - in this order. <a href="Conversions_for_several_campaigns.xlsx" class="example_file">Example</a><br/>
-          <strong>Append</strong> = old data isn't touched, new data is added<br/>
-          <strong>Update</strong> = old data is updated, new data is added<br/>
-          <strong>Replace</strong> = old data is removed, new data is added<br/>
+      <div class="campaign_panel" v-if="$root.info && $root.info.confirmed">
+        <button type="button" class="btn-con" >Conversion Data <br/>(Optimise for CPA)</button>
+        <button type="button" class="btn-rev" >Revenue Data <br/>(Optimise for ROI)</button>
+        <button type="button" class="btn-both" >Both</button>    
+      </div>
+
+      <div class="file_panel" v-if="$root.info && $root.info.confirmed">
+        <input type="file" id="file_roi_old" class="file" accept=".csv,.xlsx" ref="file_old_roi" @change="oldFileROI" />
+        <div class="center"><label for="file_roi_old" class="file">Choose Files</label></div>
+        <input type="text" id="account_name" class="txt_account" placeholder="Account Name"/>
+        <select v-model="industry_id" class="file_industry">
+          <option value="0" disabled>-- Choose industry --</option>
+          <option v-for="item in list_industry" :value="item.id">{{ item.title }}</option>
+        </select>
+      </div>
+
+      <div class="import_panel" v-if="$root.info && $root.info.confirmed">
+        <div class="campaigns">
+          <div class="camp_status">
+            <div>
+              <input type="checkbox" id="account_name" class="txt_account"/>
+              <label for="subscribeNews">All Campaigns</label>
+            </div>
+            <div>
+              <input type="checkbox" id="account_name" class="txt_account"/>
+              <label for="subscribeNews">Only active Campaigns</label>
+            </div>
+          </div>
+
+          <div class="camp_types">
+            <div>
+              <input type="checkbox" id="account_name" class="txt_account"/>
+              <label for="subscribeNews">Search Campaigns</label>
+            </div>
+            <div>
+              <input type="checkbox" id="account_name" class="txt_account"/>
+              <label for="subscribeNews">Display Campaigns</label>
+            </div>
+            <div>
+              <input type="checkbox" id="account_name" class="txt_account"/>
+              <label for="subscribeNews">Video Campaigns</label>
+            </div>
+            <div>
+              <input type="checkbox" id="account_name" class="txt_account"/>
+              <label for="subscribeNews">Shopping Campaigns</label>
+            </div>
+          </div>
         </div>
-        <br/>
-        <fieldset class="new_campaign">
-          <legend>&nbsp;New campaign&nbsp;</legend>
-          <input type="text" class="full_width field" v-model="new_cpa" placeholder="Group name for campaign(s)"/>
-          <label><input type="checkbox" v-model="no_multi_cpa"/> Treat a file with multiple campaigns as a single campaign</label>
-          <label><input type="checkbox" v-model="combine_cpa"/> Combine multiple file uploads into 1 file for 1 campaign</label>
-          <input type="file" id="file_cpa_new" class="file" accept=".csv,.xlsx" ref="file_new_cpa" @change="newFileCPA" multiple/>
-          <div class="center"><label for="file_cpa_new" class="file full_width">Choose file(s)</label></div>
-          <ol class="list" v-if="file_cpa_new.length">
-            <li v-for="item in file_cpa_new">{{ item.name }}</li>
-          </ol>
-          <button type="button" class="btn-login block top_space" @click="uploadCPA">UPLOAD</button>
-          <input type="text" class="full_width" v-model="cpa_client_customer_id" placeholder="Customer Client ID for your adwords account"/>
-          <button type="button" class="btn-login block top_space" @click="connectConversionAPI">Connect API</button>  
-        </fieldset>
-        <h2 class="center">OR</h2>
-        <fieldset class="new_campaign">
-          <legend>&nbsp;Old campaign&nbsp;</legend>
-          <select v-model="old_cpa" class="full_width">
-            <option value="0">- Select campaign -</option>
-            <optgroup v-for="grp in groupsCPA" :label="grp.title || 'NO GROUP'">
-              <option v-for="item in sortedCPA(grp)" :value="item.id">{{ item.title }}</option>
-            </optgroup>
-          </select>
-          <input type="file" id="file_cpa_old" class="file" accept=".csv,.xlsx" ref="file_old_cpa" @change="oldFileCPA" />
-          <div class="center"><label for="file_cpa_old" class="file full_width">Choose a file</label></div>
-          <ol class="list" v-if="file_cpa_old.length">
-            <li v-for="item in file_cpa_old">{{ item.name }}</li>
-          </ol>
-          <button type="button" class="btn-login block top_space" @click="appendCPA">Append to existing data</button>
-          <button type="button" class="btn-login block top_space" @click="updateCPA">Update existing data</button>
-          <button type="button" class="btn-login block top_space" @click="replaceCPA">Replace existing data</button>
-        </fieldset>
+
+        <div>
+            <select v-model="industry_id" class="camp_industry">
+              <option value="0" disabled>-- Choose industry --</option>
+              <option v-for="item in list_industry" :value="item.id">{{ item.title }}</option>
+            </select>
+        </div>
       </div>
     </div>
   </div>
@@ -142,10 +106,12 @@ export default
         new_cpa: '', // name for the new campaign
         old_roi: 0, // ID of the old campaign
         old_cpa: 0, // ID of the old campaign
+        industry_id: '0',
         file_roi_new: [],
         file_roi_old: [],
         file_cpa_new: [],
         file_cpa_old: [],
+        list_industry: [],
         no_multi_roi: false, // TRUE = treat files with multiple campaigns as files with single-campaign
         combine_roi: false, // TRUE = combine all files into one campaign, group name is the name of this campaign
         no_multi_cpa: false, // TRUE = treat files with multiple campaigns as files with single-campaign
@@ -156,6 +122,7 @@ export default
   created: function()
   {
     this.fetchData();
+    this.fetchIndustry();
   },
   computed:
     {
@@ -194,6 +161,20 @@ export default
           function(stat,resp)
           {
             make_error.call(this,resp);
+          }
+        );
+      },
+      fetchIndustry: function()
+      {
+         AJAX.ajax_get(this,'api/login/industry.php',
+          function(resp)
+          {
+            if(isArray(resp)) this.list_industry = resp;
+          },
+          function(stat,resp)
+          {
+            // this.cant_signup = resp;
+            // this.$refs.username.focus();
           }
         );
       },
@@ -370,8 +351,8 @@ function make_error(err)
 <style>
   .import_container
   {
-    display: flex;
-    justify-content: center;
+    /* display: flex; */
+    /* justify-content: center; */
   }
 
   .margin_box
@@ -379,6 +360,65 @@ function make_error(err)
     margin: 12px;
   }
 
+  .kind_panel, .campaign_panel, .file_panel, .import_panel{
+    margin: 0px 50px 30px;
+  }
+
+  .kind_panel{
+    background: #eee;
+    display: flex;
+    justify-content: space-around;  
+  }
+
+  .kind_panel button{
+    background-color: #25d6cefa;
+    color: white;
+    margin: 100px 10px;
+    width: 45%;
+    border-radius: 10px;
+  }
+
+  .kind_panel .btn-csv{
+    background-color:#d65625ba
+  }
+
+  .campaign_panel{
+    background: #eee;
+    display: flex;
+    padding: 100px;
+  }
+
+  .campaign_panel button{
+    background-color: #25d6cefa;
+    color: white;
+    margin: 20px;
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .campaign_panel .btn-rev{
+    background-color: #d65625ba;
+  }
+
+  .campaign_panel .btn-both{
+    background-color: #d68f258f;
+  }
+
+  .file_panel, .import_panel{
+    background: #eee;
+    padding: 100px;
+  }
+
+  .import_panel .campaigns{
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .camp_status, .camp_types{
+    background-color: #25d6cefa;
+    padding: 10px;
+    border-radius: 10px;
+  }
   .panel_title
   {
     margin: 0;

@@ -6,7 +6,7 @@
         <a href=""></a>
         <router-link v-for="page in $router.options.routes" v-if="page.meta!=null && (page.meta.menu || (page.meta.admin && $root.info && $root.info.is_admin == true))" v-bind:key="page.path" v-bind:to="page.path"> {{ page.meta.title }}</router-link></div>
         <a><span class="log_info">Welcome, {{ $root.user_name != '' ? $root.user_name : 'dear customer' }}</span></a>
-        <a class="login pointer" href="api/login/logout.php">Logout</a>
+        <a class="login pointer" href="api/login/logout.php" >Logout</a>
       </template>
       <template v-else>
         <span class="log_info">&nbsp;</span>
@@ -63,7 +63,7 @@ export default
         func1() {
           // console.log('aaa');
           var x = document.getElementById("myTopnav");
-          x.className = "mainmenu";
+          x.className = "mainmenu";     
         }
 
     }

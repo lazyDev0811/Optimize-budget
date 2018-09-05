@@ -40,7 +40,7 @@
       <br/>
       <h1>What our customers say</h1>
     </div>
-    <div class="video_panel" id="feature">
+    <div class="video_panel">
       <div v-for="item in video_list" class="youtube-player">
         <h3>{{ item.title }}</h3>
         <iframe :src="'https://www.youtube.com/embed/'+item.video" frameborder="0" allowfullscreen></iframe>
@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import myJson from '@/template.json'
 import Highcharts from 'highcharts'
 import { round } from '@/tool/util'
 import AJAX from '@/tool/ajax'
@@ -116,7 +117,9 @@ export default
   },
   mounted: function ()
   {
-    this.defaultData();
+    //this.defaultData();
+    this.combined = myJson[0];
+    this.recalc();
   },
   computed: {
     max_value: function()
@@ -148,6 +151,7 @@ export default
       setPoint: function()
       {
         this.chart.destroy();
+
         var reg_data = this.combined.regressions[3].points.sort(function (a,b)
         {
           return a[0] - b[0];
@@ -166,9 +170,9 @@ export default
               }
           }
         );
-
         this.chart = Highcharts.chart(
           {
+
             chart:
             {
               renderTo: 'graph'+this._uid,
@@ -295,6 +299,9 @@ export default
       recalc: function(step)
       {
         this.solved = false;
+        //this.combined = JSON.parse(myJson);
+       // console.log(this.combined);
+       // console.log(myJson[0]);
         this.worker.postMessage(
           {
             cmd: 1,
@@ -348,7 +355,7 @@ export default
         AJAX.ajax_get(this,"api/campaign/default.php", this.getResult,
           function(stat,resp)
           {
-
+       
           }
         );
       },
@@ -357,7 +364,7 @@ export default
       {
         this.defaultList = resp.id;
         this.init_Data();
-        // console.log("default",this.defaultList);
+        console.log("default",this.defaultList);
       },
 
       init_Data: function ()
@@ -369,7 +376,9 @@ export default
             if(isArray(resp) && resp.length)
             {
               if(resp.length>1) this.combined = resp.shift();
-                else this.combined = resp[0];
+                else {
+                  this.combined = resp[0];
+                }
               this.individual = resp;
               this.recalc();
             }
@@ -378,7 +387,6 @@ export default
               this.combined = null;
               this.individual = [];
             }
-
           },
           function(stat,resp)
           {
@@ -497,11 +505,12 @@ export default
             series:
             [
               {
-                name: 'Day (Cost, ' + this.text_kind + ')',
+                name: 'Day (Cost, ' + 'Conversion' + ')',
                 color: 'rgba(223, 83, 83, .5)',
                 data: this.combined.points
               },
               {
+                name: 'Day (Cost, ' + 'Conversion' + ')',
                 data: reg_data,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,

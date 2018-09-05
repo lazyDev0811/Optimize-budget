@@ -451,10 +451,9 @@ export default
         this.$parent.$emit('toggleNav');
         if (this.active) {
           document.getElementById('collapseIcon').className = "fa fa-caret-left custom_collapse";
-          event.target.parentElement.setAttribute('style', 'height: 100%');
         } else {
           document.getElementById('collapseIcon').className = "fa fa-caret-right custom_collapse";
-          event.target.parentElement.setAttribute('style', 'height: 89vh');
+          event.target.parentElement.setAttribute('style', 'height: 678px');
         }
       }
     }
@@ -479,7 +478,6 @@ export default
   {
     background: #4585cc;
     margin: auto;
-    height: 100%;
     width: 18px;
     display: flex;
     align-items: center;
@@ -613,7 +611,7 @@ export default
 
   .campaign_listing ul{
     overflow: auto;
-    max-height: 100px;
+    max-height: 170px;
   }
 
   .campaign_dates
@@ -694,7 +692,7 @@ export default
     text-align: center;
     vertical-align: middle;
     padding: 5px;
-    background: #ed9999;
+    background: #bbb;
     border-radius: 7px;
   }
 
@@ -719,6 +717,7 @@ export default
   .actived_tav
   {
     color: white;
+    background-color: #259ad6!important;
   }
 
   input[type="radio"] {

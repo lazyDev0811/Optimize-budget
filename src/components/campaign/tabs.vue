@@ -7,8 +7,9 @@
           <img src="~@/img/help.svg"/>
         </div>
       </div>
+      <!--
       <button v-if="cur_tab!=2" class="btn_camp" @click="cur_tab=2">Individual campaigns</button>
-      <div v-if="cur_tab==2" class="btn_camp_cur">Individual campaigns</div>
+      <div v-if="cur_tab==2" class="btn_camp_cur">Individual campaigns</div>-->
       <button v-if="cur_tab!=3" class="btn_camp" @click="cur_tab=3">Optimisation table</button>
       <div v-if="cur_tab==3" class="btn_camp_cur">Optimisation table</div>
     </nav>

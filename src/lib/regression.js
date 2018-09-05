@@ -36,7 +36,19 @@ function determinationCoefficient(data, results) {
     return accum + (residual * residual);
   }, 0);
 
-  return 1 - (sse / ssyy);
+  const ssresid = observations.reduce((accum, observation, index) => {
+    const prediction = predictions[index];
+    const residual = prediction[1] - mean;
+    return accum + (residual * residual);
+  }, 0);
+
+  const rmse = sse / observations.length;
+  const r2 = 1 - rmse /ssyy;
+
+  // console.log("first "+(1 - (sse / ssyy))+" sec "+ssresid / ssyy);
+  return ssresid / ssyy;
+  // return 1 - (sse / ssyy);
+  //  return r2;
 }
 
 /**
@@ -154,6 +166,8 @@ export default {
 
   exponential(data, options) {
     const sum = [0, 0, 0, 0, 0, 0];
+    const poly = [0, 0, 0, 0, 0, 0];
+    const len = data.length;
 
     for (let n = 0; n < data.length; n++) {
       if (data[n][1] != 0) {
@@ -163,18 +177,44 @@ export default {
         sum[3] += data[n][1] * Math.log(data[n][1]);
         sum[4] += data[n][0] * data[n][1] * Math.log(data[n][1]);
         sum[5] += data[n][0] * data[n][1];
+
+        poly[0] += data[n][0];
+        poly[1] += Math.log(data[n][1]);
+        poly[2] += data[n][0] * Math.log(data[n][1]);
+        poly[3] += data[n][0] * data[n][0];
       }
     }
+
+    const m = (len * poly[2] - poly[0] * poly[1]) / (len * poly[3] - poly[0] * poly[0]);
+    const intercept = (poly[1] * poly[3] - poly[0] * poly[2]) / (len * poly[3] - poly[0] * poly[0]);
+    // const b1 = round(Math.exp(m), DEFAULT_OPTIONS.precision);
+    // const a1 = round(Math.exp(intercept), DEFAULT_OPTIONS.precision);
+    const b1 = round(m, DEFAULT_OPTIONS.precision);
+    const a1 = round(Math.exp(intercept), DEFAULT_OPTIONS.precision);
 
     const denominator = ((sum[1] * sum[2]) - (sum[5] * sum[5]));
     const a = Math.exp(((sum[2] * sum[3]) - (sum[5] * sum[4])) / denominator);
     const b = ((sum[1] * sum[4]) - (sum[5] * sum[3])) / denominator;
     const coeffA = round(a, DEFAULT_OPTIONS.precision);
     const coeffB = round(b, DEFAULT_OPTIONS.precision);
+
+    // console.log("first "+coeffA+" "+coeffB+" second "+a1+" "+b1);
+    // const predict = x => ([
+    //   round(x, DEFAULT_OPTIONS.precision),
+    //   round(a1 * Math.pow(b1, x), DEFAULT_OPTIONS.precision),
+    // ]);
+    // const predict = x => ([
+    //   round(x, DEFAULT_OPTIONS.precision),
+    //   round(a1 * Math.exp(b1 * x), DEFAULT_OPTIONS.precision),
+    // ]);
     const predict = x => ([
       round(x, DEFAULT_OPTIONS.precision),
       round(coeffA * Math.exp(coeffB * x), DEFAULT_OPTIONS.precision),
     ]);
+    // const predict = x => ([
+    //   round(x, DEFAULT_OPTIONS.precision),
+    //   round(a1 * Math.exp(b1 * x), DEFAULT_OPTIONS.precision),
+    // ]);
 
     const points = data.map(point => predict(point[0]));
 

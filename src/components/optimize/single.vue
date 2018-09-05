@@ -7,8 +7,8 @@
               <td align="center"></td>
               <td align="center">Cost/day</td>
               <td></td>
-              <td align="center">Conversions</td>
-              <td align="center">CPA</td>
+              <td align="center">{{ text_kind }}</td>
+              <td align="center">{{ campaign_kind }}</td>
             </tr>
             <tr>
               <td align="center">
@@ -19,6 +19,7 @@
                   </div>
                 </div>
               </td>
+
               <td align="center"><div class="const_field">{{ optimal_cost | filterNum }}</div></td>
               <td>
                 <div class="item_content"><button class="btn btn_dark btn-shadow" style="padding: 3px 6px 4px" v-on:click="moveGreenLine()">
@@ -93,7 +94,7 @@
       <div class="op_graph second_graph">
           <div :id="'graph1'+_uid" class="graph_panel"></div>
           <div class="top_space">
-            CPA: <strong class="code">{{ regression.string1 }}</strong>
+            {{ campaign_kind }}: <strong class="code">{{ regression.string1 }}</strong>
             <div class="help_sign tooltip-bottom tooltip" data-tooltip="The graph above is a plot of this function, it helps you visualise optimal solutions">
               <img src="~@/img/help.svg"/>
             </div>
@@ -185,6 +186,11 @@ export default
       {
         return (this.kind==1 ? 'Max ROI' : 'Min CPA');
       },
+      campaign_kind: function()
+      {
+        return (this.kind==1 ? 'ROI' : 'CPA');
+      }
+      ,
       max_value: function()
       {
         // compute the cost for the max ROI or max CPA - using the predicted values from regression
@@ -321,7 +327,7 @@ export default
                 data: [[this.var_cost*Math.abs(-1),this.projected_value(this.var_cost)]]
               },
               {
-                name: '(Cost, CPA)',
+                name: '(Cost, ' + this.campaign_kind + ')',
                 data: reg_data,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
@@ -546,7 +552,7 @@ export default
             },
             title:
             {
-              text: 'CPA vs Cost'
+              text: 'Cost vs ' + this.campaign_kind
             },
             xAxis:
             {
@@ -565,7 +571,7 @@ export default
             {
               title:
               {
-                text: 'CPA'
+                text: this.campaign_kind
               }
             },
             legend:
@@ -904,6 +910,7 @@ export default
                 data: this.campaign.points
               },
               {
+                name: '(Cost, ' + this.text_kind +')',
                 data: reg_data,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
@@ -913,7 +920,6 @@ export default
                   {
                     enabled: false
                   },
-                name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '+round(isNaN(this.regression.r2) ? 0 : this.regression.r2)+'<br/>',
                 showInLegend: false
               },
               {
@@ -946,7 +952,7 @@ export default
             },
             title:
             {
-              text: 'CPA vs Cost'
+              text: 'Cosrrrrt vs ' + this.campaign_kind
             },
             xAxis:
             {
@@ -965,7 +971,7 @@ export default
             {
               title:
               {
-                text: 'CPA'
+                text: this.campaign_kind
               }
             },
             legend:
@@ -1020,7 +1026,7 @@ export default
             series:
             [
               {
-                name: '(Cost, CPA)',
+                name: '(Cosrrrrrt, ' + this.campaign_kind + ')',
                 data: reg_data1,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
@@ -1105,6 +1111,8 @@ export default
 
   .op_header
   {
+    margin-bottom: 10px;
+    margin-top: 10px; 
     color: white;
     padding: 0px 10px 0;
     max-height: 2em;
