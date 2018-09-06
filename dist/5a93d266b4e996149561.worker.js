@@ -73,10 +73,11 @@
 "use strict";
 /* unused harmony export DEFAULT_OPTIONS */
 /* unused harmony export predict */
-
-
-const DEFAULT_OPTIONS = { order: 2, precision: 2, period: null };
-
+const DEFAULT_OPTIONS = {
+  order: 2,
+  precision: 2,
+  period: null
+};
 /**
 * Determine the coefficient of determination (r^2) of a fit from the observations
 * and predictions.
@@ -86,34 +87,38 @@ const DEFAULT_OPTIONS = { order: 2, precision: 2, period: null };
 *
 * @return {number} - The r^2 value, or NaN if one cannot be calculated.
 */
+
 function determinationCoefficient(data, results) {
   const predictions = [];
   const observations = [];
-
   data.forEach((d, i) => {
     if (d[1] !== null) {
       observations.push(d);
       predictions.push(results[i]);
     }
   });
-
   const sum = observations.reduce((a, observation) => a + observation[1], 0);
   const mean = sum / observations.length;
-
   const ssyy = observations.reduce((a, observation) => {
     const difference = observation[1] - mean;
     return a + difference * difference;
   }, 0);
-
   const sse = observations.reduce((accum, observation, index) => {
     const prediction = predictions[index];
     const residual = observation[1] - prediction[1];
     return accum + residual * residual;
   }, 0);
+  const ssresid = observations.reduce((accum, observation, index) => {
+    const prediction = predictions[index];
+    const residual = prediction[1] - mean;
+    return accum + residual * residual;
+  }, 0);
+  const rmse = sse / observations.length;
+  const r2 = 1 - rmse / ssyy; // console.log("first "+(1 - (sse / ssyy))+" sec "+ssresid / ssyy);
 
-  return 1 - sse / ssyy;
+  return ssresid / ssyy; // return 1 - (sse / ssyy);
+  //  return r2;
 }
-
 /**
 * Determine the solution of a system of linear equations A * x = b using
 * Gaussian elimination.
@@ -123,6 +128,8 @@ function determinationCoefficient(data, results) {
 *
 * @return {Array<number>} - Vector of normalized solution coefficients matrix (x)
 */
+
+
 function gaussianElimination(input, order) {
   const matrix = input;
   const n = input.length - 1;
@@ -130,6 +137,7 @@ function gaussianElimination(input, order) {
 
   for (let i = 0; i < n; i++) {
     let maxrow = i;
+
     for (let j = i + 1; j < n; j++) {
       if (Math.abs(matrix[i][j]) > Math.abs(matrix[i][maxrow])) {
         maxrow = j;
@@ -151,6 +159,7 @@ function gaussianElimination(input, order) {
 
   for (let j = n - 1; j >= 0; j--) {
     let total = 0;
+
     for (let k = j + 1; k < n; k++) {
       total += matrix[k][j] * coefficients[k];
     }
@@ -160,7 +169,6 @@ function gaussianElimination(input, order) {
 
   return coefficients;
 }
-
 /**
 * Round a number to a precision, specificed in number of decimal places
 *
@@ -171,16 +179,19 @@ function gaussianElimination(input, order) {
 *
 * @return {numbr} - The number, rounded
 */
+
+
 function round(number, precision) {
   const factor = 10 ** precision;
   return Math.round(number * factor) / factor;
 }
-
 /**
 * The set of all fitting methods
 *
 * @namespace
 */
+
+
 /* harmony default export */ __webpack_exports__["a"] = ({
   linear(data, options) {
     const sum = [0, 0, 0, 0, 0];
@@ -209,7 +220,6 @@ function round(number, precision) {
     const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / (gradient * x + intercept), DEFAULT_OPTIONS.precision)];
 
     const points1 = data.map(point => predict1(point[0]));
-
     return {
       points,
       predict,
@@ -223,6 +233,8 @@ function round(number, precision) {
 
   exponential(data, options) {
     const sum = [0, 0, 0, 0, 0, 0];
+    const poly = [0, 0, 0, 0, 0, 0];
+    const len = data.length;
 
     for (let n = 0; n < data.length; n++) {
       if (data[n][1] != 0) {
@@ -232,22 +244,44 @@ function round(number, precision) {
         sum[3] += data[n][1] * Math.log(data[n][1]);
         sum[4] += data[n][0] * data[n][1] * Math.log(data[n][1]);
         sum[5] += data[n][0] * data[n][1];
+        poly[0] += data[n][0];
+        poly[1] += Math.log(data[n][1]);
+        poly[2] += data[n][0] * Math.log(data[n][1]);
+        poly[3] += data[n][0] * data[n][0];
       }
     }
 
+    const m = (len * poly[2] - poly[0] * poly[1]) / (len * poly[3] - poly[0] * poly[0]);
+    const intercept = (poly[1] * poly[3] - poly[0] * poly[2]) / (len * poly[3] - poly[0] * poly[0]); // const b1 = round(Math.exp(m), DEFAULT_OPTIONS.precision);
+    // const a1 = round(Math.exp(intercept), DEFAULT_OPTIONS.precision);
+
+    const b1 = round(m, DEFAULT_OPTIONS.precision);
+    const a1 = round(Math.exp(intercept), DEFAULT_OPTIONS.precision);
     const denominator = sum[1] * sum[2] - sum[5] * sum[5];
     const a = Math.exp((sum[2] * sum[3] - sum[5] * sum[4]) / denominator);
     const b = (sum[1] * sum[4] - sum[5] * sum[3]) / denominator;
     const coeffA = round(a, DEFAULT_OPTIONS.precision);
-    const coeffB = round(b, DEFAULT_OPTIONS.precision);
-    const predict = x => [round(x, DEFAULT_OPTIONS.precision), round(coeffA * Math.exp(coeffB * x), DEFAULT_OPTIONS.precision)];
+    const coeffB = round(b, DEFAULT_OPTIONS.precision); // console.log("first "+coeffA+" "+coeffB+" second "+a1+" "+b1);
+    // const predict = x => ([
+    //   round(x, DEFAULT_OPTIONS.precision),
+    //   round(a1 * Math.pow(b1, x), DEFAULT_OPTIONS.precision),
+    // ]);
+    // const predict = x => ([
+    //   round(x, DEFAULT_OPTIONS.precision),
+    //   round(a1 * Math.exp(b1 * x), DEFAULT_OPTIONS.precision),
+    // ]);
+
+    const predict = x => [round(x, DEFAULT_OPTIONS.precision), round(coeffA * Math.exp(coeffB * x), DEFAULT_OPTIONS.precision)]; // const predict = x => ([
+    //   round(x, DEFAULT_OPTIONS.precision),
+    //   round(a1 * Math.exp(b1 * x), DEFAULT_OPTIONS.precision),
+    // ]);
+
 
     const points = data.map(point => predict(point[0]));
 
     const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / (coeffA * Math.exp(coeffB * x)), DEFAULT_OPTIONS.precision)];
 
     const points1 = data.map(point => predict1(point[0]));
-
     return {
       points,
       predict,
@@ -283,7 +317,6 @@ function round(number, precision) {
     const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(round(x / (coeffA + coeffB * Math.log(x)), DEFAULT_OPTIONS.precision), DEFAULT_OPTIONS.precision)];
 
     const points1 = data.map(point => predict1(point[0]));
-
     return {
       points,
       predict,
@@ -320,7 +353,6 @@ function round(number, precision) {
     const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(round(x / (coeffA * x ** coeffB), DEFAULT_OPTIONS.precision), DEFAULT_OPTIONS.precision)];
 
     const points1 = data.map(point => predict1(point[0]));
-
     return {
       points,
       predict,
@@ -349,21 +381,23 @@ function round(number, precision) {
 
       lhs.push(a);
       a = 0;
-
       const c = [];
+
       for (let j = 0; j < k; j++) {
         for (let l = 0; l < len; l++) {
           if (data[l][1] !== null) {
             b += data[l][0] ** (i + j);
           }
         }
+
         c.push(b);
         b = 0;
       }
+
       rhs.push(c);
     }
-    rhs.push(lhs);
 
+    rhs.push(lhs);
     const coefficients = gaussianElimination(rhs, k).map(v => round(v, DEFAULT_OPTIONS.precision));
 
     const predict = x => [round(x, DEFAULT_OPTIONS.precision), round(coefficients.reduce((sum, coeff, power) => sum + coeff * x ** power, 0), DEFAULT_OPTIONS.precision)];
@@ -373,8 +407,8 @@ function round(number, precision) {
     const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / coefficients.reduce((sum, coeff, power) => sum + coeff * x ** power, 0), DEFAULT_OPTIONS.precision)];
 
     const points1 = data.map(point => predict1(point[0]));
-
     let string = 'Y = ';
+
     for (let i = coefficients.length - 1; i >= 0; i--) {
       if (i > 1) {
         string += `${coefficients[i]} * X ^ ${i} + `;
@@ -386,6 +420,7 @@ function round(number, precision) {
     }
 
     let string1 = 'Y = X / (';
+
     for (let i = coefficients.length - 1; i >= 0; i--) {
       if (i > 1) {
         string1 += `${coefficients[i]} * X ^ ${i} + `;
@@ -406,35 +441,40 @@ function round(number, precision) {
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   }
+
 });
-
-
 
 function predict(cost, reg_kind, reg_coef) {
   if (cost <= 0) return 0;
   let t = 0;
+
   switch (reg_kind) {
     case 1:
       // linear
       t = cost * reg_coef[0] + reg_coef[1];
       break;
+
     case 2:
       // exponential
       t = reg_coef[0] * Math.exp(cost * reg_coef[1]);
       break;
+
     case 3:
       // logarithmic
       t = reg_coef[0] + reg_coef[1] * Math.log(cost);
       break;
+
     case 4:
       // polynomial
       t = reg_coef.reverse().reduce((sum, coeff, power) => sum + coeff * Math.pow(cost, power), 0);
       break;
+
     case 5:
       // power
       t = reg_coef[0] * Math.pow(cost, reg_coef[1]);
       break;
   }
+
   return t <= 0 ? 0 : t;
 }
 
