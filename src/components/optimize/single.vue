@@ -58,7 +58,7 @@
               <td></td>
               <td colspan="4">
                 <div class="slider_panel">
-                  <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord" v-on:input="setPoint()"/>
+                  <input type="range" min="0" v-bind:max="maxValue" step="0.01" v-model="var_cost" class="slider no_bord" v-on:input="setPoint()"/>
                 </div>
               </td>
             </tr>
@@ -147,11 +147,14 @@ export default
         optimum: 0, // either ROI or CPA
         optimal_result: '', // used by the Legend
         var_cost: 0,
+        minValue: 0,
+        maxValue: 0,
       };
     return a;
   },
   mounted: function ()
   {
+    // this.initEnv();
     this.initChart();
   },
   watch:
@@ -322,7 +325,7 @@ export default
                 data: this.campaign.points
               },
               {
-                name: 'State',
+                name: 'Fit',
                 color: 'blue',
                 data: [[this.var_cost*Math.abs(-1),this.projected_value(this.var_cost)]]
               },
@@ -386,16 +389,15 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
-
-        var maxValue=reg_data1[reg_data1.length-1][0];
-        reg_data1.splice(0, reg_data1.length);
-
-        for(var i=0; i<=maxValue; i++)
+        var counter = 0;
+        var maxValue = reg_data.length;
+        for(var i = 0; i < maxValue; i++)
         {
-          reg_data1.push([i, i/this.projected_value(i)]);
+          if(reg_data[i][1] == 0)
+            continue;
+          reg_data1[counter] = [reg_data[i][0], reg_data[i][0]/reg_data[i][1]];
+          counter++;
         }
-        reg_data1.push([maxValue, i/this.projected_value(maxValue)]);
-
         var reg_points1 = reg_data1.sort(function (a,b)
         {
           return a[0] - b[0];
@@ -505,7 +507,7 @@ export default
                 data: this.campaign.points
               },
               {
-                name: 'State',
+                name: 'Fit',
                 color: 'blue',
                 data: [[this.var_cost*Math.abs(-1),this.projected_value(this.var_cost)]]
               },
@@ -519,7 +521,7 @@ export default
                   {
                     enabled: false
                   },
-                name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '+round(isNaN(this.regression.r2) ? 0 : this.regression.r2) + '<br/>',
+                name: '(Cost, ' + this.text_kind + ')',
                 showInLegend: false
               },
               {
@@ -626,12 +628,12 @@ export default
             series:
             [
              {
-                name: 'State',
+                name: 'Fit',
                 color: 'blue',
                 data: [[this.var_cost*Math.abs(-1), this.var_cost/this.projected_value(this.var_cost)]]
               },
               {
-                data: reg_points1,
+                data: reg_data1,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
                 type: 'line',
@@ -640,7 +642,7 @@ export default
                   {
                     enabled: false
                   },
-                name: 'R<span style="dominant-baseline: ideographic; font-size: 8pt;">2</span> = '+round(isNaN(this.regression.r2) ? 0 : this.regression.r2)+'<br/>',
+                name: '(Cost vs ' + this.campaign_kind + ')',
                 showInLegend: false
               }
             ],
@@ -652,7 +654,6 @@ export default
       },
       projected_value: function (cost)
       {
-        //this.changeString();
         return Math.min(predict(cost,this.reg_type,this.regression.equation), 10000);
       },
       projected_optimal: function (cost)
@@ -664,35 +665,131 @@ export default
         return (this.kind==1 ? (cost ? 100*(revenue - cost)/cost : 0) : (revenue ? cost / revenue : 0));
       },
 
-      derivative: function(x)
-      {
-        const fn = (x) => Math.pow(x, 2) * 0.5;
-        const memo = (fn, cache = {}) => (x) => (x in cache) ? cache[x] : cache[x] = fn(x);
-        const d_func= memo((fn,step = 0.01) => (x) => (fn(x + step) - fn(x - step)) / (2 * step))
-        return d_func(fn)(x)
-      },
-
       optimal_regress: function()
       {
-        // this.optimal_cost = Math.min(this.max_value, 10000);
-        // this.optimal_value = this.projected_value(this.optimal_cost);
-        // this.optimum = Math.round(100 * this.projected_roi(this.optimal_cost,this.optimal_value))/100;
-        var optimum = 1000000, optimal_cost = 0, tmp;
-        for (var i = 0; i < this.max_value; i++) {
-          if(this.kind == 1) optimum = 0;
-          tmp = Math.round(100 * this.projected_roi(this.derivative(i),this.projected_value(this.derivative(i)))) / 100;
-          if(this.kind == 1){
-            if(optimum < tmp) {
-              optimum = tmp;
-              optimal_cost = this.derivative(i);
+        var optinum_min, optinum_max;
+        var optimum = 1000000, tmp;
+        var optimal_cost = 0;
+        switch(this.reg_type)
+        {
+          case 1:
+            if(this.kind != 1)
+            {
+              optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+              if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                optimal_cost = 0.01;
+              else optimal_cost = this.max_value;
             }
-          } else if(tmp > 0 && optimum > tmp){
-            optimum = tmp;
-            optimal_cost = this.derivative(i);
+            else
+            {
+              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+             if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+              optimal_cost = 0.01;
+              else optimal_cost = this.max_value;
+            }
+            break;
+          case 2:
+            var b = this.regression.equation[1];
+            var a = this.regression.equation[0];
+            if(this.kind != 1)
+            {
+              if(b == 0)
+                {
+                  optinum_min = Math.ceil(0.01 / a * 100) / 100;
+                  optimal_cost = 0.01;
+                }
+              else
+              {
+                optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(1 / b,this.projected_value(1 / b))) / 100);
+                if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                  optimal_cost = 0.01;
+                else if (optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100) 
+                  optimal_cost = this.max_value;
+                else optimal_cost = 1 / b;
+              }
+            }
+            else
+            {
+              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+              if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                optimal_cost = 0; 
+              else optimal_cost = this.max_value;
+            }
+            break;
+          case 3:
+            if(this.kind != 1)
+            {
+              optinum_min = Math.min(Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]),this.projected_value(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1])))) / 100);
+              if(optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                  optimal_cost = this.max_value;
+              else optimal_cost = Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]);
+            }
+            else
+            {
+              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]),this.projected_value(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1])))) / 100);
+              if (optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100) 
+                optimal_cost = 0.01;
+              else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                optimal_cost = this.max_value;
+              else optimal_cost = Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]);
+            }
+            break;
+          case 4:
+            if(this.kind != 1)
+            {
+              optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+              if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                optimal_cost = 0.01;
+              else optimal_cost = this.max_value;
+            }
+            else
+            {
+              if((this.regression.equation[0] != 0) && (this.regression.equation[2]/this.regression.equation[0] > 0))
+                {
+                  optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(this.regression.equation[2]/this.regression.equation[0]),this.projected_value(Math.sqrt(this.regression.equation[2]/this.regression.equation[0])))) / 100);  
+                  if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                    optimal_cost = 0.01;
+                  else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                    optimal_cost = this.max_value;
+                  else optimal_cost = Math.sqrt(this.regression.equation[2]/this.regression.equation[0]);
+                }
+              else 
+              {
+                optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+                if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                    optimal_cost = 0.01;
+                  else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                    optimal_cost = this.max_value;
+              }
+            }
+            break;
+          case 5:
+            if(this.kind != 1)
+            {
+              optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+              if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                optimal_cost = 0.01;
+              else optimal_cost = this.max_value;
+            }
+            else
+            {
+              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+             if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+              optimal_cost = 0.01;
+              else optimal_cost = this.max_value;
+            }
+            break;
+        }
+        
+        if(this.kind == 1){
+          if(optimum < optinum_max){
+            optimum = optinum_max;
           }
+        } else if(optinum_min > 0 && optimum > optinum_min){
+          optimum = optinum_min;
         }
         this.optimum = optimum;
-        this.optimal_cost = optimal_cost;
+        this.optimal_cost = Math.round(optimal_cost * 100) / 100;
         this.optimal_value = this.projected_value(optimal_cost);
         if(this.kind==1)
         {
@@ -761,6 +858,7 @@ export default
 
         plot = [init_x, init_y];
         return plot;
+
       },
       initChart: function ()
       {
@@ -775,6 +873,7 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
+        this.maxValue=reg_data[reg_data.length-1][0]
         if(this.chart!=null) this.chart = null;
         Highcharts.setOptions(
           {
@@ -792,15 +891,16 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
-
-        var maxValue=reg_data1[reg_data1.length-1][0];
-        reg_data1.splice(0, reg_data1.length);
-
-        for(var i=0; i<=maxValue; i++)
+        var maxValue = reg_data.length;
+        var counter = 0;
+        for(var i = 0; i < maxValue; i++)
         {
-          reg_data1.push([i, i/this.projected_value(i)]);
+          if(reg_data[i][1] == 0)
+            continue;
+          reg_data1[counter] = [reg_data[i][0], reg_data[i][0]/reg_data[i][1]];
+          counter++;
         }
-        reg_data1.push([maxValue, i/this.projected_value(maxValue)]);
+        //reg_data1.push([maxValue, i/this.projected_value(maxValue)]);
 
         var reg_points1 = reg_data1.sort(function (a,b)
         {
@@ -952,7 +1052,7 @@ export default
             },
             title:
             {
-              text: 'Cosrrrrt vs ' + this.campaign_kind
+              text: 'Cost vs ' + this.campaign_kind
             },
             xAxis:
             {
@@ -1026,7 +1126,7 @@ export default
             series:
             [
               {
-                name: '(Cosrrrrrt, ' + this.campaign_kind + ')',
+                name: '(Cost, ' + this.campaign_kind + ')',
                 data: reg_data1,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,

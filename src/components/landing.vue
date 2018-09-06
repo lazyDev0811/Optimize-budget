@@ -266,6 +266,7 @@ export default
                 data: [[this.var_cost*Math.abs(1), this.projected_value(this.var_cost)]]
               },
               {
+                name: 'Day (Cost, Conversion)',
                 data: reg_data,
                 color: 'rgba(40, 100, 255, .9)',
                 lineWidth: 2,
