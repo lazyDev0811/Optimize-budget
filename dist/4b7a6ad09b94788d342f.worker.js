@@ -102,22 +102,22 @@ function determinationCoefficient(data, results) {
   const ssyy = observations.reduce((a, observation) => {
     const difference = observation[1] - mean;
     return a + difference * difference;
-  }, 0);
+  }, 0); //************* SStot value *************////
+
   const sse = observations.reduce((accum, observation, index) => {
     const prediction = predictions[index];
     const residual = observation[1] - prediction[1];
     return accum + residual * residual;
-  }, 0);
+  }, 0); //*********** SSres value **************//
+
   const ssresid = observations.reduce((accum, observation, index) => {
     const prediction = predictions[index];
     const residual = prediction[1] - mean;
     return accum + residual * residual;
   }, 0);
   const rmse = sse / observations.length;
-  const r2 = 1 - rmse / ssyy; // console.log("first "+(1 - (sse / ssyy))+" sec "+ssresid / ssyy);
-
-  return ssresid / ssyy; // return 1 - (sse / ssyy);
-  //  return r2;
+  const r2 = 1 - rmse / ssyy;
+  return ssresid / ssyy;
 }
 /**
 * Determine the solution of a system of linear equations A * x = b using
@@ -220,6 +220,7 @@ function round(number, precision) {
     const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / (gradient * x + intercept), DEFAULT_OPTIONS.precision)];
 
     const points1 = data.map(point => predict1(point[0]));
+    console.log(round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision), "r-square");
     return {
       points,
       predict,
@@ -227,7 +228,8 @@ function round(number, precision) {
       equation: [gradient, intercept],
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
       string: intercept === 0 ? `Y = ${gradient} * X` : `Y = ${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept}`,
-      string1: intercept === 0 ? `Y = X / ${gradient} * X` : `Y = X / (${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept})`
+      string1: intercept === 0 ? `Y = X / ${gradient} * X` : `Y = X / (${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept})`,
+      string2: intercept === 0 ? `Y =  ${gradient - 1} * X / X` : `Y =  (${gradient - 1} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept}) / X`
     };
   },
 
@@ -289,6 +291,7 @@ function round(number, precision) {
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * Exp(${coeffB} * X)`,
       string1: `Y = X / (${coeffA} * Exp(${coeffB} * X))`,
+      string2: `Y = (${coeffA} * Exp(${coeffB} * X) - X) / X`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -324,6 +327,7 @@ function round(number, precision) {
       equation: [coeffA, coeffB],
       string: `Y = ${coeffB} * Ln(X)` + (coeffA < 0 ? ' ' : ' + ') + `${coeffA}`,
       string1: `Y = X / (${coeffB} * Ln(X)` + (coeffA < 0 ? ' ' : ' + ') + `${coeffA})`,
+      string2: `Y = (${coeffB} * Ln(X)` + ' - X ' + (coeffA < 0 ? ' ' : ' + ') + `${coeffA}) / X`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -360,6 +364,7 @@ function round(number, precision) {
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * X ^ ${coeffB}`,
       string1: `Y = X / (${coeffA} * X ^ ${coeffB})`,
+      string2: `Y = (${coeffA} * X ^ ${coeffB} - X) / X `,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -431,9 +436,22 @@ function round(number, precision) {
       }
     }
 
+    let string2 = 'Y = (';
+
+    for (let i = coefficients.length - 1; i >= 0; i--) {
+      if (i > 1) {
+        string2 += `${coefficients[i]} * X ^ ${i} + `;
+      } else if (i === 1) {
+        string2 += `${coefficients[i] - 1} * X + `;
+      } else {
+        string2 += coefficients[i] + ') / X';
+      }
+    }
+
     return {
       string,
       string1,
+      string2,
       points,
       predict,
       points1,
@@ -490,15 +508,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // Setup an event listener that will handle messages sent to the worker.
 self.addEventListener('message', function(e)
 {
+  console.log(e);
   if(e.data && e.data.cmd) switch(e.data.cmd)
   {
     case 1: // regression of combined data
+      console.log("1")
       setTimeout(function()
       {
         combined(e.data);
       },20);
       break;
     case 2: // regressions of individual campaigns
+      console.log("2")
       setTimeout(function()
       {
         individual(e.data);
@@ -578,6 +599,7 @@ function do_regress(reg_type,campaign,outliers)
     {
       case 1: // linear
         campaign.regressions[1] = __WEBPACK_IMPORTED_MODULE_0__lib_regression__["a" /* default */].linear(campaign.points);
+        console.log("linear");
         break;
       case 2: // exponential
         campaign.regressions[2] = __WEBPACK_IMPORTED_MODULE_0__lib_regression__["a" /* default */].exponential(campaign.points);
@@ -598,6 +620,7 @@ function do_regress(reg_type,campaign,outliers)
   else
   {
     // best auto-fit
+    console.log("worst linear")
     campaign.regressions[1] = __WEBPACK_IMPORTED_MODULE_0__lib_regression__["a" /* default */].linear(campaign.points);
     campaign.regressions[2] = __WEBPACK_IMPORTED_MODULE_0__lib_regression__["a" /* default */].exponential(campaign.points);
     campaign.regressions[3] = __WEBPACK_IMPORTED_MODULE_0__lib_regression__["a" /* default */].logarithmic(campaign.points);

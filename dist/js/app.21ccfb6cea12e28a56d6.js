@@ -214,13 +214,13 @@ module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGlu
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(64)
+  __webpack_require__(65)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(41),
+  __webpack_require__(42),
   /* template */
-  __webpack_require__(110),
+  __webpack_require__(111),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -358,22 +358,22 @@ function determinationCoefficient(data, results) {
   const ssyy = observations.reduce((a, observation) => {
     const difference = observation[1] - mean;
     return a + difference * difference;
-  }, 0);
+  }, 0); //************* SStot value *************////
+
   const sse = observations.reduce((accum, observation, index) => {
     const prediction = predictions[index];
     const residual = observation[1] - prediction[1];
     return accum + residual * residual;
-  }, 0);
+  }, 0); //*********** SSres value **************//
+
   const ssresid = observations.reduce((accum, observation, index) => {
     const prediction = predictions[index];
     const residual = prediction[1] - mean;
     return accum + residual * residual;
   }, 0);
   const rmse = sse / observations.length;
-  const r2 = 1 - rmse / ssyy; // console.log("first "+(1 - (sse / ssyy))+" sec "+ssresid / ssyy);
-
-  return ssresid / ssyy; // return 1 - (sse / ssyy);
-  //  return r2;
+  const r2 = 1 - rmse / ssyy;
+  return ssresid / ssyy;
 }
 /**
 * Determine the solution of a system of linear equations A * x = b using
@@ -476,6 +476,7 @@ function round(number, precision) {
     const predict1 = x => [round(x, DEFAULT_OPTIONS.precision), round(x / (gradient * x + intercept), DEFAULT_OPTIONS.precision)];
 
     const points1 = data.map(point => predict1(point[0]));
+    console.log(round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision), "r-square");
     return {
       points,
       predict,
@@ -483,7 +484,8 @@ function round(number, precision) {
       equation: [gradient, intercept],
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
       string: intercept === 0 ? `Y = ${gradient} * X` : `Y = ${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept}`,
-      string1: intercept === 0 ? `Y = X / ${gradient} * X` : `Y = X / (${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept})`
+      string1: intercept === 0 ? `Y = X / ${gradient} * X` : `Y = X / (${gradient} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept})`,
+      string2: intercept === 0 ? `Y =  ${gradient - 1} * X / X` : `Y =  (${gradient - 1} * X` + (intercept < 0 ? ' ' : ' + ') + `${intercept}) / X`
     };
   },
 
@@ -545,6 +547,7 @@ function round(number, precision) {
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * Exp(${coeffB} * X)`,
       string1: `Y = X / (${coeffA} * Exp(${coeffB} * X))`,
+      string2: `Y = (${coeffA} * Exp(${coeffB} * X) - X) / X`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -580,6 +583,7 @@ function round(number, precision) {
       equation: [coeffA, coeffB],
       string: `Y = ${coeffB} * Ln(X)` + (coeffA < 0 ? ' ' : ' + ') + `${coeffA}`,
       string1: `Y = X / (${coeffB} * Ln(X)` + (coeffA < 0 ? ' ' : ' + ') + `${coeffA})`,
+      string2: `Y = (${coeffB} * Ln(X)` + ' - X ' + (coeffA < 0 ? ' ' : ' + ') + `${coeffA}) / X`,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -616,6 +620,7 @@ function round(number, precision) {
       equation: [coeffA, coeffB],
       string: `Y = ${coeffA} * X ^ ${coeffB}`,
       string1: `Y = X / (${coeffA} * X ^ ${coeffB})`,
+      string2: `Y = (${coeffA} * X ^ ${coeffB} - X) / X `,
       r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision)
     };
   },
@@ -687,9 +692,22 @@ function round(number, precision) {
       }
     }
 
+    let string2 = 'Y = (';
+
+    for (let i = coefficients.length - 1; i >= 0; i--) {
+      if (i > 1) {
+        string2 += `${coefficients[i]} * X ^ ${i} + `;
+      } else if (i === 1) {
+        string2 += `${coefficients[i] - 1} * X + `;
+      } else {
+        string2 += coefficients[i] + ') / X';
+      }
+    }
+
     return {
       string,
       string1,
+      string2,
       points,
       predict,
       points1,
@@ -913,7 +931,7 @@ function jsonCookieValue(a, def) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function () {
-  return new Worker(__webpack_require__.p + "5a93d266b4e996149561.worker.js");
+  return new Worker(__webpack_require__.p + "4b7a6ad09b94788d342f.worker.js");
 };
 
 /***/ }),
@@ -946,13 +964,13 @@ module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGlu
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(67)
+  __webpack_require__(68)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(43),
+  __webpack_require__(44),
   /* template */
-  __webpack_require__(115),
+  __webpack_require__(116),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -969,13 +987,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(65)
+  __webpack_require__(66)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(49),
+  __webpack_require__(50),
   /* template */
-  __webpack_require__(112),
+  __webpack_require__(113),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -992,13 +1010,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(58)
+  __webpack_require__(59)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(50),
+  __webpack_require__(51),
   /* template */
-  __webpack_require__(97),
+  __webpack_require__(98),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -1015,13 +1033,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(66)
+  __webpack_require__(67)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(52),
+  __webpack_require__(53),
   /* template */
-  __webpack_require__(113),
+  __webpack_require__(114),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -1039,43 +1057,43 @@ module.exports = Component.exports
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_router__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_bad_route___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_bad_route__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form__ = __webpack_require__(90);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_login_login_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_login_login_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__ = __webpack_require__(92);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__ = __webpack_require__(93);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_login_signup_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_login_signup_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_login_reset_form___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__components_login_reset_form__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_login_password_reset___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_login_password_reset__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_landing__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_landing___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__components_landing__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_account_my_profile___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__components_account_my_profile__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import__ = __webpack_require__(88);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_import_import___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__components_import_import__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_campaign_list___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__components_campaign_list__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__ = __webpack_require__(93);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__ = __webpack_require__(94);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10__components_optimize_optimize__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support__ = __webpack_require__(96);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support__ = __webpack_require__(97);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_support_support___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11__components_support_support__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact__ = __webpack_require__(96);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_support_contact___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_12__components_support_contact__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats__ = __webpack_require__(85);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_admin_stats___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13__components_admin_stats__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__ = __webpack_require__(84);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_admin_paypal___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14__components_admin_paypal__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy__ = __webpack_require__(95);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_privacy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15__components_privacy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_account_campaigns___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16__components_account_campaigns__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_admin_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_17__components_admin_events__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_account_upgrade___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_18__components_account_upgrade__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about__ = __webpack_require__(78);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_about___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_19__components_about__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__tool_cook__ = __webpack_require__(12);
 
@@ -1239,13 +1257,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(63)
+  __webpack_require__(64)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(31),
+  __webpack_require__(32),
   /* template */
-  __webpack_require__(108),
+  __webpack_require__(109),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -1258,7 +1276,8 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 30 */
+/* 30 */,
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1377,7 +1396,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1449,7 +1468,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1581,7 +1600,7 @@ __webpack_require__(10);
 });
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1704,7 +1723,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1784,7 +1803,7 @@ __webpack_require__(13);
 });
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1852,7 +1871,7 @@ __webpack_require__(10);
 });
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2110,7 +2129,7 @@ __webpack_require__(10);
 });
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2217,7 +2236,7 @@ __webpack_require__(10);
 });
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2229,7 +2248,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2237,10 +2256,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_err_panel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__ = __webpack_require__(87);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__ = __webpack_require__(88);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_campaign_tabs__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tool_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vue_collapse___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_vue_collapse__);
 //
 //
@@ -2651,7 +2670,7 @@ __webpack_require__(11);
 });
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2810,6 +2829,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }));
     },
     recalc: function (step) {
+      console.log(this.individual, "individual values");
+      console.log(this.combined, "cobined values");
+
       if (step == 2) {
         this.worker.postMessage({
           cmd: 2,
@@ -2897,7 +2919,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2947,7 +2969,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2956,7 +2978,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_err_panel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_err_panel__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tool_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tool_util_file__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tool_util_file__ = __webpack_require__(57);
 //
 //
 //
@@ -3267,12 +3289,12 @@ function make_error(err) {
 }
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__template_json__ = __webpack_require__(125);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__template_json__ = __webpack_require__(126);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__template_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__template_json__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_highcharts__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_highcharts___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_highcharts__);
@@ -3719,7 +3741,7 @@ __webpack_require__(19);
 });
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3791,7 +3813,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3855,7 +3877,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3933,7 +3955,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4026,7 +4048,7 @@ __webpack_require__(6);
 });
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4135,7 +4157,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4482,11 +4504,24 @@ __webpack_require__(11);
       });
       var counter = 0;
       var maxValue = reg_data.length;
+      console.log(this.campaign_kind);
 
-      for (var i = 0; i < maxValue; i++) {
-        if (reg_data[i][1] == 0) continue;
-        reg_data1[counter] = [reg_data[i][0], reg_data[i][0] / reg_data[i][1]];
-        counter++;
+      if (this.campaign_kind == 'CPA') {
+        console.log("is this CPA?");
+
+        for (var i = 0; i < maxValue; i++) {
+          if (reg_data[i][1] == 0) continue;
+          reg_data1[counter] = [reg_data[i][0], reg_data[i][0] / reg_data[i][1]];
+          counter++;
+        }
+      } else {
+        console.log("is this ROI?");
+
+        for (var i = 0; i < maxValue; i++) {
+          if (reg_data[i][0] == 0) continue;
+          reg_data1[counter] = [reg_data[i][0], (reg_data[i][1] - reg_data[i][0]) / reg_data[i][0]];
+          counter++;
+        }
       }
 
       var reg_points1 = reg_data1.sort(function (a, b) {
@@ -4692,6 +4727,8 @@ __webpack_require__(11);
       return this.kind == 1 ? cost ? 100 * (revenue - cost) / cost : 0 : revenue ? cost / revenue : 0;
     },
     optimal_regress: function () {
+      console.log(this.regression.string2, "strinng2");
+      console.log("Fdsfdsfdsfdsfdsfsdfdsfds");
       var optinum_min, optinum_max;
       var optimum = 1000000,
           tmp;
@@ -4722,13 +4759,20 @@ __webpack_require__(11);
               if (optinum_min == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else if (optinum_min == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;else optimal_cost = 1 / b;
             }
           } else {
-            optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100);
-            if (optinum_max == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0;else optimal_cost = this.max_value;
+            if (b == 0) {
+              optinum_max = Math.ceil((a - 0.01) / 0.01 * 100);
+              optimal_cost = 0.01;
+            } else {
+              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(1 / b, this.projected_value(1 / b))) / 100);
+              if (optinum_max == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else if (optinum_max == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;else optimal_cost = 1 / b;
+            }
           }
 
           break;
 
         case 3:
+          console.log(this.regression.equation, "e");
+
           if (this.kind != 1) {
             optinum_min = Math.min(Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.exp(1 - this.regression.equation[0] / this.regression.equation[1]), this.projected_value(Math.exp(1 - this.regression.equation[0] / this.regression.equation[1])))) / 100);
             if (optinum_min == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;else optimal_cost = Math.exp(1 - this.regression.equation[0] / this.regression.equation[1]);
@@ -4741,12 +4785,28 @@ __webpack_require__(11);
 
         case 4:
           if (this.kind != 1) {
-            optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100);
-            if (optinum_min == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else optimal_cost = this.max_value;
-          } else {
+            var a = this.regression.equation[0];
+            var b = this.regression.equation[1];
+            var c = this.regression.equation[2];
+
             if (this.regression.equation[0] != 0 && this.regression.equation[2] / this.regression.equation[0] > 0) {
-              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(this.regression.equation[2] / this.regression.equation[0]), this.projected_value(Math.sqrt(this.regression.equation[2] / this.regression.equation[0])))) / 100);
-              if (optinum_max == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else if (optinum_max == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;else optimal_cost = Math.sqrt(this.regression.equation[2] / this.regression.equation[0]);
+              optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(c / a), this.projected_value(Math.sqrt(c / a)))) / 100);
+              if (optinum_min == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else if (optinum_min == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;else optimal_cost = Math.sqrt(c / a);
+              console.log(optimal_cost, "optimal_cost");
+            } else {
+              optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100);
+              if (optinum_min == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else if (optinum_min == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;
+            }
+          } else {
+            var a = this.regression.equation[0];
+            var b = this.regression.equation[1];
+            var c = this.regression.equation[2];
+
+            if (this.regression.equation[0] != 0 && this.regression.equation[2] / this.regression.equation[0] > 0) {
+              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(c / a), this.projected_value(Math.sqrt(c / a)))) / 100);
+              console.log(optinum_max, "sdfsdfds");
+              if (optinum_max == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else if (optinum_max == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;else optimal_cost = Math.sqrt(c / a);
+              console.log(optimal_cost, "optimal_cost");
             } else {
               optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100);
               if (optinum_max == Math.round(100 * this.projected_roi(0.01, this.projected_value(0.01))) / 100) optimal_cost = 0.01;else if (optinum_max == Math.round(100 * this.projected_roi(this.max_value, this.projected_value(this.max_value))) / 100) optimal_cost = this.max_value;
@@ -4778,6 +4838,8 @@ __webpack_require__(11);
       this.optimum = optimum;
       this.optimal_cost = Math.round(optimal_cost * 100) / 100;
       this.optimal_value = this.projected_value(optimal_cost);
+      this.optimal_value = this.projected_value(optimal_cost);
+      console.log(this.projected_value(optimal_cost), this.optimal_value, "optimal_cost");
 
       if (this.kind == 1) {
         // the cost with maximum ROI
@@ -4865,11 +4927,26 @@ __webpack_require__(11);
       });
       var maxValue = reg_data.length;
       var counter = 0;
+      console.log(this.campaign_kind);
 
-      for (var i = 0; i < maxValue; i++) {
-        if (reg_data[i][1] == 0) continue;
-        reg_data1[counter] = [reg_data[i][0], reg_data[i][0] / reg_data[i][1]];
-        counter++;
+      if (this.campaign_kind == 'CPA') {
+        console.log("is this CPA?");
+
+        for (var i = 0; i < maxValue; i++) {
+          if (reg_data[i][1] == 0) continue;
+          reg_data1[counter] = [reg_data[i][0], reg_data[i][0] / reg_data[i][1]];
+          counter++;
+        }
+      } else {
+        console.log("is this ROI?");
+
+        for (var i = 0; i < maxValue; i++) {
+          if (reg_data[i][0] == 0) continue;
+          reg_data1[counter] = [reg_data[i][0], (reg_data[i][1] - reg_data[i][0]) / reg_data[i][0]];
+          counter++;
+        }
+
+        console.log(reg_data, reg_data1);
       } //reg_data1.push([maxValue, i/this.projected_value(maxValue)]);
 
 
@@ -5062,7 +5139,7 @@ __webpack_require__(11);
 });
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5245,7 +5322,7 @@ __webpack_require__(11);
 });
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5414,13 +5491,13 @@ __webpack_require__(20);
 });
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tool_ajax__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_plyr_patched__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_plyr_patched__ = __webpack_require__(55);
 //
 //
 //
@@ -5462,7 +5539,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
  // patched for TITLE
 
-__webpack_require__(57);
+__webpack_require__(58);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function () {
@@ -5496,7 +5573,7 @@ __webpack_require__(57);
 });
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5588,7 +5665,7 @@ __webpack_require__(20);
 });
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9319,19 +9396,21 @@ function get(container) {
 });
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__routes__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__events__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tool_cook__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__config__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__App__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__App__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_vue_responsive__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__routes__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__events__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__tool_cook__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__config__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__App__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__App__);
+
 
 
 
@@ -9344,7 +9423,8 @@ __webpack_require__(15);
 
 __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].config.productionTip = false;
 __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].use(__WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]);
-__WEBPACK_IMPORTED_MODULE_2__routes__["a" /* default */].afterEach(function (to, from) {
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].use(__WEBPACK_IMPORTED_MODULE_2_vue_responsive__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_3__routes__["a" /* default */].afterEach(function (to, from) {
   var title = to.meta.title;
   document.title = 'ROI/CPA optimizer' + (title != null && title != '' ? ' - ' + title : '');
 });
@@ -9388,11 +9468,11 @@ __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].directive('focus', {
 });
 new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
   el: '#app',
-  router: __WEBPACK_IMPORTED_MODULE_2__routes__["a" /* default */],
+  router: __WEBPACK_IMPORTED_MODULE_3__routes__["a" /* default */],
   created: function () {
-    this.info = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__tool_cook__["a" /* jsonCookieValue */])(__WEBPACK_IMPORTED_MODULE_5__config__["a" /* default */].cookie_info, {});
-    __WEBPACK_IMPORTED_MODULE_3__events__["a" /* default */].$on('show_spin', this.showSpin);
-    __WEBPACK_IMPORTED_MODULE_3__events__["a" /* default */].$on('hide_spin', this.hideSpin);
+    this.info = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__tool_cook__["a" /* jsonCookieValue */])(__WEBPACK_IMPORTED_MODULE_6__config__["a" /* default */].cookie_info, {});
+    __WEBPACK_IMPORTED_MODULE_4__events__["a" /* default */].$on('show_spin', this.showSpin);
+    __WEBPACK_IMPORTED_MODULE_4__events__["a" /* default */].$on('hide_spin', this.hideSpin);
   },
   data: function () {
     var a = {
@@ -9422,11 +9502,11 @@ new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
       if (this.spin_visible) this.spin_visible--;
     }
   },
-  render: h => h(__WEBPACK_IMPORTED_MODULE_6__App___default.a)
+  render: h => h(__WEBPACK_IMPORTED_MODULE_7__App___default.a)
 });
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9449,12 +9529,6 @@ function encodeFilename(str) {
   // so we can allow for a little better readability over the wire: |`^
   replace(/%(?:7C|60|5E)/g, unescape);
 }
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 58 */
@@ -9542,63 +9616,49 @@ function encodeFilename(str) {
 
 /***/ }),
 /* 72 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__.p + "img/CalR.0d76f45.svg";
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__.p + "img/graR.34aab78.svg";
+module.exports = __webpack_require__.p + "img/CalR.0d76f45.svg";
 
 /***/ }),
 /* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__.p + "img/oR.7efe50b.svg";
+module.exports = __webpack_require__.p + "img/graR.34aab78.svg";
 
 /***/ }),
 /* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "img/oR.7efe50b.svg";
+
+/***/ }),
+/* 76 */
 /***/ (function(module, exports) {
 
 module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8c3ZnIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4NCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDYwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDkwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgxNTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMTgwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDIxMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgyNDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KICA8cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSI1IiByeT0iNSIgZmlsbD0iIzI5YTVkOSIgdHJhbnNmb3JtPSJyb3RhdGUoMjcwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApIi8+ICANCiAgPHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iNSIgcnk9IjUiIGZpbGw9IiMyOWE1ZDkiIHRyYW5zZm9ybT0icm90YXRlKDMwMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSIvPiAgDQogIDxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjUiIHJ5PSI1IiBmaWxsPSIjMjlhNWQ5IiB0cmFuc2Zvcm09InJvdGF0ZSgzMzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCkiLz4gIA0KPC9zdmc+ICAgCSAgICANCg=="
 
 /***/ }),
-/* 76 */,
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-function injectStyle (ssrContext) {
-  __webpack_require__(60)
-}
-var Component = __webpack_require__(0)(
-  /* script */
-  __webpack_require__(30),
-  /* template */
-  __webpack_require__(101),
-  /* styles */
-  injectStyle,
-  /* scopeId */
-  null,
-  /* moduleIdentifier (server only) */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
+/* 77 */,
 /* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(61)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  null,
+  __webpack_require__(31),
   /* template */
-  __webpack_require__(109),
+  __webpack_require__(102),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9614,9 +9674,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(32),
+  null,
   /* template */
-  __webpack_require__(116),
+  __webpack_require__(110),
   /* styles */
   null,
   /* scopeId */
@@ -9636,7 +9696,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(33),
   /* template */
-  __webpack_require__(103),
+  __webpack_require__(117),
   /* styles */
   null,
   /* scopeId */
@@ -9652,16 +9712,13 @@ module.exports = Component.exports
 /* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(59)
-}
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(34),
   /* template */
-  __webpack_require__(100),
+  __webpack_require__(104),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9675,13 +9732,16 @@ module.exports = Component.exports
 /* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(60)
+}
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(35),
   /* template */
-  __webpack_require__(118),
+  __webpack_require__(101),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9699,7 +9759,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(36),
   /* template */
-  __webpack_require__(105),
+  __webpack_require__(119),
   /* styles */
   null,
   /* scopeId */
@@ -9735,16 +9795,13 @@ module.exports = Component.exports
 /* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(62)
-}
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(38),
   /* template */
   __webpack_require__(107),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9759,13 +9816,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(69)
+  __webpack_require__(63)
 }
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(39),
   /* template */
-  __webpack_require__(119),
+  __webpack_require__(108),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -9782,13 +9839,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(61)
+  __webpack_require__(70)
 }
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(40),
   /* template */
-  __webpack_require__(102),
+  __webpack_require__(120),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -9805,13 +9862,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(70)
+  __webpack_require__(62)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(42),
+  __webpack_require__(41),
   /* template */
-  __webpack_require__(121),
+  __webpack_require__(103),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -9827,13 +9884,16 @@ module.exports = Component.exports
 /* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(71)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(44),
+  __webpack_require__(43),
   /* template */
-  __webpack_require__(111),
+  __webpack_require__(122),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9851,7 +9911,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(45),
   /* template */
-  __webpack_require__(114),
+  __webpack_require__(112),
   /* styles */
   null,
   /* scopeId */
@@ -9871,7 +9931,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(46),
   /* template */
-  __webpack_require__(99),
+  __webpack_require__(115),
   /* styles */
   null,
   /* scopeId */
@@ -9891,7 +9951,7 @@ var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(47),
   /* template */
-  __webpack_require__(98),
+  __webpack_require__(100),
   /* styles */
   null,
   /* scopeId */
@@ -9907,16 +9967,13 @@ module.exports = Component.exports
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function injectStyle (ssrContext) {
-  __webpack_require__(68)
-}
 var Component = __webpack_require__(0)(
   /* script */
   __webpack_require__(48),
   /* template */
-  __webpack_require__(117),
+  __webpack_require__(99),
   /* styles */
-  injectStyle,
+  null,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9931,13 +9988,13 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 function injectStyle (ssrContext) {
-  __webpack_require__(71)
+  __webpack_require__(69)
 }
 var Component = __webpack_require__(0)(
   /* script */
-  null,
+  __webpack_require__(49),
   /* template */
-  __webpack_require__(122),
+  __webpack_require__(118),
   /* styles */
   injectStyle,
   /* scopeId */
@@ -9953,13 +10010,16 @@ module.exports = Component.exports
 /* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
+function injectStyle (ssrContext) {
+  __webpack_require__(72)
+}
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(51),
-  /* template */
-  __webpack_require__(104),
-  /* styles */
   null,
+  /* template */
+  __webpack_require__(123),
+  /* styles */
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -9975,9 +10035,9 @@ module.exports = Component.exports
 
 var Component = __webpack_require__(0)(
   /* script */
-  __webpack_require__(53),
+  __webpack_require__(52),
   /* template */
-  __webpack_require__(120),
+  __webpack_require__(105),
   /* styles */
   null,
   /* scopeId */
@@ -9991,6 +10051,26 @@ module.exports = Component.exports
 
 /***/ }),
 /* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(0)(
+  /* script */
+  __webpack_require__(54),
+  /* template */
+  __webpack_require__(121),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10231,7 +10311,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10422,7 +10502,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10491,7 +10571,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10546,7 +10626,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10579,7 +10659,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10656,7 +10736,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -10825,7 +10905,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11107,7 +11187,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11444,7 +11524,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11532,7 +11612,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11544,7 +11624,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11691,7 +11771,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('img', {
     attrs: {
-      "src": __webpack_require__(75),
+      "src": __webpack_require__(76),
       "width": "100px",
       "height": "100px",
       "border": "0",
@@ -11701,7 +11781,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11709,7 +11789,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11722,7 +11802,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -11826,7 +11906,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12018,7 +12098,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "top_space"
   }, [_vm._v("\n          " + _vm._s(_vm.campaign_kind) + ": "), _c('strong', {
     staticClass: "code"
-  }, [_vm._v(_vm._s(_vm.regression.string1))]), _vm._v(" "), _vm._m(6)]), _vm._v(" "), _c('div', {
+  }, [_vm._v(_vm._s(_vm.campaign_kind == 'CPA' ? _vm.regression.string1 : _vm.regression.string2))]), _vm._v(" "), _vm._m(6)]), _vm._v(" "), _c('div', {
     staticClass: "top_space"
   }, [_vm._v("\n          Based on: "), _c('strong', {
     staticClass: "code"
@@ -12106,7 +12186,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12159,7 +12239,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12253,7 +12333,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12372,23 +12452,23 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', [_c('h1', [_vm._v("Map campaigns using regression models to find optimal performance")]), _vm._v(" "), _c('img', {
     staticClass: "first_img",
     attrs: {
-      "src": __webpack_require__(73)
+      "src": __webpack_require__(74)
     }
   })]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Forecast performance with increased budgets")]), _vm._v(" "), _c('img', {
     staticClass: "second_img",
     attrs: {
-      "src": __webpack_require__(72)
+      "src": __webpack_require__(73)
     }
   })]), _vm._v(" "), _c('div', [_c('h1', [_vm._v("Find optimal campaign budget allocation that you can plug back into your account")]), _vm._v(" "), _c('img', {
     staticClass: "third_img",
     attrs: {
-      "src": __webpack_require__(74)
+      "src": __webpack_require__(75)
     }
   })])])
 }]}
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12576,7 +12656,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12625,7 +12705,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 },staticRenderFns: []}
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -12659,7 +12739,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -13300,7 +13380,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -13401,7 +13481,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -13958,7 +14038,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -13982,12 +14062,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 }]}
 
 /***/ }),
-/* 123 */,
 /* 124 */,
-/* 125 */
+/* 125 */,
+/* 126 */
 /***/ (function(module, exports) {
 
 module.exports = [{"id":5311,"kind":1,"title":"FC-Revenue","points":[[565.7400000000002,2213.5],[603.05,5575.2],[776.26,6373.599999999999],[738.7700000000002,6261.5],[1400.5300000000007,14218.3],[164.08,1165.3],[1263.1000000000001,818.2],[1323.23,5486.1],[922.4200000000001,1795.01],[1251.39,9440.62],[296.4399999999998,340.860000000001],[563.7799999999997,7956.09],[1533.46,12923.36],[1396.31,12917.94],[984.6099999999999,5472.87],[1352.8100000000002,10580.179999999997],[629.1400000000003,3359.339999999998],[1393.73,10490.27],[1538.6699999999998,7540.399999999998],[1254.6299999999997,3949.1],[1518.3200000000002,15076.699999999999],[1103.8799999999999,9087.84],[1351.55,12038.02],[641.94,7238.289999999998],[1278.0299999999997,11858.17],[1437.1700000000003,12985.02],[1408.3800000000003,7122.69],[1177.7099999999998,5273.46],[985.1000000000003,4115.6900000000005],[1198.5100000000002,7902.539999999998],[1243.7999999999997,6931.179999999998],[1249.18,9911.81],[1147.51,3526.55],[1329.8099999999997,10461.709999999997],[1324.34,13258.64],[953.27,9737.179999999998],[1042.5300000000002,8710.21],[906.42,4468.96],[1439.9500000000007,5109.58],[1134.2099999999998,4426.53],[1158.8800000000003,9747.15],[1285.4599999999994,11412.66],[977.270000000001,7137.999999999999]]}]
 
 /***/ })
-],[55]);
+],[56]);
