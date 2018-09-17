@@ -8,6 +8,8 @@ import landing from './components/landing'
 import feature from './components/landing'
 import myProfile from './components/account/my_profile'
 import dataImport from './components/import/import'
+import camp from './components/import/import'
+import panel from './components/import/import'
 import campaignList from './components/campaign/list'
 import optimizer from './components/optimize/optimize'
 import support from './components/support/support'
@@ -97,6 +99,22 @@ export default new Router({
       meta:
         {
           title: 'Import data',
+          menu: true
+        }
+    },
+    {
+      path: '/camp',
+      component: camp,
+      meta:
+        {
+          menu: true
+        }
+    },
+    {
+      path: '/panel',
+      component: panel,
+      meta:
+        {
           menu: true
         }
     },

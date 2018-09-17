@@ -1,127 +1,191 @@
 <template>
   <div class="field">
-    <err-panel v-model="warn_text" :warn="is_warn"></err-panel>
-    <h2 align="center">Subscription plans</h2>
-    <table align="center" class="acc_stat">
-      <thead>
-        <tr>
-          <th>Subscription Name</th>
-          <th>Description</th>
-          <th>Payment Name</th>
-          <th>Payment frequency</th>
-          <th>Amount</th>
-          <th>Currency</th>
-          <th>Max failed billing attempts</th>
-          <th>Action</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr bgcolor="#dcdcdc">
-          <td>
-            <input type="text" v-model.trim="plan_name" minlength="3" required class="full_width" title="Monthly billing for Budget Optimize"/>
-          </td>
-          <td>
-            <input type="text" v-model.trim="plan_desc" minlength="5" required class="full_width" title="Monthly Subscription for the One Egg AdWords budget optimizer"/>
-          </td>
-          <td>
-            <input type="text" v-model.trim="pay_name" minlength="3" required class="full_width" placeholder="Regular Payments"/>
-          </td>
-          <td>
-            <select v-model="freq" class="full_width" required>
-              <option v-for="freqs in freq_list" :value="freqs">{{ freqs }}</option>
-            </select>
-          </td>
-          <td>
-            <input type="number" min="1" max="1000" required v-model.trim.number="amount" class="full_width"/>
-          </td>
-          <td>
-            <select v-model="currency" class="full_width" required>
-              <option v-for="curr in curr_list" :value="curr">{{ curr }}</option>
-            </select>
-          </td>
-          <td>
-            <select v-model="max_fail" class="full_width" required>
-              <option value="0">Infinite</option>
-              <option value="1">Once</option>
-              <option value="2">Twice</option>
-              <option value="3">Triple</option>
-            </select>
-          </td>
-          <td align="center">
-            <button class="btn btn_yes" @click="newPlan">Create</button>
-          </td>
-          <td>&nbsp;</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr v-for="item in plans">
-          <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
-          <td>{{ item.paydef }}</td>
-          <td align="center">{{ item.frequency }}</td>
-          <td align="right">{{ (+item.amount).toFixed(2) }}</td>
-          <td align="center">{{ item.currency }}</td>
-          <td align="center">{{ item.max_fail }}</td>
-          <td align="center">
-            <button class="btn btn_dark" @click="planDuplicate(item)">Duplicate</button>
-          </td>
-          <td align="center">
-            <button class="btn btn_no" v-if="!item.active" @click="planActive(item)">Activate</button>
-            <span v-else>Active</span>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-    <h2 align="center">Web hooks</h2>
-    <table align="center" class="acc_stat">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>URL</th>
-          <th>Events</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr bgcolor="#dcdcdc">
-          <td>&nbsp;</td>
-          <td>{{ window.location.href }}/api/paypal/web_hook.php</td>
-          <td>
-            <ul>
-              <li>BILLING.SUBSCRIPTION.CREATED</li>
-              <li>BILLING.SUBSCRIPTION.CANCELLED</li>
-              <li>BILLING.SUBSCRIPTION.RE-ACTIVATED</li>
-              <li>BILLING.SUBSCRIPTION.SUSPENDED</li>
-            </ul>
-          </td>
-          <td align="center">
-            <button class="btn btn_yes" @click="newHook">Create</button>
-          </td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr v-for="item in hooks">
-          <td>{{ item.id }}</td>
-          <td>{{ item.url }}</td>
-          <td>
-            <ul>
-              <li v-for="event in item.event_types">{{ event.name }}</li>
-            </ul>
-          </td>
-          <td align="center">
-            <button class="btn btn_no" @click="hookDelete(item)">Delete</button>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+    <h1>Plans & Prices</h1>
+
+    <form class = "prices__period__selector" >
+      <label class = "prices__period">
+        <input type = "radio" id="month" name = "period" value = "month" @click = "changeState" v-model="price_value" />
+        Monthly Plans
+      </label>
+      <label class = "prices__period">
+        <input type = "radio" name = "period" value = "year" @click = "changeState"  v-model = "price_value"  />
+        Annual Plans, Save up to $800
+      </label>
+    </form>
+
+    <div class = "prices__header__plans">
+      <div class = "prices__plan">
+        <h3>Pro</h3>
+        <div  v-if = "price_state">
+          <div class = "prices__plan__price">
+            <span class = "price__amount">$99<span class = "cents">.95</span></span>
+            <span class = "price__period">monthly</span>
+          </div>
+          <p>
+            <span class = "s-btn__text" >
+            Subscribe
+            </span>
+          </p>
+        </div>
+        <div  v-else = "">
+          <div class = "prices__plan__price -old">
+            <span class = "price__amount">$1199</span>
+          </div>
+          <div class = "prices__plan__price" >
+            <span class = "price__amount">$999<span class = "cents">.40</span></span>
+            <span class = "price__period">annual</span>
+          </div>
+          <p>
+            <span data-ga-event-onclick = "" data-ga-category = "page:prices" data-ga-action="button.click:subscribe-annual" data-ga-label="pro">
+              <span class = "s-btn__text">
+              Subscribe
+              </span>
+            </span>
+          </p>
+        </div>
+        <hr>
+        <div class = "prices__plan__content">
+          <p class = "prices__plan__description">
+            For freelancers, startups and in-house marketers with limited budget</p>
+          <p>Run your SEO, PPC, SMM and content projects with 28 advanced tools.</p> 
+          <p>Know your competitors’ traffic sources, rankings, social media results &amp; more.</p>
+        </div>
+        <p>
+          <a href = "#plans_comparison" class = "link">
+           See a full plan comparison
+          </a>
+        </p>
+      </div>
+      <div class = "prices__plan -featured">
+        <h3>Guru</h3>
+        <div v-if = "price_state">
+          <div class = "prices__plan__price">
+            <span class = "price__amount">$199<span class = "cents">.95</span></span>
+            <span class = "price__period">monthly</span>
+          </div>
+          <p>
+            <span class = "s-btn__text">
+            Subscribe
+            </span>
+          </p>
+        </div>
+        <div v-else = "">
+          <div class = "prices__plan__price -old">
+            <span class = "price__amount">$2399</span>
+          </div>
+          <div class = "prices__plan__price">
+            <span class = "price__amount">$1999<span class = "cents">.40</span></span>
+            <span class = "price__period">annual</span>
+          </div>
+          <p>
+            <span data-ga-event-onclick="" data-ga-category = "page:prices" data-ga-action="button.click:subscribe-annual" data-ga-label = "guru">
+              <span class = "s-btn__text">
+              Subscribe
+              </span>
+            </span>
+          </p>
+        </div>
+        <hr>
+        <div class = "prices__plan__content">
+          <p class = "prices__plan__description">
+          For SMB and growing marketing agencies</p>
+          <p>All the Pro features plus:</p>
+          <ul> 
+            <li>Branded reports</li> 
+            <li>Historical Data</li> 
+            <li>Extended limits</li> 
+          </ul>
+        </div>
+        <p>
+          <a href = "#plans_comparison" class = "link">
+          See a full plan comparison
+          </a>
+        </p>
+      </div>
+      <div class = "prices__plan">
+        <h3>Business</h3>
+        <div v-if = "price_state">
+          <div class = "prices__plan__price">
+            <span class = "price__amount">$399<span class = "cents">.95</span></span>
+            <span class = "price__period">monthly</span>
+          </div>
+          <p>
+            <span class = "s-btn__text">
+            Subscribe
+            </span>
+          </p>
+        </div>
+        <div v-else = "">
+          <div class = "prices__plan__price -old">
+            <span class = "price__amount">$4799</span>
+          </div>
+          <div class = "prices__plan__price">
+            <span class = "price__amount">$3999<span class = "cents">.40</span></span>
+            <span class = "price__period">annual</span>
+          </div>
+          <p>
+            <span data-ga-event-onclick = "" data-ga-category = "page:prices" data-ga-action="button.click:subscribe-annual" data-ga-label="business">
+              <span class="s-btn__text">
+              Subscribe
+              </span>
+            </span>
+          </p>
+        </div>
+        <hr>
+        <div class = "prices__plan__content">
+          <p class = "prices__plan__description">
+          For agencies, E-commerce projects and businesses with extensive web presence</p>
+          <p>All the Guru features plus:</p>
+          <ul> 
+            <li>White label reports</li> 
+            <li>API access</li> 
+            <li>Extended limits and sharing options </li> 
+          </ul>
+        </div>
+        <p>
+          <a href = "#plans_comparison" class = "link">
+          See a full plan comparison
+          </a>
+        </p>
+      </div>
+      <div class = "prices__plan">
+        <h3>Enterprise</h3>
+        <div class = "prices__plan__price -enterprise">
+        Need more?
+        </div>
+        <p>
+          <span class = "s-btn__text">
+          Contact us
+          </span>
+        </p>
+        <hr>
+        <div class = "prices__plan__content">
+          <p>A custom solution to fit the marketing needs of your business:</p>
+          <ul> 
+            <li>Custom keyword databases</li>
+            <li>Custom limits</li> 
+            <li>Unlimited crawling of large websites</li> 
+            <li>On-site trainings</li> 
+            <li>And other add-on features upon request </li> 
+          </ul>
+        </div>
+        <p>
+          <a href = "#plans_comparison" class = "link">
+          See a full plan comparison
+          </a>
+        </p>
+      </div>
+    </div>
   </div>
 </template>
+<!-- <script type="text/javascript" src="../../index.563ae54c0a84.js"></script> -->
 
 <script>
 import AJAX from '@/tool/ajax'
 import errPanel from '@/components/err_panel'
+require('@/css/paypal.css');
 require('@/css/account.css');
+// require('@/css/paypal.js');
 
 export default
 {
@@ -133,6 +197,8 @@ export default
   {
     var a =
       {
+        price_value: "",
+        price_state: true,
         is_warn: false,
         warn_text: '',
         plans: [],
@@ -168,8 +234,24 @@ export default
     this.fetchPlans();
     this.fetchHooks();
   },
+  mounted: function()
+  {
+    this.initValues();
+  },
   methods:
     {
+      initValues: function()
+      {
+        document.getElementById("month").checked = true;
+      },
+      changeState: function()
+      {
+        if(this.price_value == "month")
+          this.price_state = true;
+        if(this.price_value == "year") 
+          this.price_state = false;
+        
+      },
       fetchPlans: function()
       {
         // get details for the existing billing plans from PayPal

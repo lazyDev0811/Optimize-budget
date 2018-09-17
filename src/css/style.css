@@ -39,10 +39,10 @@ h1, h2, h3, h4, h5, h6, p, ul, ol
   margin: 1rem 0;
 }
 
-h1, h2, h3, h4, h5, h6
+/*h1, h2, h3, h4, h5, h6
 {
   line-height: 1.5;
-}
+}*/
 
 .center
 {
@@ -136,7 +136,43 @@ input, select
 div.field
 {
   margin: 10px;
+  /*width: 1170px;
+  transition: all .3s linear;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding-left: 14px;
+  padding-right: 14px;*/
+
 }
+
+.prices__header__plans
+{
+  width: 1170px;
+  transition: all .3s linear;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.field h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #333;
+    margin: 20px 0;
+    text-align: center;
+  }
+
+.prices__period__selector {
+    text-align: center;
+    color: #000;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 5px 0 0;
+  }
 
 svg
 {

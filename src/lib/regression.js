@@ -28,7 +28,7 @@ function determinationCoefficient(data, results) {
   const ssyy = observations.reduce((a, observation) => {
     const difference = observation[1] - mean;
     return a + (difference * difference);
-  }, 0); //************* SStot value *************////
+  }, 0); //************* SStot value *************//
 
 
   const sse = observations.reduce((accum, observation, index) => {
@@ -44,9 +44,13 @@ function determinationCoefficient(data, results) {
   }, 0);
 
   const rmse = sse / observations.length;
-  const r2 = 1 - rmse /ssyy;
+  const r2 = 1 - observations.length * rmse /ssyy;
 
-  return ssresid/ssyy;
+  // console.log("first "+(1 - (sse / ssyy))+" sec "+ssresid / ssyy);
+  //return ssresid / ssyy;
+  // return 1 - (sse / ssyy);
+ return r2;
+ // return ssresid/ssyy;
 }
 
 /**
