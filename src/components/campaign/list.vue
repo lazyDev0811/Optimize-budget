@@ -168,7 +168,7 @@
         </div>
       </div>
       <div class="sidebar_collapse" @click="toggleNav($event)">
-        <i id="collapseIcon" class="fa fa-caret-left custom_collapse" aria-hidden="true"></i>
+        <i id="collapseIcon" class="fa fa-chevron-left custom_collapse" aria-hidden="true"></i>
       </div>
     </div>
     <div class="campaign_center">
@@ -450,10 +450,9 @@ export default
       toggleNav: function(event) {
         this.$parent.$emit('toggleNav');
         if (this.active) {
-          document.getElementById('collapseIcon').className = "fa fa-caret-left custom_collapse";
+          document.getElementById('collapseIcon').className = "fa fa-chevron-left custom_collapse";
         } else {
-          document.getElementById('collapseIcon').className = "fa fa-caret-right custom_collapse";
-          event.target.parentElement.setAttribute('style', 'height: 678px');
+          document.getElementById('collapseIcon').className = "fa fa-chevron-right custom_collapse";
         }
       }
     }
@@ -472,6 +471,7 @@ export default
   .campaign_sidebar_wrapper
   {
     display: flex;
+    height: 678px;
   }
 
   .sidebar_collapse
@@ -483,11 +483,15 @@ export default
     align-items: center;
     justify-content: center;
     border: 2px solid #555;
+    height: 40px;
+    width: 20px;
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
   }
 
   .custom_collapse
   {
-    font-size: 30px;
+    font-size: 17px;
     color: white;
   }
   .group_title
