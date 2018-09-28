@@ -113,6 +113,7 @@ export default
             total_roi: 0,
             avg_roi: 0,
             best_fit: 0,
+            rmse:  [0,0,0,0,0,0],
             r2: [0,0,0,0,0,0] // equal to the number of regressions + 1 (for the Auto-fit)
           },
         worker: new CalcWorker()
@@ -222,8 +223,15 @@ export default
               {
                 return isNaN(item.r2) ? 0 : item.r2;
               });
+              hist.rmse = this.combined.regressions.map(function(item)
+              {
+                return isNaN(item.rmse) ? 0 : item.rmse;
+              });
               for(i=0;i<len;i++)
               {
+
+                projected = predict(points[i][0],this.combined.best_fit,this.combined.regressions[0].equation);
+                hist.total_roi = (this.kind==1 ? (spent ? 100*(projected - points[i][0])/points[i][0] : 0) : (projected ? points[i][0] / projected : 0));
                 spent += points[i][0];
                 revenue += points[i][1];
               }
@@ -231,8 +239,8 @@ export default
               hist.total_revenue = revenue;
               hist.avg_spent = (len ? spent / len : 0);
               hist.avg_revenue = (len ? revenue / len : 0);
-              projected = predict(spent,this.combined.best_fit,this.combined.regressions[0].equation);
-              hist.total_roi = (this.kind==1 ? (spent ? 100*(projected - spent)/spent : 0) : (projected ? spent / projected : 0));
+              // projected = predict(spent,this.combined.best_fit,this.combined.regressions[0].equation);
+              // hist.total_roi = (this.kind==1 ? (spent ? 100*(projected - spent)/spent : 0) : (projected ? spent / projected : 0));
               hist.avg_roi = (len ? hist.total_roi / len : 0);
               this.$emit('history',hist);
               break;

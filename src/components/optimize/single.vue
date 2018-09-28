@@ -183,7 +183,7 @@ export default
       },
       text_kind: function ()
       {
-        return (this.kind==1 ? 'Revenue' : 'Conversions');
+        return (this.kind==1 ? 'Conversions' : 'Revenue');
       },
       optimal_text: function ()
       {
@@ -225,8 +225,17 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
-        if(this.chart!=null) this.chart = null;
 
+        var sort_observation_data = this.campaign.points.sort(function (a,b)
+        {
+          return a[0] - b[0];
+        }).map(function(item)
+        {
+          if(item[1]<0) item[1] = 0;
+          return item;
+        });
+        console.log(sort_observation_data, "this is for blue line")
+        if(this.chart!=null) this.chart = null;
         Highcharts.setOptions(
           {
             lang:
@@ -345,8 +354,8 @@ export default
               {
                 data:
                 [
-                  [reg_data[1][0],0],
-                  [reg_data[1][0], this.optimal_value * 2]
+                  [sort_observation_data[0][0],0],
+                  [sort_observation_data[0][0], this.optimal_value * 2]
                 ],
                 color: 'rgba(70, 160, 50, .9)',
                 lineWidth: 3,
@@ -644,7 +653,7 @@ export default
              {
                 name: 'Fit',
                 color: 'blue',
-                data: [[this.var_cost*Math.abs(-1), this.var_cost/this.projected_value(this.var_cost)]]
+                data: [[this.var_cost*Math.abs(-1), this.campaign_kind == 'CPA' ? this.var_cost/this.projected_value(this.var_cost) : (this.projected_value(this.var_cost) - this.var_cost)/this.var_cost]]
               },
               {
                 data: reg_data1,
@@ -682,7 +691,6 @@ export default
       optimal_regress: function()
       {
         console.log(this.regression.string2, "strinng2")
-        console.log("Fdsfdsfdsfdsfdsfsdfdsfds")
         var optinum_min, optinum_max;
         var optimum = 1000000, tmp;
         var optimal_cost = 0;

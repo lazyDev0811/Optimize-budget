@@ -21,7 +21,7 @@
         <h2>Optimize Budget allocation, forecast performance & predict results with Machine Learning</h2>
         <div class="slider_panel">
           <label>See how it works:</label>
-          <input type="range" min="0" max="5000" step="0.01" v-model="var_cost" class="slider no_bord" v-on:input="setPoint()"/>
+          <input type="range" min="0" max="1538.67" step="0.01" v-model="var_cost" class="slider no_bord" v-on:input="setPoint()"/>
           <div class="create_content"><a class="login btn create_account" href="#/signup" @click="func1()">Create a free account</a></div>
         </div>
       </div>
@@ -151,7 +151,8 @@ export default
       setPoint: function()
       {
         this.chart.destroy();
-
+        this.optimal_value = this.projected_value(this.var_cost);
+        this.optimum = this.optimal_value / this.var_cost;
         var reg_data = this.combined.regressions[3].points.sort(function (a,b)
         {
           return a[0] - b[0];
@@ -181,7 +182,7 @@ export default
             },
             title:
             {
-              text: 'Regression Cost'
+              text: 'Cost vs Conversions'
             },
             xAxis:
             {
@@ -261,7 +262,7 @@ export default
                 data: this.combined.points
               },
               {
-                name: 'State',
+                name: 'Fit',
                 color: "blue",
                 data: [[this.var_cost*Math.abs(1), this.projected_value(this.var_cost)]]
               },
@@ -432,7 +433,7 @@ export default
             },
             title:
             {
-              text: 'Regression Cost'
+              text: 'Cost vs Conversions'
             },
             xAxis:
             {
@@ -647,9 +648,11 @@ export default
 
   .slider_panel
   {
+    margin-top : 70px;
     text-align: center;
     width: 90%;
-    margin: 0 auto;
+    margin-left : auto;
+    margin-right: auto; 
   }
 
   .no_bord
@@ -661,7 +664,7 @@ export default
 
   .create_content
   {
-    margin-top: 50px;
+    margin-top: 130px;
   }
 
   .create_account

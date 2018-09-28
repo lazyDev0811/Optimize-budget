@@ -127,13 +127,15 @@
                   <td>&nbsp;</td>
                   <td>&nbsp;</td>
                   <td align="right">R<span class="super">2</span></td>
+                  <td align="center">RMSE</td>
                 </tr>
                 <tr v-for="(reg,idx) in regressions">
                   <td>
                     <input type="radio" v-model="kind_regress" :value="idx" :id="'regid_'+idx"/>
                   </td>
                   <td><label :for="'regid_'+idx">{{ reg }}</label></td>
-                  <td align="right">{{ r2[idx] | filterNum }}</td>
+                  <td align="center">{{ r2[idx] | filterNum }}</td>
+                  <td align="center">{{ rmse[idx] | filterNum }}</td>
                 </tr>
               </table>
             </div>
@@ -154,9 +156,9 @@
                 Total Spent = {{ total_spent | filterNum }}<br/>Avg Spent = {{ avg_spent | filterNum }}
               </div>
               <div class="actual_body">
-                Total {{ roi_or_cpa==1 ? 'Revenue = ' : 'Conversions = ' }}{{ total_revenue | filterNum }}
+                Total {{ roi_or_cpa==1 ? 'Conversions = ' : 'Revenue = ' }}{{ total_revenue | filterNum }}
                 <br/>
-                Avg {{ roi_or_cpa==1 ? 'revenue' : 'conv' }} / day = {{ avg_revenue | filterNum }}
+                Avg {{ roi_or_cpa==1 ? 'conv' : 'revenue' }} / day = {{ avg_revenue | filterNum }}
               </div>
               <div class="actual_body">
                 Total {{ roi_or_cpa==1 ? 'ROI' : 'CPA' }} for period = {{ total_roi | filterNum }}{{ roi_or_cpa==1 ? '%' : '' }}
@@ -229,6 +231,15 @@ export default
             0, // logarithmic
             0, // polynomial
             0, // power
+          ],
+        rmse:
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
           ],
         regressions:
           [
@@ -423,6 +434,7 @@ export default
         // update best fit R2
         //this.kind_regress = history.best_fit;
         this.r2 = history.r2;
+        this.rmse = history.rmse;
       },
       /*
       month_start: function()
@@ -519,7 +531,6 @@ export default
 
   .group_name
   {
-    /* flex: 1 1 auto; */
     cursor: pointer;
     padding-left: 80px;
   }
@@ -658,6 +669,15 @@ export default
   }
 
   .campaign_regress td:last-child
+  {
+    color: blue;
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+
+  .campaign_regress td:nth-last-child(2)
   {
     color: red;
     font-weight: bold;

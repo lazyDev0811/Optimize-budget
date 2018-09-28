@@ -44,12 +44,12 @@ function determinationCoefficient(data, results) {
   }, 0);
 
   const rmse = sse / observations.length;
-  const r2 = 1 - observations.length * rmse /ssyy;
-
+  // const r2 = 1 - observations.length * rmse /ssyy;
   // console.log("first "+(1 - (sse / ssyy))+" sec "+ssresid / ssyy);
   //return ssresid / ssyy;
   // return 1 - (sse / ssyy);
- return r2;
+  const r2 = ssresid/ssyy;
+ return {r2, rmse};
  // return ssresid/ssyy;
 }
 
@@ -154,13 +154,14 @@ export default {
     );
 
     const points1 = data.map(point => predict1(point[0]));
-    console.log(round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision), "r-square")
+    console.log(round(determinationCoefficient(data, points).rmse, DEFAULT_OPTIONS.precision), "r-square")
     return {
       points,
       predict,
       points1,
       equation: [gradient, intercept],
-      r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
+      r2: round(determinationCoefficient(data, points).r2, DEFAULT_OPTIONS.precision),
+      rmse: round(determinationCoefficient(data, points).rmse, DEFAULT_OPTIONS.precision),
       string: intercept === 0 ? `Y = ${gradient} * X` : `Y = ${gradient} * X` + (intercept<0 ? ' ' : ' + ') + `${intercept}`,
       string1: intercept === 0 ? `Y = X / ${gradient} * X` : `Y = X / (${gradient} * X` + (intercept<0 ? ' ' : ' + ') + `${intercept})`,
       string2: intercept === 0 ? `Y =  ${gradient - 1} * X / X` : `Y =  (${gradient - 1} * X` + (intercept<0 ? ' ' : ' + ') + `${intercept}) / X`,
@@ -236,7 +237,8 @@ export default {
       string: `Y = ${coeffA} * Exp(${coeffB} * X)`,
       string1: `Y = X / (${coeffA} * Exp(${coeffB} * X))`,
       string2: `Y = (${coeffA} * Exp(${coeffB} * X) - X) / X`,
-      r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
+      r2: round(determinationCoefficient(data, points).r2, DEFAULT_OPTIONS.precision),
+      rmse: round(determinationCoefficient(data, points).rmse, DEFAULT_OPTIONS.precision),
     };
   },
 
@@ -279,7 +281,8 @@ export default {
       string: `Y = ${coeffB} * Ln(X)` + (coeffA<0 ? ' ' : ' + ') + `${coeffA}`,
       string1: `Y = X / (${coeffB} * Ln(X)` + (coeffA<0 ? ' ' : ' + ') + `${coeffA})`,
       string2: `Y = (${coeffB} * Ln(X)` + ' - X ' + (coeffA<0 ? ' ' : ' + ') + `${coeffA}) / X`,
-      r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
+      r2: round(determinationCoefficient(data, points).r2, DEFAULT_OPTIONS.precision),
+      rmse: round(determinationCoefficient(data, points).rmse, DEFAULT_OPTIONS.precision),
     };
   },
 
@@ -323,7 +326,8 @@ export default {
       string: `Y = ${coeffA} * X ^ ${coeffB}`,
       string1: `Y = X / (${coeffA} * X ^ ${coeffB})`,
       string2: `Y = (${coeffA} * X ^ ${coeffB} - X) / X `,
-      r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
+      r2: round(determinationCoefficient(data, points).r2, DEFAULT_OPTIONS.precision),
+      rmse: round(determinationCoefficient(data, points).rmse, DEFAULT_OPTIONS.precision),
     };
   },
 
@@ -422,7 +426,8 @@ export default {
       predict,
       points1,
       equation: [...coefficients].reverse(),
-      r2: round(determinationCoefficient(data, points), DEFAULT_OPTIONS.precision),
+      r2: round(determinationCoefficient(data, points).r2, DEFAULT_OPTIONS.precision),
+      rmse: round(determinationCoefficient(data, points).rmse, DEFAULT_OPTIONS.precision),
     };
   },
 };
