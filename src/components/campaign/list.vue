@@ -488,13 +488,12 @@ export default
 
   .sidebar_collapse
   {
-    background: #4585cc;
+    background: #27496d;
     margin: auto;
     width: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #555;
     height: 40px;
     width: 20px;
     border-top-right-radius: 40px;
