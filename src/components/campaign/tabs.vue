@@ -200,7 +200,7 @@ export default
               regression: parseInt(this.regression),
               outliers: this.outliers
             });
-        }
+        }        
       },
       clear_optimal: function()
       {
@@ -211,7 +211,7 @@ export default
         }
       },
       worker_ready: function (e)
-      {
+      {         
         switch(e.data.cmd)
         {
           case 1: // regression of combined data
@@ -229,7 +229,6 @@ export default
               });
               for(i=0;i<len;i++)
               {
-
                 projected = predict(points[i][0],this.combined.best_fit,this.combined.regressions[0].equation);
                 hist.total_roi = (this.kind==1 ? (spent ? 100*(projected - points[i][0])/points[i][0] : 0) : (projected ? points[i][0] / projected : 0));
                 spent += points[i][0];
@@ -244,13 +243,22 @@ export default
               hist.avg_roi = (len ? hist.total_roi / len : 0);
               this.$emit('history',hist);
               break;
+            } 
+            else{
+              hist.r2 = 0;
+              hist.rmse = 0;
+              hist.total_spent = 0;
+              hist.total_revenue = 0;
+              hist.avg_revenue = 0;
+              hist.avg_spent = 0;
+              hist.avg_roi = 0;
+              this.$emit('history', hist)
             }
-          case 2: // regressions of individual campaigns
+          case 2: // regressions of individual campaigns          
             this.individual = e.data.param;
             this.solved = true;
             break;
           case 3: // progress indicator
-
 
             break;
         }

@@ -234,7 +234,6 @@ export default
           if(item[1]<0) item[1] = 0;
           return item;
         });
-        console.log(sort_observation_data, "this is for blue line")
         if(this.chart!=null) this.chart = null;
         Highcharts.setOptions(
           {
@@ -400,10 +399,8 @@ export default
         });
         var counter = 0;
         var maxValue = reg_data.length;
-        console.log(this.campaign_kind)
         if(this.campaign_kind == 'CPA')
         {
-          console.log("is this CPA?")
            for(var i = 0; i < maxValue; i++)
             {
               if(reg_data[i][1] == 0)
@@ -412,7 +409,6 @@ export default
               counter++;
             }
         } else {
-          console.log("is this ROI?")
           for(var i = 0; i < maxValue; i++)
           {
             if(reg_data[i][0] == 0)
@@ -690,153 +686,156 @@ export default
 
       optimal_regress: function()
       {
-        console.log(this.regression.string2, "strinng2")
         var optinum_min, optinum_max;
         var optimum = 1000000, tmp;
         var optimal_cost = 0;
-        switch(this.reg_type)
+        if(isNaN(this.regression.equation[0]) && isNaN(this.regression.equation[1]))
         {
-          case 1:
-            if(this.kind != 1)
-            {
-              optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
-              if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-                optimal_cost = 0.01;
-              else optimal_cost = this.max_value;
-            }
-            else
-            {
-              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
-             if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-              optimal_cost = 0.01;
-              else optimal_cost = this.max_value;
-            }
-            break;
-          case 2:
-            var b = this.regression.equation[1];
-            var a = this.regression.equation[0];
-            if(this.kind != 1)
-            {
-              if(b == 0)
-                {
-                  optinum_min = Math.ceil(0.01 / a * 100) / 100;
-                  optimal_cost = 0.01;
-                }
-              else
-              {
-                optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(1 / b,this.projected_value(1 / b))) / 100);
-                if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-                  optimal_cost = 0.01;
-                else if (optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100) 
-                  optimal_cost = this.max_value;
-                else optimal_cost = 1 / b;
-              }
-            }
-            else
-            {
-              if(b == 0)
-              {
-                optinum_max = Math.ceil((a - 0.01)/0.01 * 100);
-                optimal_cost = 0.01;
-              } else 
-              {
-                optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(1 / b,this.projected_value(1 / b))) / 100);
-                  if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-                    optimal_cost = 0.01;
-                  else if (optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100) 
-                    optimal_cost = this.max_value;
-                  else optimal_cost = 1 / b;
-                }
-            }
-            break;
-          case 3:
-          console.log(this.regression.equation, "e")
-            if(this.kind != 1)
-            {
-              optinum_min = Math.min(Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]),this.projected_value(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1])))) / 100);
-              if(optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
-                  optimal_cost = this.max_value;
-              else optimal_cost = Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]);
-            }
-            else
-            {
-              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]),this.projected_value(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1])))) / 100);
-              if (optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100) 
-                optimal_cost = 0.01;
-              else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
-                optimal_cost = this.max_value;
-              else optimal_cost = Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]);
-            }
-            break;
-          case 4:
-            if(this.kind != 1)
-            {
-              var a = this.regression.equation[0];
-              var b = this.regression.equation[1];
-              var c = this.regression.equation[2];
-              if((this.regression.equation[0] != 0) && (this.regression.equation[2]/this.regression.equation[0] > 0))
-                {
-                  optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(c/a),this.projected_value(Math.sqrt(c/a)))) / 100); 
-                  if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-                    optimal_cost = 0.01;
-                  else if(optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
-                    optimal_cost = this.max_value;
-                  else optimal_cost = Math.sqrt(c / a);
-                  console.log(optimal_cost, "optimal_cost")
-                }
-              else 
+          this.optimal_cost = 0;
+          optinum_min = 0;
+          optinum_max = 0;
+          optimum = 0;
+        }
+        else{
+          switch(this.reg_type)
+          {
+            case 1:
+              if(this.kind != 1)
               {
                 optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
                 if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-                    optimal_cost = 0.01;
-                  else if(optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
-                    optimal_cost = this.max_value;
+                  optimal_cost = 0.01;
+                else optimal_cost = this.max_value;
               }
-            }
-            else
-            {
-              var a = this.regression.equation[0];
-              var b = this.regression.equation[1];
-              var c = this.regression.equation[2];
-              if((this.regression.equation[0] != 0) && (this.regression.equation[2]/this.regression.equation[0] > 0))
-                {
-                  optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(c/a),this.projected_value(Math.sqrt(c/a)))) / 100); 
-                  console.log(optinum_max, "sdfsdfds"); 
-                  if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-                    optimal_cost = 0.01;
-                  else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
-                    optimal_cost = this.max_value;
-                  else optimal_cost = Math.sqrt(c / a);
-                  console.log(optimal_cost, "optimal_cost")
-                }
-              else 
+              else
               {
                 optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
-                if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-                    optimal_cost = 0.01;
-                  else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
-                    optimal_cost = this.max_value;
-              }
-            }
-            break;
-          case 5:
-            if(this.kind != 1)
-            {
-              optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
-              if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+               if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
                 optimal_cost = 0.01;
-              else optimal_cost = this.max_value;
-            }
-            else
-            {
-              optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
-             if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
-              optimal_cost = 0.01;
-              else optimal_cost = this.max_value;
-            }
-            break;
+                else optimal_cost = this.max_value;
+              }
+              break;
+            case 2:
+              var b = this.regression.equation[1];
+              var a = this.regression.equation[0];
+              if(this.kind != 1)
+              {
+                if(b == 0)
+                  {
+                    optinum_min = Math.ceil(0.01 / a * 100) / 100;
+                    optimal_cost = 0.01;
+                  }
+                else
+                {
+                  optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(1 / b,this.projected_value(1 / b))) / 100);
+                  if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                    optimal_cost = 0.01;
+                  else if (optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100) 
+                    optimal_cost = this.max_value;
+                  else optimal_cost = 1 / b;
+                }
+              }
+              else
+              {
+                if(b == 0)
+                {
+                  optinum_max = Math.ceil((a - 0.01)/0.01 * 100);
+                  optimal_cost = 0.01;
+                } else 
+                {
+                  optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(1 / b,this.projected_value(1 / b))) / 100);
+                    if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                      optimal_cost = 0.01;
+                    else if (optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100) 
+                      optimal_cost = this.max_value;
+                    else optimal_cost = 1 / b;
+                  }
+              }
+              break;
+            case 3:
+              if(this.kind != 1)
+              {
+                optinum_min = Math.min(Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]),this.projected_value(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1])))) / 100);
+                if(optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                    optimal_cost = this.max_value;
+                else optimal_cost = Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]);
+              }
+              else
+              {
+                optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]),this.projected_value(Math.exp(1 - this.regression.equation[0]/this.regression.equation[1])))) / 100);
+                if (optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100) 
+                  optimal_cost = 0.01;
+                else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                  optimal_cost = this.max_value;
+                else optimal_cost = Math.exp(1 - this.regression.equation[0]/this.regression.equation[1]);
+              }
+              break;
+            case 4:
+              if(this.kind != 1)
+              {
+                var a = this.regression.equation[0];
+                var b = this.regression.equation[1];
+                var c = this.regression.equation[2];
+                if((this.regression.equation[0] != 0) && (this.regression.equation[2]/this.regression.equation[0] > 0))
+                  {
+                    optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(c/a),this.projected_value(Math.sqrt(c/a)))) / 100); 
+                    if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                      optimal_cost = 0.01;
+                    else if(optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                      optimal_cost = this.max_value;
+                    else optimal_cost = Math.sqrt(c / a);
+                  }
+                else 
+                {
+                  optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+                  if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                      optimal_cost = 0.01;
+                    else if(optinum_min == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                      optimal_cost = this.max_value;
+                }
+              }
+              else
+              {
+                var a = this.regression.equation[0];
+                var b = this.regression.equation[1];
+                var c = this.regression.equation[2];
+                if((this.regression.equation[0] != 0) && (this.regression.equation[2]/this.regression.equation[0] > 0))
+                  {
+                    optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100, Math.round(100 * this.projected_roi(Math.sqrt(c/a),this.projected_value(Math.sqrt(c/a)))) / 100); 
+                    if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                      optimal_cost = 0.01;
+                    else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                      optimal_cost = this.max_value;
+                    else optimal_cost = Math.sqrt(c / a);
+                  }
+                else 
+                {
+                  optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+                  if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                      optimal_cost = 0.01;
+                    else if(optinum_max == Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100)
+                      optimal_cost = this.max_value;
+                }
+              }
+              break;
+            case 5:
+              if(this.kind != 1)
+              {
+                optinum_min = Math.min(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+                if(optinum_min == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                  optimal_cost = 0.01;
+                else optimal_cost = this.max_value;
+              }
+              else
+              {
+                optinum_max = Math.max(Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100, Math.round(100 * this.projected_roi(this.max_value,this.projected_value(this.max_value))) / 100);
+               if(optinum_max == Math.round(100 * this.projected_roi(0.01,this.projected_value(0.01))) / 100)
+                optimal_cost = 0.01;
+                else optimal_cost = this.max_value;
+              }
+              break;
+          }
         }
-        
         if(this.kind == 1){
           if(optimum < optinum_max){
             optimum = optinum_max;
@@ -848,7 +847,6 @@ export default
         this.optimal_cost = Math.round(optimal_cost * 100) / 100;
         this.optimal_value = this.projected_value(optimal_cost);
         this.optimal_value = this.projected_value(optimal_cost)
-        console.log(this.projected_value(optimal_cost), this.optimal_value,"optimal_cost")
         if(this.kind==1)
         {
           // the cost with maximum ROI
@@ -919,7 +917,7 @@ export default
 
       },
       initChart: function ()
-      {
+      { 
         this.optimal_regress();
         var init_plot = this.connectPlot();
         this.regression.points[length] = init_plot;
@@ -951,10 +949,8 @@ export default
         });
         var maxValue = reg_data.length;
         var counter = 0;
-        console.log(this.campaign_kind)
         if(this.campaign_kind == 'CPA')
         {
-          console.log("is this CPA?")
            for(var i = 0; i < maxValue; i++)
             {
               if(reg_data[i][1] == 0)
@@ -963,7 +959,6 @@ export default
               counter++;
             }
         } else {
-          console.log("is this ROI?")
           for(var i = 0; i < maxValue; i++)
           {
             if(reg_data[i][0] == 0)
@@ -971,7 +966,6 @@ export default
             reg_data1[counter] = [reg_data[i][0], (reg_data[i][1] - reg_data[i][0]) / reg_data[i][0]];
             counter++;
           }
-          console.log(reg_data ,reg_data1)
         }
         //reg_data1.push([maxValue, i/this.projected_value(maxValue)]);
 

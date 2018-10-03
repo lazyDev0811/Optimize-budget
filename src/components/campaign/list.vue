@@ -4,29 +4,29 @@
     <div class="campaign_sidebar_wrapper">
       <div class="campaign_left" :class="{ active: active}">
         <div class="sidebar_tap_wrapper">
-          <button v-if="roi_or_cpa!=1" class="roi_content">
-            <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
+          <button v-if="roi_or_cpa!=1" class="roi_content" @click="changeStateROI()">
+            <!-- <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/> -->
             <label for="roi_optimial">ROI</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
               <img src="~@/img/help.svg"/>
             </span>
           </button>
           <div v-if="roi_or_cpa==1" class="roi_content actived_tav" >
-            <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
+            <!-- <input type="radio" v-model="roi_or_cpa" id="roi_optimial" value="1" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/> -->
             <label for="roi_optimial">ROI</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select campaign data that contains revenue to optimise for ROI (Return on Investment).">
               <img src="~@/img/help.svg"/>
             </span>
           </div>
-          <button v-if="roi_or_cpa!=0" class="cpa_content">
-            <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
+          <button v-if="roi_or_cpa!=0" class="cpa_content"  @click="changeStateCPA()">
+            <!-- <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/> -->
             <label for="cpa_optimial">CPA</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
               <img src="~@/img/help.svg"/>
             </span>
           </button>
           <div v-if="roi_or_cpa==0" class="cpa_content actived_tav">
-            <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/>
+            <!-- <input type="radio" v-model="roi_or_cpa" id="cpa_optimial" value="0" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)"/> -->
             <label for="cpa_optimial">CPA</label>
             <span class="tooltip-bottom tooltip" data-tooltip="Select Campaign data that contains ‘conversions’ to optimise for CPA (Cost Per Aquisition).">
               <img src="~@/img/help.svg"/>
@@ -44,10 +44,10 @@
               <i class="fa fa-search" aria-hidden="true"></i>
             </div>
             <template v-if="roi_or_cpa==1">
-              <template v-for="grp in groupsROI">
-                <div class="group_title">
+              <template v-for="(grp, index) in groupsROI">
+                <div class="group_title">{{index}}
                   <div v-if="grp.collapsed">
-                    <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp)" :checked="grp.checked==campaign_roi[grp.id].length" />
+                    <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp,index)" :checked="group_roi_check[index].count_status == campaign_roi[grp.id].length" />
                   </div>
                   <div class="group_name" @click="toggleCollapsed(grp)">
                     <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
@@ -57,17 +57,17 @@
                 </div>
                 <ul v-bind:id="grp.id + 'list'" class="no_list camp_group" v-if="grp.collapsed">
                   <li v-for="item in sortedROI(grp)">
-                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
+                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="checkClick(index, $event.target.checked)"/>
                     <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
                   </li>
                 </ul>
               </template>
             </template>
             <template v-else>
-              <template v-for="grp in groupsCPA">
+              <template v-for="(grp, index) in groupsCPA">
                 <div class="group_title">
                   <div v-if="grp.collapsed">
-                    <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
+                    <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp,index)" :checked="group_cpa_check[index].count_status == campaign_cpa[grp.id].length" />
                   </div>
                   <div class="group_name" @click="toggleCollapsed(grp)">
                     <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
@@ -77,7 +77,7 @@
                 </div>
                 <ul v-bind:id="grp.id" class="no_list camp_group" v-if="grp.collapsed">
                   <li v-for="item in sortedCPA(grp)">
-                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
+                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="checkClick(index, $event.target.checked)"/>
                     <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
                   </li>
                 </ul>
@@ -121,7 +121,7 @@
                 </span>
             </div>
 
-            <div slot="collapse-body">
+            <div slot="collapse-body" class="collapse-body">
               <table>
                 <tr>
                   <td>&nbsp;</td>
@@ -223,6 +223,8 @@ export default
         from_date: null, // this.month_start(),
         to_date: null, // this.month_end(),
         kind_regress: 0,
+        group_roi_check: [],
+        group_cpa_check: [],
         r2:
           [
             0, // auto-selected
@@ -279,17 +281,34 @@ export default
     {
       groupsROI: function ()
       {
-        return this.group_roi.sort(function (a, b)
+        this.group_roi =  this.group_roi.sort(function (a, b)
           {
             return strCompare(a.title, b.title);
           });
+
+        this.group_roi_check = this.group_roi.map(function()
+        {
+          return {
+            count_status: 0,
+          };
+        })
+        console.log(this.group_roi_check, "this is group_roi_check")
+        return this.group_roi;
       },
       groupsCPA: function ()
       {
-        return this.group_cpa.sort(function (a, b)
+        this.group_cpa = this.group_cpa.sort(function (a, b)
           {
             return strCompare(a.title, b.title);
           });
+
+        this.group_cpa_check = this.group_cpa.map(function()
+        {
+          return {
+            count_status: 0,
+          };
+        })
+        return this.group_cpa;
       },
 
     },
@@ -353,6 +372,16 @@ export default
         this.to_date = year + '-' + month + '-' + day;
         this.from_date = (year-1) + '-' + month + '-' + day;
       },
+      changeStateROI: function()
+      {
+        this.roi_or_cpa = 1;
+        this.doOptimal(this.select_roi);
+      },
+      changeStateCPA: function()
+      {
+        this.roi_or_cpa = 0;
+        this.doOptimal(this.select_cpa);
+      },
       doOptimal: function (list)
       {
         this.valid_msg = '';
@@ -364,12 +393,33 @@ export default
           this.avg_revenue = 0;
           this.total_roi = 0;
           this.avg_roi = 0;
-
+          this.kind_regress = 0;
+          this.optimizer_list = list.slice();
+          this.r2 = this.r2.map(function()
+          {
+            return 0;
+          })
+          this.rmse = this.rmse.map(function()
+          {
+            return 0;
+          })
         }
         else if(!(this.$root.info && this.$root.info.confirmed)) this.valid_msg = '<b>Forbidden</b><br/>Confirm your e-mail first<br/>or <a href="#/profile" class="link">re-issue</a> another activation';
         else {
           this.kind_regress = 0;
           this.optimizer_list = list.slice();
+        }
+      },
+      checkClick: function(count, check_status)
+      {
+        if(this.roi_or_cpa == 1)
+        {
+          this.group_roi_check[count].count_status += (check_status ? +1 : -1);
+          console.log(this.group_roi_check, "roi_check");
+        }
+        else{
+          this.group_cpa_check[count].count_status += (check_status ? +1 : -1);
+          console.log(this.group_roi_check, "roi_check1");
         }
       },
       delCampaign: function(list)
@@ -394,7 +444,7 @@ export default
         }
         this.$set(grp,'collapsed', !grp.collapsed);
       },
-      toggleSelected: function(arr,list,grp)
+      toggleSelected: function(arr,list,grp,index)
       {
         var len = arr.length, i, idx;
         if(grp.checked==len)
@@ -405,7 +455,15 @@ export default
             idx = list.indexOf(arr[i].id);
             if(idx != -1) list.splice(idx,1);
           }
-          grp.checked = 0;
+          if(this.roi_or_cpa == 1)
+            {
+              this.group_roi_check[index].count_status = 0;
+              grp.checked = 0;
+            }
+          else{
+             this.group_cpa_check[index].count_status = 0;
+             grp.checked = 0;
+           }
         }
         else
         {
@@ -415,8 +473,17 @@ export default
             idx = list.indexOf(arr[i].id);
             if(idx == -1 && !arr[i].unpaid) list.push(arr[i].id); // skip campaigns over the free limit
           }
-          grp.checked = len;
+          if(this.roi_or_cpa == 1)
+            {
+              this.group_roi_check[index].count_status = len;
+              grp.checked = len;
+            }
+          else{
+             this.group_cpa_check[index].count_status = len;
+             grp.checked = len;
+           }
         }
+        console.log(this.group_roi_check, "roi_check");
       },
       showError: function(msg)
       {
@@ -682,6 +749,12 @@ export default
     font-weight: bold;
     padding-left: 5px;
     padding-right: 5px;
+  }
+
+  .collapse-body
+  {
+    display: flex;
+    justify-content: center;
   }
 
   .campaign_regress
