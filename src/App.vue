@@ -54,14 +54,11 @@ export default
           var x = document.getElementById("myTopnav");
           if (x.className === "mainmenu") {
               x.className += " responsive";
-              // console.log(x.className);
           } else {
               x.className = "mainmenu";
-              // console.log(x.className);
           }
         },
         func1() {
-          // console.log('aaa');
           var x = document.getElementById("myTopnav");
           x.className = "mainmenu";     
         }
@@ -180,7 +177,6 @@ export default
   .content
   {
     flex: 1 1 100%;
-    overflow: auto;
   }
 
   .copyright

@@ -150,8 +150,10 @@ export default
     {
       setPoint: function()
       {
+        // console.log(this.optimal_cost);
         this.chart.destroy();
         this.optimal_value = this.projected_value(this.var_cost);
+        this.optimal_cost = this.var_cost;
         this.optimum = this.optimal_value / this.var_cost;
         var reg_data = this.combined.regressions[3].points.sort(function (a,b)
         {
@@ -301,9 +303,6 @@ export default
       recalc: function(step)
       {
         this.solved = false;
-        //this.combined = JSON.parse(myJson);
-       // console.log(this.combined);
-       // console.log(myJson[0]);
         this.worker.postMessage(
           {
             cmd: 1,
@@ -366,7 +365,6 @@ export default
       {
         this.defaultList = resp.id;
         this.init_Data();
-        console.log("default",this.defaultList);
       },
 
       init_Data: function ()

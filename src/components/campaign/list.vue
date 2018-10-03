@@ -34,83 +34,108 @@
           </div>
         </div>
         <div class="campaign_panel">
-          <div class="campaign_listing">
-            <div class="campaign_header">
+          <!-- <collapse :selected="true">
+            <div slot="collapse-header" class="campaign_header">
               <h3>Campaigns</h3>
             </div>
-            <div class="search-wrapper">
-              <input type="text" v-model="search" placeholder="Search campaign.."/>
-              <label>Search title:</label>
-              <i class="fa fa-search" aria-hidden="true"></i>
+            <div></div>
+          </collapse> -->
+          <collapse :selected="true" >
+            
+            <div class="campaign_header" slot="collapse-header">
+              <h3>Campaigns</h3>
             </div>
-            <template v-if="roi_or_cpa==1">
-              <template v-for="(grp, index) in groupsROI">
-                <div class="group_title">{{index}}
-                  <div v-if="grp.collapsed">
-                    <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp,index)" :checked="group_roi_check[index].count_status == campaign_roi[grp.id].length" />
+            <div slot="collapse-body" class="campaign_listing">
+              <div class="search-wrapper">
+                <input type="text" v-model="search" placeholder="Search campaign.."/>
+                <label>Search title:</label>
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </div>
+              <template v-if="roi_or_cpa==1">
+                <template v-for="grp in groupsROI">
+                  <div class="group_title">
+                    <div v-if="grp.collapsed">
+                      <input type="checkbox" @click="toggleSelected(campaign_roi[grp.id],select_roi,grp)" :checked="grp.checked==campaign_roi[grp.id].length" />
+                    </div>
+                    <div class="group_name" @click="toggleCollapsed(grp)">
+                      <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                      {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
+                    </div>
+                    <i class="fa fa-remove cus_remove" @click="removeElement($event, grp)"></i>
                   </div>
-                  <div class="group_name" @click="toggleCollapsed(grp)">
-                    <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
-                    {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
-                  </div>
-                  <i class="fa fa-remove cus_remove" @click="removeElement($event, grp)"></i>
-                </div>
-                <ul v-bind:id="grp.id + 'list'" class="no_list camp_group" v-if="grp.collapsed">
-                  <li v-for="item in sortedROI(grp)">
-                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="checkClick(index, $event.target.checked)"/>
-                    <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
-                  </li>
-                </ul>
+                  <ul v-bind:id="grp.id + 'list'" class="no_list camp_group" v-if="grp.collapsed">
+                    <li v-for="item in sortedROI(grp)">
+                      <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'roi_' + item.id" :value="item.id" v-model="select_roi" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
+                      <label :for="'roi_' + item.id">&nbsp;{{ item.title }}</label>
+                    </li>
+                  </ul>
+                </template>
               </template>
-            </template>
-            <template v-else>
-              <template v-for="(grp, index) in groupsCPA">
-                <div class="group_title">
-                  <div v-if="grp.collapsed">
-                    <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp,index)" :checked="group_cpa_check[index].count_status == campaign_cpa[grp.id].length" />
+              <template v-else>
+                <template v-for="grp in groupsCPA">
+                  <div class="group_title">
+                    <div v-if="grp.collapsed">
+                      <input type="checkbox" @click="toggleSelected(campaign_cpa[grp.id],select_cpa,grp)" :checked="grp.checked==campaign_cpa[grp.id].length" />
+                    </div>
+                    <div class="group_name" @click="toggleCollapsed(grp)">
+                      <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
+                      {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
+                    </div>
+                    <i class="fa fa-remove cus_remove" @click="removeElement($event, grp)"></i>
                   </div>
-                  <div class="group_name" @click="toggleCollapsed(grp)">
-                    <i v-bind:id="grp.id" class="fa fa-angle-up" aria-hidden="true"></i>
-                    {{ (grp.title!='' ? grp.title : 'NO GROUP') }}
-                  </div>
-                  <i class="fa fa-remove cus_remove" @click="removeElement($event, grp)"></i>
-                </div>
-                <ul v-bind:id="grp.id" class="no_list camp_group" v-if="grp.collapsed">
-                  <li v-for="item in sortedCPA(grp)">
-                    <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="checkClick(index, $event.target.checked)"/>
-                    <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
-                  </li>
-                </ul>
+                  <ul v-bind:id="grp.id" class="no_list camp_group" v-if="grp.collapsed">
+                    <li v-for="item in sortedCPA(grp)">
+                      <input :disabled="item.unpaid && !$root.info.is_admin" type="checkbox" :id="'cpa_' + item.id" :value="item.id" v-model="select_cpa" @click="grp.checked+=($event.target.checked ? +1 : -1)"/>
+                      <label :for="'cpa_' + item.id">&nbsp;{{ item.title }}</label>
+                    </li>
+                  </ul>
+                </template>
               </template>
-            </template>
-          </div>
-          <div class="error_message" v-if="valid_msg != ''" v-html="valid_msg"></div>
-          <div class="error_message" v-if="(roi_or_cpa==1 && campaign_roi.length==0) || (roi_or_cpa!=1 && campaign_cpa.length==0)">
-            Please <a href="#/import" class="link">import</a> some data
-          </div>
-          <div class="campaign_dates">
-            <input type="date" v-model="from_date"/>
-            <input type="date" v-model="to_date"/>
-            <button class="btn btn_dark btn-shadow" style="padding: 3px 6px 4px" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)">
-              <svg width="16px" height="22px" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#fff" d="M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3
-                  C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7
-                  C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"/>
-              </svg>
-            </button>
-          </div>
+              <div class="error_message" v-if="valid_msg != ''" v-html="valid_msg"></div>
+              <div class="error_message" v-if="(roi_or_cpa==1 && campaign_roi.length==0) || (roi_or_cpa!=1 && campaign_cpa.length==0)">
+                Please <a href="#/import" class="link">import</a> some data
+              </div>
+              <div class="campaign_dates">
+                <!-- <div class="dates_section"> -->
+                  <input type="date" v-model="from_date"/>
+                  <input type="date" v-model="to_date"/>
+                  <button class="btn btn_dark btn-shadow" style="padding: 3px 6px 4px" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)">
+                    <svg width="16px" height="22px" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
+                      <path fill="#fff" d="M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3
+                        C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7
+                        C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"/>
+                    </svg>
+                  </button>
+                <!-- </div> -->
+                <!-- <div class="outlier_section">
+                  <input type="checkbox" v-model="outlier" id="remove_outlier"/>
+                  <label for="remove_outlier">Remove outliers</label>
+                  <button class="btn btn_dark btn-shadow" style="padding: 3px 6px 4px" @click="doOptimal(roi_or_cpa==1 ? select_roi : select_cpa)">
+                    <svg width="16px" height="22px" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg">
+                      <path fill="#fff" d="M8,3 L8,0 L4,4 L8,8 L8,5 C11.3,5 14,7.7 14,11 C14,12 13.7,13 13.3,13.8 L14.8,15.3
+                        C15.5,14 16,12.6 16,11 C16,6.6 12.4,3 8,3 L8,3 Z M8,17 C4.7,17 2,14.3 2,11 C2,10 2.3,9 2.7,8.2 L1.2,6.7
+                        C0.5,8 0,9.4 0,11 C0,15.4 3.6,19 8,19 L8,22 L12,18 L8,14 L8,17 L8,17 Z"/>
+                    </svg>
+                  </button>
+                </div>       -->  
+              </div>
+
+              <div class="campaign_optimize">
+                <!-- <div slot="collapse-body"> -->
+                  <input type="checkbox" v-model="outlier" id="remove_outlier"/>
+                  <label for="remove_outlier">Remove outliers</label>
+                  <span class="tooltip-bottom tooltip" data-tooltip="Outliers are abnormal observations that can skew results. Removing outliers is recommended.">
+                    <img src="~@/img/help.svg"/>
+                  </span>
+                  <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
+                  <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
+                <!-- </div> -->
+              </div>
+            </div>
+          </collapse>
+          
         </div>
-        <div class="campaign_optimize">
-          <div slot="collapse-body">
-                <input type="checkbox" v-model="outlier" id="remove_outlier"/>
-                <label for="remove_outlier">Remove outliers</label>
-                <span class="tooltip-bottom tooltip" data-tooltip="Outliers are abnormal observations that can skew results. Removing outliers is recommended.">
-                  <img src="~@/img/help.svg"/>
-                </span>
-            <button v-if="roi_or_cpa==1 && select_roi.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_roi)">Delete selected</button>
-            <button v-if="roi_or_cpa==0 && select_cpa.length>0" class="campaign_delete btn btn_dark" @click="delCampaign(select_cpa)">Delete selected</button>
-          </div>
-        </div>
+        
 
         <div class="campaign_regress">
           <collapse :selected="false">
@@ -223,8 +248,6 @@ export default
         from_date: null, // this.month_start(),
         to_date: null, // this.month_end(),
         kind_regress: 0,
-        group_roi_check: [],
-        group_cpa_check: [],
         r2:
           [
             0, // auto-selected
@@ -281,34 +304,17 @@ export default
     {
       groupsROI: function ()
       {
-        this.group_roi =  this.group_roi.sort(function (a, b)
+        return this.group_roi.sort(function (a, b)
           {
             return strCompare(a.title, b.title);
           });
-
-        this.group_roi_check = this.group_roi.map(function()
-        {
-          return {
-            count_status: 0,
-          };
-        })
-        console.log(this.group_roi_check, "this is group_roi_check")
-        return this.group_roi;
       },
       groupsCPA: function ()
       {
-        this.group_cpa = this.group_cpa.sort(function (a, b)
+        return this.group_cpa.sort(function (a, b)
           {
             return strCompare(a.title, b.title);
           });
-
-        this.group_cpa_check = this.group_cpa.map(function()
-        {
-          return {
-            count_status: 0,
-          };
-        })
-        return this.group_cpa;
       },
 
     },
@@ -395,7 +401,7 @@ export default
           this.avg_roi = 0;
           this.kind_regress = 0;
           this.optimizer_list = list.slice();
-          this.r2 = this.r2.map(function()
+          this.r2 = this.r2.map(function() 
           {
             return 0;
           })
@@ -408,18 +414,6 @@ export default
         else {
           this.kind_regress = 0;
           this.optimizer_list = list.slice();
-        }
-      },
-      checkClick: function(count, check_status)
-      {
-        if(this.roi_or_cpa == 1)
-        {
-          this.group_roi_check[count].count_status += (check_status ? +1 : -1);
-          console.log(this.group_roi_check, "roi_check");
-        }
-        else{
-          this.group_cpa_check[count].count_status += (check_status ? +1 : -1);
-          console.log(this.group_roi_check, "roi_check1");
         }
       },
       delCampaign: function(list)
@@ -444,7 +438,7 @@ export default
         }
         this.$set(grp,'collapsed', !grp.collapsed);
       },
-      toggleSelected: function(arr,list,grp,index)
+      toggleSelected: function(arr,list,grp)
       {
         var len = arr.length, i, idx;
         if(grp.checked==len)
@@ -455,15 +449,7 @@ export default
             idx = list.indexOf(arr[i].id);
             if(idx != -1) list.splice(idx,1);
           }
-          if(this.roi_or_cpa == 1)
-            {
-              this.group_roi_check[index].count_status = 0;
-              grp.checked = 0;
-            }
-          else{
-             this.group_cpa_check[index].count_status = 0;
-             grp.checked = 0;
-           }
+          grp.checked = 0;
         }
         else
         {
@@ -473,17 +459,8 @@ export default
             idx = list.indexOf(arr[i].id);
             if(idx == -1 && !arr[i].unpaid) list.push(arr[i].id); // skip campaigns over the free limit
           }
-          if(this.roi_or_cpa == 1)
-            {
-              this.group_roi_check[index].count_status = len;
-              grp.checked = len;
-            }
-          else{
-             this.group_cpa_check[index].count_status = len;
-             grp.checked = len;
-           }
+          grp.checked = len;
         }
-        console.log(this.group_roi_check, "roi_check");
       },
       showError: function(msg)
       {
@@ -550,7 +527,6 @@ export default
   .campaign_sidebar_wrapper
   {
     display: flex;
-    height: 678px;
   }
 
   .sidebar_collapse
@@ -593,6 +569,13 @@ export default
     position: absolute;
     right: 5px;
     top: 3px;
+  }
+
+  .error_message
+  {
+    position: absolute;
+    bottom: 80px;
+    width: 95%;
   }
 
   .group_name
@@ -683,24 +666,33 @@ export default
 
   .campaign_listing
   {
-    border: 1px solid #CCC;
-    margin-bottom: 4px;
-    overflow: auto;
+    overflow :auto;
     flex: 1 1 auto;
-    max-height: 366px;
+    max-height: 300px;
   }
 
   .campaign_listing ul{
     overflow: auto;
-    max-height: 170px;
+    max-height: 145px;
   }
 
   .campaign_dates
   {
+    position :absolute;
+    bottom: 22px;
+    left: -1px;
+    width: 100%;
+    min-height: 70px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    min-height: 36px;
+    justify-content: space-around;
+  }
+
+  
+
+  .outlier_section
+  {
+    padding :8px;
   }
 
   input[type="date"]
@@ -711,10 +703,13 @@ export default
 
   .campaign_optimize
   {
+    width : 99%;
+    position : absolute;
+    bottom :3px;
+    height : 36px;
     padding: 8px;
     background-color: #70AD47;
     color: white;
-    position: relative;
   }
 
   .tooltip-bottom img
@@ -736,7 +731,7 @@ export default
 
   .campaign_regress td:last-child
   {
-    color: blue;
+    color: darkgreen;
     font-weight: bold;
     padding-left: 5px;
     padding-right: 5px;
@@ -759,8 +754,7 @@ export default
 
   .campaign_regress
   {
-    padding: 8px;
-    color: white;
+    color: white; 
     background-color: black;
   }
 
@@ -839,18 +833,33 @@ export default
 
   .campaign_panel
   {
+    position : relative;
     display: flex;
     flex-direction: column;
-    padding: 3px;
-    height: 412px;
-    max-height: 412px;
   }
 
-  .campaign_panel,
+
   .campaign_center
   {
     flex: 1 1 auto;
-    overflow: auto;
+    margin-top : 5px;
+  }
+
+  .campaign_panel .collapse .collapse-header
+  {
+    background-color: black !important;
+    padding: 20px 20px 20px 10px;
+    display: flex;
+    justify-content: center;
+    font-size : 18px;
+  }
+
+  .campaign_panel .collapse .collapse-content-box
+  {
+    padding : 0px;
+    flex: 1 1 auto;
+    height: 390px;
+    max-height: 390px;
   }
 
   .campaign_center
@@ -881,6 +890,7 @@ export default
   }
 
   .btn-shadow
+
   {
     box-shadow: inset 0 0 0 1px #27496d;
   }
@@ -902,7 +912,7 @@ export default
 
   .campaign_regress .collapse .collapse-header{
     background-color: black !important;
-    padding: 15px 15px 15px 10px;
+    padding: 20px 20px 20px 10px;
   }
 
   .campaign_actual .collapse .collapse-header{
@@ -911,7 +921,8 @@ export default
 
   .collapse .collapse-header::before{
     left: auto !important;
-    right: 0px;
+    right: 6px;
+
   }
 
   .group_title .collapse-header{

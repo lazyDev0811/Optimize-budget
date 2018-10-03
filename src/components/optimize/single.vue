@@ -183,7 +183,7 @@ export default
       },
       text_kind: function ()
       {
-        return (this.kind==1 ? 'Conversions' : 'Revenue');
+        return (this.kind==1 ? 'Revenue' : 'Conversions');
       },
       optimal_text: function ()
       {
