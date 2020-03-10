@@ -216,12 +216,15 @@ export default
       height: 100%;
       color: white;
     }
+
     .mainmenu.responsive .log_info {
       display: none;
     }
+
     .mainmenu.responsive .icon {
       display: none;
     }
+
     .mainmenu.responsive .icon1 {
       float: right;
       display: block;
@@ -229,15 +232,18 @@ export default
       top: 10px;
       position: absolute;
     }
+
     .mainmenu.responsive a {
       float: none;
       display: block;
       text-align: left;
       color: white;
     }
+
     .mainmenu.responsive .login.pointer {
       background-color: rgba(6,6,6,0.2);
     }
+
     .mainmenu.responsive .btn {
       width: 300px;
       text-align: center;
@@ -245,6 +251,7 @@ export default
       margin-left: 20px;
       background-color: rgba(6,6,6,0.2);
     }
+
   }
 
   .mainmenu a {
