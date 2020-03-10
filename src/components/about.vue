@@ -1,3 +1,5 @@
 <template>
-  <div>not ready</div>
+  <div>
+    <h1> Not Ready </h1>
+  </div>
 </template>
